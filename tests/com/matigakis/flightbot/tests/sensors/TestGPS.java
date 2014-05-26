@@ -10,7 +10,7 @@ import com.matigakis.flightbot.sensors.GPS;
 import com.matigakis.flightbot.sensors.SensorData;
 
 @RunWith(JUnit4.class)
-public class GPSTests {
+public class TestGPS {
 	private GPS gps;
 	
 	@Before

@@ -1,6 +1,11 @@
 <project name="FlightBox" default="dist" basedir=".">
 	<property name="src" location="src" />
+	<property name="src.tests" location="tests" />
 	<property name="build" location="build" />
+	<property name="build.classes" location="${build}/classes" />
+	<property name="build.tests" location="${build}/tests" />
+	<property name="reports" location="reports" />
+	<property name="reports.tests" location="${reports}/tests" />
 	<property name="dist" location="dist" />
 	<property name="lib" location="lib" />
 	<property name="main-class" value="com.matigakis.flightbot.FlightBot" />
@@ -10,23 +15,52 @@
 			<include name="*.jar" />
 		</fileset>
 	</path>
-
+	
 	<target name="init">
-		<mkdir dir="${build}" />
+		<mkdir dir="${build.classes}" />
+		<mkdir dir="${build.tests}" />
+		<mkdir dir="${reports.tests}" />
 	</target>
 	
 	<target name="compile" depends="init">
-		<javac srcdir="${src}" destdir="${build}" debug="true">
+		<javac srcdir="${src}" destdir="${build.classes}" debug="true">
 			<classpath refid="lib.path" />
 		</javac>
 	</target>
 	
+	<target name="compile-tests" depends="init, compile">
+		<javac srcdir="${src.tests}" destdir="${build.tests}" debug="true">
+			<classpath>
+				<pathelement location="${build.classes}"/>
+				<path refid="lib.path" />
+			</classpath>
+		</javac>
+	</target>
+	
 	<target name="dist" depends="compile">
-		<jar jarfile="${dist}/FlightBot.jar" basedir="${build}">
+		<jar jarfile="${dist}/FlightBot.jar" basedir="${build.classes}">
 			<manifest>
           		<attribute name="Main-Class" value="${main-class}"/>
             </manifest>
 		</jar>
+	</target>
+	
+	<target name="test" depends="dist, compile-tests">
+		<junit printsummary="yes">
+			<classpath>
+				<pathelement location="${dist}/FlightBot.jar"/>
+				<pathelement location="${build.tests}"/>
+				<path refid="lib.path"/>
+			</classpath>
+			
+			<formatter type="plain" />
+			
+			<batchtest fork="yes" todir="${reports.tests}">
+				<fileset dir="${src.tests}">
+					<include name="**/Test*.java"/>
+				</fileset>
+			</batchtest>
+		</junit>
 	</target>
 	
 	<target name="run" depends="dist">
@@ -41,5 +75,6 @@
 	<target name="clean">
 		<delete dir="${build}" />
 		<delete dir="${dist}" />
+		<delete dir="${reports}" />
 	</target>
 </project>

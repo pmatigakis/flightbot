@@ -20,18 +20,13 @@ public class TestGPS {
 	
 	@Test
 	public void testUpdateFromSensorData(){
-		SensorData sensorData = new SensorData();
-		
-		sensorData.latitude = 37.937056;
-		sensorData.longitude = 23.94667;
-		sensorData.gpsAltitude = 1000.0;
-		sensorData.gpsAirspeed = 60.0;
-		
+		SensorData sensorData = new DummySensorData();
+				
 		gps.updateFromSensorData(sensorData);
 		
-		assertEquals(37.937056, gps.getLatitude(), 0.0);
-		assertEquals(23.94667, gps.getLongitude(), 0.0);
-		assertEquals(1000.0, gps.getAltitude(), 0.0);
-		assertEquals(60.0, gps.getAirspeed(), 0.0);
+		assertEquals(sensorData.latitude, gps.getLatitude(), 0.0);
+		assertEquals(sensorData.longitude, gps.getLongitude(), 0.0);
+		assertEquals(sensorData.gpsAltitude, gps.getAltitude(), 0.0);
+		assertEquals(sensorData.gpsAirspeed, gps.getAirspeed(), 0.0);
 	}
 }

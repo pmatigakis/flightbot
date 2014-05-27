@@ -19,21 +19,13 @@ public class TestAccelerometer {
 	}
 	
 	@Test
-	public void testUpdateFromSensorData(){
-		double xAcceleration = 0.5; 
-		double yAcceleration = 0.3;
-		double zAcceleration = 30.0;
-		
-		SensorData sensorData = new SensorData();
-		
-		sensorData.xAcceleration = xAcceleration;
-		sensorData.yAcceleration = yAcceleration;
-		sensorData.zAcceleration = zAcceleration;
-		
+	public void testUpdateFromSensorData(){		
+		SensorData sensorData = new DummySensorData();
+				
 		accelerometer.updateFromSensorData(sensorData);
 		
-		assertEquals(xAcceleration, accelerometer.getXAcceleration(), 0.0);
-		assertEquals(yAcceleration, accelerometer.getYAcceleration(), 0.0);
-		assertEquals(zAcceleration, accelerometer.getZAcceleration(), 0.0);
+		assertEquals(sensorData.xAcceleration, accelerometer.getXAcceleration(), 0.0);
+		assertEquals(sensorData.yAcceleration, accelerometer.getYAcceleration(), 0.0);
+		assertEquals(sensorData.zAcceleration, accelerometer.getZAcceleration(), 0.0);
 	}
 }

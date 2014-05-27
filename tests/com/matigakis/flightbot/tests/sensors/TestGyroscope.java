@@ -19,20 +19,12 @@ public class TestGyroscope {
 	
 	@Test
 	public void testUpdateFromSensordata(){
-		double xRotation = 2.0;
-		double yRotation = 1.5;
-		double zRotation = 1.0;
-		
-		SensorData sensorData = new SensorData();
-		
-		sensorData.xRotation = xRotation;
-		sensorData.yRotation = yRotation;
-		sensorData.zRotation = zRotation;
-		
+		SensorData sensorData = new DummySensorData();
+				
 		gyroscope.updateFromSensorData(sensorData);
 		
-		assertEquals(xRotation, gyroscope.getXRotation(), 0.0);
-		assertEquals(yRotation, gyroscope.getYRotation(), 0.0);
-		assertEquals(zRotation, gyroscope.getZRotation(), 0.0);
+		assertEquals(sensorData.xRotation, gyroscope.getXRotation(), 0.0);
+		assertEquals(sensorData.yRotation, gyroscope.getYRotation(), 0.0);
+		assertEquals(sensorData.zRotation, gyroscope.getZRotation(), 0.0);
 	}
 }

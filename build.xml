@@ -71,6 +71,20 @@
 		</junitreport>
 	</target>
 	
+	<target name="pmd">
+		<taskdef name="pmd" classname="net.sourceforge.pmd.ant.PMDTask">
+			<classpath refid="lib.path" />
+		</taskdef>
+		<pmd shortFilenames="true">
+			<sourceLanguage name="java" version="1.7"/>
+			<ruleset>rulesets/internal/all-java.xml</ruleset>
+			<formatter type="html" toFile="${reports}/pmd_report.html" />
+			<fileset dir="${src}">
+				<include name="**/*.java"/>
+			</fileset>
+		</pmd>
+	</target>
+	
 	<target name="run" depends="dist">
 		<java fork="true" classname="${main-class}">
 			<classpath> 

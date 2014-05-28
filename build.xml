@@ -6,6 +6,7 @@
 	<property name="build.tests" location="${build}/tests" />
 	<property name="reports" location="reports" />
 	<property name="reports.tests" location="${reports}/tests" />
+	<property name="reports.test_results" location="${reports}/test_results" />
 	<property name="dist" location="dist" />
 	<property name="lib" location="lib" />
 	<property name="main-class" value="com.matigakis.flightbot.FlightBot" />
@@ -53,7 +54,7 @@
 				<path refid="lib.path"/>
 			</classpath>
 			
-			<formatter type="plain" />
+			<formatter type="xml" />
 			
 			<batchtest fork="yes" todir="${reports.tests}">
 				<fileset dir="${src.tests}">
@@ -61,6 +62,13 @@
 				</fileset>
 			</batchtest>
 		</junit>
+	</target>
+	
+	<target name="testreport" depends="test">
+		<junitreport todir="${reports}">
+			<fileset dir="${reports.tests}" />
+			<report todir="${reports.test_results}" />
+		</junitreport>
 	</target>
 	
 	<target name="run" depends="dist">

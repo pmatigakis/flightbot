@@ -12,6 +12,9 @@ import com.matigakis.flightbot.simulators.Simulator;
 import com.matigakis.flightbot.ui.views.AircraftDataRenderer;
 import com.matigakis.flightbot.ui.views.TelemetryView;
 
+/**
+ * FlightBot is an autopilot framework for flightgear.
+ */
 public final class FlightBot{
 	public static void main(String[] args) throws Exception{
 		BasicConfigurator.configure();

@@ -125,14 +125,27 @@ public class Aircraft {
 		return orientation;
 	}
 	
+	/**
+	 * Return the airspeed, altitude and heading of the aircraft.
+	 */
 	public Instrumentation getInstrumentation(){
 		return instrumentation;
 	}
 	
+	/**
+	 * Check if the autopilot is active.
+	 * 
+	 * @return
+	 */
 	public boolean isAutopilotActive(){
 		return autopilotActive;
 	}
 	
+	/**
+	 * Enable or disable the autopilot.
+	 * 
+	 * @param state the state which the autopilot is to be set.
+	 */
 	public void setAutopilotState(boolean state){
 		autopilotActive = state;
 	}

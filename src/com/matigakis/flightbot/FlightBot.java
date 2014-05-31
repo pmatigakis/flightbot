@@ -7,7 +7,7 @@ import com.matigakis.flightbot.fdm.FDM;
 import com.matigakis.flightbot.flightgear.controllers.FlightgearAutopilotFactory;
 import com.matigakis.flightbot.flightgear.fdm.FlightgearFDMFactory;
 import com.matigakis.flightbot.flightgear.simulators.FlightgearSimulator;
-import com.matigakis.flightbot.configuration.Configuration;
+import com.matigakis.flightbot.configuration.ConfigurationManager;
 import com.matigakis.flightbot.simulators.Simulator;
 import com.matigakis.flightbot.ui.views.AircraftDataRenderer;
 import com.matigakis.flightbot.ui.views.TelemetryView;
@@ -19,12 +19,12 @@ public final class FlightBot{
 	public static void main(String[] args) throws Exception{
 		BasicConfigurator.configure();
 				
-		Configuration configuration = new Configuration();
-		configuration.loadConfiguration("config/settings.xml");
+		ConfigurationManager configurationManager = new ConfigurationManager();
+		configurationManager.loadConfiguration("config/settings.xml");
 		
-		String host = configuration.getHost();
-		int sensorsPort = configuration.getSensorPort();
-		int controlsPort = configuration.getControlsPort();
+		String host = configurationManager.getHost();
+		int sensorsPort = configurationManager.getSensorPort();
+		int controlsPort = configurationManager.getControlsPort();
 		
 		FDM fdm = FlightgearFDMFactory.createFDM(sensorsPort);
 		

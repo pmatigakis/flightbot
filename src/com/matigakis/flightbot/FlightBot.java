@@ -1,6 +1,13 @@
 package com.matigakis.flightbot;
 
 import org.apache.log4j.BasicConfigurator;
+import org.apache.commons.cli.Options;
+import org.apache.commons.cli.Option;
+import org.apache.commons.cli.OptionBuilder;
+import org.apache.commons.cli.CommandLineParser;
+import org.apache.commons.cli.CommandLine;
+import org.apache.commons.cli.PosixParser;
+import org.apache.commons.cli.ParseException;
 
 import com.matigakis.flightbot.aircraft.controllers.AircraftController;
 import com.matigakis.flightbot.fdm.FDM;
@@ -17,8 +24,30 @@ import com.matigakis.flightbot.ui.views.TelemetryView;
  */
 public final class FlightBot{
 	public static void main(String[] args) throws Exception{
+		CommandLine commandLine;
+		
 		BasicConfigurator.configure();
 				
+		Options options = new Options();
+		Option autopilotOption = OptionBuilder
+				.withLongOpt("autopilot")
+				.hasArgs()
+				.withArgName("NAME")
+				.withDescription("The name of he autopilot to load")
+				.create();
+		options.addOption(autopilotOption);
+		
+		CommandLineParser parser = new PosixParser();
+		
+		try{
+			commandLine = parser.parse(options, args);
+		}catch(ParseException ex){
+			System.out.println("Failed to parse arguments");
+			return;
+		}
+		
+		String autopilotName = commandLine.getOptionValue("autopilot");
+		
 		ConfigurationManager configurationManager = new ConfigurationManager();
 		configurationManager.loadConfiguration("config/settings.xml");
 		
@@ -28,7 +57,7 @@ public final class FlightBot{
 		
 		FDM fdm = FlightgearFDMFactory.createFDM(sensorsPort);
 		
-		AircraftController autopilot  = FlightgearAutopilotFactory.getAutopilot(host, controlsPort, "simple");
+		AircraftController autopilot  = FlightgearAutopilotFactory.getAutopilot(host, controlsPort, autopilotName);
 		
 		AircraftDataRenderer aircraftDataRenderer = new TelemetryView();
 		

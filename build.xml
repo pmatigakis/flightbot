@@ -86,7 +86,9 @@
 	</target>
 	
 	<target name="run" depends="dist">
+		<property name="autopilot" value="simple" />
 		<java fork="true" classname="${main-class}">
+			<arg value="--autopilot=${autopilot}"/>
 			<classpath> 
 				<path refid="lib.path" />
 				<path location="${dist}/FlightBot.jar" />

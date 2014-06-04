@@ -8,13 +8,14 @@ import org.apache.commons.cli.CommandLineParser;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.PosixParser;
 import org.apache.commons.cli.ParseException;
+import org.apache.commons.configuration.XMLConfiguration;
+import org.apache.commons.configuration.Configuration;
 
 import com.matigakis.flightbot.aircraft.controllers.AircraftController;
 import com.matigakis.flightbot.fdm.FDM;
 import com.matigakis.flightbot.flightgear.controllers.FlightgearAutopilotFactory;
 import com.matigakis.flightbot.flightgear.fdm.FlightgearFDMFactory;
 import com.matigakis.flightbot.flightgear.simulators.FlightgearSimulator;
-import com.matigakis.flightbot.configuration.ConfigurationManager;
 import com.matigakis.flightbot.simulators.Simulator;
 import com.matigakis.flightbot.ui.views.AircraftDataRenderer;
 import com.matigakis.flightbot.ui.views.TelemetryView;
@@ -28,6 +29,7 @@ public final class FlightBot{
 		
 		BasicConfigurator.configure();
 				
+		//load an autopilot
 		Options options = new Options();
 		Option autopilotOption = OptionBuilder
 				.withLongOpt("autopilot")
@@ -48,13 +50,14 @@ public final class FlightBot{
 		
 		String autopilotName = commandLine.getOptionValue("autopilot");
 		
-		ConfigurationManager configurationManager = new ConfigurationManager();
-		configurationManager.loadConfiguration("config/settings.xml");
+		//load the configuration
+		Configuration configuration = new XMLConfiguration("config/settings.xml");
 		
-		String host = configurationManager.getHost();
-		int sensorsPort = configurationManager.getSensorPort();
-		int controlsPort = configurationManager.getControlsPort();
+		String host = configuration.getString("protocol.host");
+		int sensorsPort = configuration.getInt("protocol.sensors");
+		int controlsPort = configuration.getInt("protocol.controls");
 		
+		//Start the simulation
 		FDM fdm = FlightgearFDMFactory.createFDM(sensorsPort);
 		
 		AircraftController autopilot  = FlightgearAutopilotFactory.getAutopilot(host, controlsPort, autopilotName);

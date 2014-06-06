@@ -1,8 +1,12 @@
 package com.matigakis.flightbot.ui.views;
 
 import javax.swing.JFrame;
+
 import java.awt.GridBagLayout;
 import java.awt.GridBagConstraints;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+
 import javax.swing.JMenuBar;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
@@ -20,10 +24,17 @@ public class TelemetryView extends JFrame implements AircraftDataRenderer{
 	private final ControlsPanel controlsPanel;
 	private final OrientationPanel orientationPanel;
 	private final InstrumentationPanel instrumentationPanel;
-	private final OperationPanel operationPanel;
+	//private final OperationPanel operationPanel;
+	
+	private final JMenuItem startMenuItem; 
+	private final JMenuItem stopMenuItem; 
+	
+	private boolean autopilotActivated;
 	
 	public TelemetryView(){
 		super();
+		
+		autopilotActivated = false;
 		
 		setTitle("Telemetry viewer");
 		//setDefaultCloseOperation(DISPOSE_ON_CLOSE);
@@ -38,13 +49,36 @@ public class TelemetryView extends JFrame implements AircraftDataRenderer{
 		JMenuItem exitMenuItem = new JMenuItem("Exit");
 		fileMenu.add(exitMenuItem);
 		
+		exitMenuItem.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				// TODO Auto-generated method stub
+				dispose();
+			}
+		});
+		
 		JMenu autopilotMenu = new JMenu("Autopilot");
-		JMenuItem startMenuItem = new JMenuItem("Start");
-		JMenuItem stopMenuItem = new JMenuItem("Stop");
+		startMenuItem = new JMenuItem("Start");
+		stopMenuItem = new JMenuItem("Stop");
+		stopMenuItem.setEnabled(false);
 		JMenuItem resetMenuItem = new JMenuItem("Reset");
 		autopilotMenu.add(startMenuItem);
 		autopilotMenu.add(stopMenuItem);
 		autopilotMenu.add(resetMenuItem);
+		
+		startMenuItem.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				enableAutopilot();
+			}
+		});
+		
+		stopMenuItem.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				disableAutopilot();
+			}
+		});
 		
 		JMenu helpMenu = new JMenu("Help");
 		JMenuItem aboutMenuItem = new JMenuItem("About");
@@ -92,10 +126,10 @@ public class TelemetryView extends JFrame implements AircraftDataRenderer{
 		c.gridy = 1;
 		add(controlsPanel, c);
 		
-		operationPanel = new OperationPanel();
-		c.gridx = 3;
-		c.gridy = 1;
-		add(operationPanel, c);
+		//operationPanel = new OperationPanel();
+		//c.gridx = 3;
+		//c.gridy = 1;
+		//add(operationPanel, c);
 		
 		gpsPanel = new GPSPanel();
 		c.gridx = 0;
@@ -122,11 +156,24 @@ public class TelemetryView extends JFrame implements AircraftDataRenderer{
 		orientationPanel.updateFromOrientation(aircraft.getOrientation());
 		instrumentationPanel.updateFromInstrumentation(aircraft.getInstrumentation());
 		
-		aircraft.setAutopilotState(operationPanel.isAutopilotActive());
+		//aircraft.setAutopilotState(operationPanel.isAutopilotActive());
+		aircraft.setAutopilotState(autopilotActivated);
 	}
 
 	@Override
 	public boolean rendererActive() {
 		return isVisible();
+	}
+	
+	private void enableAutopilot(){
+		startMenuItem.setEnabled(false);
+		stopMenuItem.setEnabled(true);
+		autopilotActivated = true;
+	}
+	
+	private void disableAutopilot(){
+		startMenuItem.setEnabled(true);
+		stopMenuItem.setEnabled(false);
+		autopilotActivated = false;
 	}
 }

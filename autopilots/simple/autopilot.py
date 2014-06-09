@@ -2,6 +2,8 @@ from java.lang import Math
 
 from com.matigakis.flightbot.aircraft.controllers import AircraftController
 
+from pid import PID
+
 def sigmoid(x):
     return x / Math.sqrt(1.0 + Math.pow(x, 2))
 
@@ -9,6 +11,9 @@ def logistic(x):
     return 1.0 / (1.0 + Math.exp(-x)) 
 
 class Autopilot(AircraftController):
+    def __init__(self):
+        self.throttle_pid = PID(0.095, 0.0007, 5000.0, 0.05, 1000.0)
+
     def calculateRoll(self, target_course, current_course):
         e = (target_course - current_course) / 90.0
 
@@ -23,9 +28,14 @@ class Autopilot(AircraftController):
         current_airspeed = instrumentation.getAirspeed()
         target_airspeed = 60
 
-        e = (target_airspeed - current_airspeed) / 5.0
+        e = target_airspeed - current_airspeed
 
-        target_throttle = logistic(e)
+        target_throttle = self.throttle_pid.update(e)
+        
+        if target_throttle > 1.0:
+            target_throttle = 1.0
+        elif target_throttle < 0.0:
+            target_throttle = 0.0
 
         controls.setThrottle(target_throttle)            
 

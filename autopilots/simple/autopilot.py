@@ -13,18 +13,10 @@ def logistic(x):
 class Autopilot(AircraftController):
     def __init__(self):
         self.throttle_pid = PID(0.1, 0.07, 0.05, 0.05, 10.0)
-        self.course_pid = PID(1.0, 0.0, 0.0, 0.05, 5000.0)
+        self.course_pid = PID(1.0, 0.0, 0.0, 0.05, 0.0)
         self.aileron_pid = PID(0.1, 0.005, 0.001, 0.05, 10.0)
-
-    def calculateRoll(self, target_course, current_course):
-        e = (target_course - current_course) / 90.0
-
-        return 20.0 * sigmoid(e)
-
-    def calculatePitch(self, target_altitude, current_altitude):
-        e = (target_altitude - current_altitude) / 100.0
-
-        return 20.0 * sigmoid(e)
+        self.pitch_pid = PID(0.5, 0.0, 0.0, 0.05, 0.0)
+        self.elevator_pid = PID(0.055, 0.0005, 0.0001, 0.05, 200.0)
 
     def updateThrottle(self, instrumentation, controls):
         current_airspeed = instrumentation.getAirspeed()
@@ -51,10 +43,10 @@ class Autopilot(AircraftController):
 
         #print course_e, target_roll
 
-        if target_roll > 20.0:
-            target_roll = 20.0
-        elif target_roll < -20.0:
-            target_roll = -20.0
+        if target_roll > 15.0:
+            target_roll = 15.0
+        elif target_roll < -15.0:
+            target_roll = -15.0
 
         current_roll = orientation.getRoll()
 
@@ -72,13 +64,24 @@ class Autopilot(AircraftController):
     def updateElevator(self, instrumentation, orientation, controls):
         current_altitude = instrumentation.getAltitude()
         target_altitude = 1000.0
-        
+
+        altitude_e = target_altitude - current_altitude
+        target_pitch = self.pitch_pid.update(altitude_e)
+
+        if target_pitch > 15.0:
+            target_pitch = 15.0
+        elif target_pitch < -15.0:
+            target_pitch = -15.0
+
         current_pitch = orientation.getPitch()
-        target_pitch = self.calculatePitch(target_altitude, current_altitude)
 
-        e = (target_pitch - current_pitch) / 10.0
+        pitch_e = target_pitch - current_pitch
+        target_elevator = -self.elevator_pid.update(pitch_e)
 
-        target_elevator = -sigmoid(e)
+        if target_elevator > 1.0:
+            target_elevator = 1.0
+        elif target_elevator < -1.0:
+            target_elevator = -1.0
 
         controls.setElevator(target_elevator)
 

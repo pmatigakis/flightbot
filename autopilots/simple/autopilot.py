@@ -12,7 +12,9 @@ def logistic(x):
 
 class Autopilot(AircraftController):
     def __init__(self):
-        self.throttle_pid = PID(0.095, 0.0007, 5000.0, 0.05, 1000.0)
+        self.throttle_pid = PID(0.1, 0.07, 0.05, 0.05, 10.0)
+        self.course_pid = PID(1.0, 0.0, 0.0, 0.05, 5000.0)
+        self.aileron_pid = PID(0.1, 0.005, 0.001, 0.05, 10.0)
 
     def calculateRoll(self, target_course, current_course):
         e = (target_course - current_course) / 90.0
@@ -43,12 +45,27 @@ class Autopilot(AircraftController):
         current_course = instrumentation.getHeading()
         target_course = 50.0
 
+        course_e = target_course - current_course
+
+        target_roll = self.course_pid.update(course_e)
+
+        #print course_e, target_roll
+
+        if target_roll > 20.0:
+            target_roll = 20.0
+        elif target_roll < -20.0:
+            target_roll = -20.0
+
         current_roll = orientation.getRoll()
-        target_roll = self.calculateRoll(target_course, current_course)
 
-        e = (target_roll - current_roll) / 10.0
+        roll_e = target_roll - current_roll
 
-        target_aileron = sigmoid(e)
+        target_aileron = self.aileron_pid.update(roll_e)
+
+        if target_aileron > 1.0:
+            target_aileron = 1.0
+        elif target_aileron < -1.0:
+            target_aileron = -1.0
 
         controls.setAileron(target_aileron)
 

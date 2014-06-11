@@ -2,6 +2,9 @@ package com.matigakis.flightbot.flightgear.fdm;
 
 import java.net.InetSocketAddress;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import io.netty.channel.ChannelOption;
 import io.netty.channel.EventLoopGroup;
 import io.netty.channel.nio.NioEventLoopGroup;
@@ -15,6 +18,7 @@ import io.netty.util.CharsetUtil;
 import com.matigakis.flightbot.controls.Controls;
 
 public class ControlsClient {
+	private static final Logger logger = LoggerFactory.getLogger(ControlsClient.class);
 	private final InetSocketAddress address;
 	private EventLoopGroup group;
 	private Channel channel;
@@ -24,6 +28,8 @@ public class ControlsClient {
 	}
 	
 	public void openConnection() throws InterruptedException{
+		logger.info("Opening connection to server");
+		
 		group = new NioEventLoopGroup();
 		
 		Bootstrap bootstrap = new Bootstrap();
@@ -37,6 +43,8 @@ public class ControlsClient {
 	}
 	
 	public void closeConnection(){
+		logger.info("Closing connection to server");
+		
 		group.shutdownGracefully();
 	}
 	

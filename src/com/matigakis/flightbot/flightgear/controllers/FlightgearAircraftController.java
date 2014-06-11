@@ -13,14 +13,6 @@ public class FlightgearAircraftController implements AircraftController{
 		this.controlsClient = controlsClient;
 	}
 	
-	public void openConnection() throws InterruptedException{
-		controlsClient.openConnection();
-	}
-	
-	public void closeConnection(){
-		controlsClient.closeConnection();
-	}
-	
 	@Override
 	public void updateAircraftControls(Aircraft aircraft) {
 		autopilot.updateAircraftControls(aircraft);

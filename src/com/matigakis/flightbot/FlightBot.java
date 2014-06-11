@@ -12,12 +12,12 @@ import org.apache.commons.configuration.XMLConfiguration;
 import org.apache.commons.configuration.Configuration;
 
 import com.matigakis.flightbot.aircraft.controllers.AircraftController;
-import com.matigakis.flightbot.fdm.FDM;
-import com.matigakis.flightbot.flightgear.controllers.FlightgearAutopilotFactory;
-import com.matigakis.flightbot.flightgear.fdm.FlightgearFDMFactory;
-import com.matigakis.flightbot.flightgear.simulators.FlightgearSimulator;
-import com.matigakis.flightbot.simulators.Simulator;
-import com.matigakis.flightbot.ui.views.AircraftDataRenderer;
+import com.matigakis.flightbot.aircraft.controllers.Autopilot;
+import com.matigakis.flightbot.aircraft.controllers.AutopilotLoader;
+import com.matigakis.flightbot.flightgear.controllers.JythonAutopilotLoader;
+import com.matigakis.flightbot.flightgear.fdm.ControlsClient;
+import com.matigakis.flightbot.flightgear.fdm.SensorServer;
+import com.matigakis.flightbot.ui.controllers.SensorDataRenderer;
 import com.matigakis.flightbot.ui.views.TelemetryView;
 
 /**
@@ -56,17 +56,40 @@ public final class FlightBot{
 		String host = configuration.getString("protocol.host");
 		int sensorsPort = configuration.getInt("protocol.sensors");
 		int controlsPort = configuration.getInt("protocol.controls");
+	
 		
 		//Start the simulation
-		FDM fdm = FlightgearFDMFactory.createFDM(sensorsPort);
+		SensorServer sensorServer = new SensorServer(sensorsPort);
 		
-		AircraftController autopilot  = FlightgearAutopilotFactory.getAutopilot(host, controlsPort, autopilotName);
+		TelemetryView telemetryView = new TelemetryView();
+		SensorDataRenderer telemetryViewController = new SensorDataRenderer(telemetryView);
 		
-		AircraftDataRenderer aircraftDataRenderer = new TelemetryView();
+		sensorServer.addSensorDataListener(telemetryViewController);
 		
-		Simulator simulator = new FlightgearSimulator(aircraftDataRenderer, fdm, autopilot);
+		ControlsClient controlsClient = new ControlsClient(host, controlsPort);
+		controlsClient.openConnection();
 		
-		simulator.run(0.05);
-		simulator.shutdown();
+		AutopilotLoader autopilotLoader = new JythonAutopilotLoader();
+		AircraftController aircraftController = autopilotLoader.getAutopilot(autopilotName);
+		
+		Autopilot autopilot = new Autopilot(aircraftController, controlsClient, telemetryView);
+		sensorServer.addSensorDataListener(autopilot);
+		
+		telemetryViewController.start();
+		autopilot.start();
+		sensorServer.start();
+		
+		boolean running = true;
+		while(running){			
+			//TODO: I should use something better than rendererActive
+			if (!telemetryView.rendererActive()){
+				sensorServer.stopServer();
+				telemetryViewController.stopController();
+				autopilot.shutdown();
+				controlsClient.closeConnection();
+				
+				running = false;
+			}
+		}
 	}
 }

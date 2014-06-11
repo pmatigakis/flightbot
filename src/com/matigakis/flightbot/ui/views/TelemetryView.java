@@ -2,16 +2,37 @@ package com.matigakis.flightbot.ui.views;
 
 import javax.swing.JFrame;
 
+import java.awt.AWTEvent;
 import java.awt.GridBagLayout;
 import java.awt.GridBagConstraints;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+import java.awt.event.WindowListener;
+import java.awt.event.WindowStateListener;
 
 import javax.swing.JMenuBar;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 
 import com.matigakis.flightbot.aircraft.Aircraft;
+
+class ExitAdapter extends WindowAdapter{
+	public volatile boolean running;
+	
+	public ExitAdapter(){
+		running = true;
+	}
+	
+	@Override
+	public void windowClosing(WindowEvent e) {
+		// TODO Auto-generated method stub
+		super.windowClosing(e);
+		running = false;
+		System.out.println("CLOSING THE DAMN THING");
+	}
+}
 
 public class TelemetryView extends JFrame implements AircraftDataRenderer{
 	private static final long serialVersionUID = 1L;
@@ -29,7 +50,9 @@ public class TelemetryView extends JFrame implements AircraftDataRenderer{
 	private final JMenuItem startMenuItem; 
 	private final JMenuItem stopMenuItem; 
 	
-	private boolean autopilotActivated;
+	private ExitAdapter exitAdapter;
+	
+	private volatile boolean autopilotActivated;
 	
 	public TelemetryView(){
 		super();
@@ -37,8 +60,8 @@ public class TelemetryView extends JFrame implements AircraftDataRenderer{
 		autopilotActivated = false;
 		
 		setTitle("Telemetry viewer");
-		//setDefaultCloseOperation(DISPOSE_ON_CLOSE);
 		setDefaultCloseOperation(DISPOSE_ON_CLOSE);
+		//setDefaultCloseOperation(HIDE_ON_CLOSE);
 		
 		GridBagLayout layout = new GridBagLayout();    
 		setLayout(layout);
@@ -52,8 +75,7 @@ public class TelemetryView extends JFrame implements AircraftDataRenderer{
 		exitMenuItem.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
-				// TODO Auto-generated method stub
-				dispose();
+				dispose();				
 			}
 		});
 		
@@ -143,6 +165,10 @@ public class TelemetryView extends JFrame implements AircraftDataRenderer{
 		setResizable(false);
 		
 		setVisible(true);
+		
+		System.out.println("Window state STARTING" );
+		exitAdapter = new ExitAdapter();
+		addWindowListener(exitAdapter);
 	}
 	
 	@Override
@@ -162,7 +188,8 @@ public class TelemetryView extends JFrame implements AircraftDataRenderer{
 
 	@Override
 	public boolean rendererActive() {
-		return isVisible();
+		//return isVisible();
+		return exitAdapter.running;
 	}
 	
 	private void enableAutopilot(){
@@ -175,5 +202,9 @@ public class TelemetryView extends JFrame implements AircraftDataRenderer{
 		startMenuItem.setEnabled(true);
 		stopMenuItem.setEnabled(false);
 		autopilotActivated = false;
+	}
+	
+	public boolean isAutopilotActivated(){
+		return autopilotActivated;
 	}
 }

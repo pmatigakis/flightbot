@@ -1,5 +1,8 @@
 package com.matigakis.flightbot;
 
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+
 import org.apache.log4j.BasicConfigurator;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.Option;
@@ -24,6 +27,49 @@ import com.matigakis.flightbot.ui.views.TelemetryView;
  * FlightBot is an autopilot framework for flightgear.
  */
 public final class FlightBot{
+	private SensorServer sensorServer;
+	private SensorDataRenderer telemetryViewController;
+	private ControlsClient controlsClient;
+	private Autopilot autopilot;
+	
+	public void run(CommandLine commandLine, Configuration configuration) throws Exception{
+		String host = configuration.getString("protocol.host");
+		int sensorsPort = configuration.getInt("protocol.sensors");
+		int controlsPort = configuration.getInt("protocol.controls");
+	
+		String autopilotName = commandLine.getOptionValue("autopilot");
+		
+		sensorServer = new SensorServer(sensorsPort);
+		
+		TelemetryView telemetryView = new TelemetryView();
+		telemetryViewController = new SensorDataRenderer(telemetryView);
+		
+		sensorServer.addSensorDataListener(telemetryViewController);
+		
+		controlsClient = new ControlsClient(host, controlsPort);
+		controlsClient.openConnection();
+		
+		AutopilotLoader autopilotLoader = new JythonAutopilotLoader();
+		AircraftController aircraftController = autopilotLoader.getAutopilot(autopilotName);
+		
+		autopilot = new Autopilot(aircraftController, controlsClient, telemetryView);
+		sensorServer.addSensorDataListener(autopilot);
+		
+		telemetryViewController.start();
+		autopilot.start();
+		sensorServer.start();
+		
+		telemetryView.addWindowListener(new WindowAdapter() {
+			@Override
+			public void windowClosing(WindowEvent e) {
+				sensorServer.stopServer();
+				telemetryViewController.stopController();
+				autopilot.shutdown();
+				controlsClient.closeConnection();
+			}
+		});
+	}
+	
 	public static void main(String[] args) throws Exception{
 		CommandLine commandLine;
 		
@@ -48,48 +94,12 @@ public final class FlightBot{
 			return;
 		}
 		
-		String autopilotName = commandLine.getOptionValue("autopilot");
-		
 		//load the configuration
 		Configuration configuration = new XMLConfiguration("config/settings.xml");
 		
-		String host = configuration.getString("protocol.host");
-		int sensorsPort = configuration.getInt("protocol.sensors");
-		int controlsPort = configuration.getInt("protocol.controls");
-	
-		
 		//Start the simulation
-		SensorServer sensorServer = new SensorServer(sensorsPort);
+		FlightBot flightBot = new FlightBot();
 		
-		TelemetryView telemetryView = new TelemetryView();
-		SensorDataRenderer telemetryViewController = new SensorDataRenderer(telemetryView);
-		
-		sensorServer.addSensorDataListener(telemetryViewController);
-		
-		ControlsClient controlsClient = new ControlsClient(host, controlsPort);
-		controlsClient.openConnection();
-		
-		AutopilotLoader autopilotLoader = new JythonAutopilotLoader();
-		AircraftController aircraftController = autopilotLoader.getAutopilot(autopilotName);
-		
-		Autopilot autopilot = new Autopilot(aircraftController, controlsClient, telemetryView);
-		sensorServer.addSensorDataListener(autopilot);
-		
-		telemetryViewController.start();
-		autopilot.start();
-		sensorServer.start();
-		
-		boolean running = true;
-		while(running){			
-			//TODO: I should use something better than rendererActive
-			if (!telemetryView.rendererActive()){
-				sensorServer.stopServer();
-				telemetryViewController.stopController();
-				autopilot.shutdown();
-				controlsClient.closeConnection();
-				
-				running = false;
-			}
-		}
+		flightBot.run(commandLine, configuration);
 	}
 }

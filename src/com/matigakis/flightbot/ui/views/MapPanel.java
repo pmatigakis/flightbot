@@ -29,6 +29,7 @@ public class MapPanel extends JPanel implements JMapViewerEventListener, SensorR
 		
 		airplaneMarker = new MapMarkerDot(0.0, 0.0);
 		map.addMapMarker(airplaneMarker);
+		map.setZoom(15);
 		airplaneMarker.setVisible(true);
 		airplaneMarker.setColor(Color.red);
 		airplaneMarker.setBackColor(Color.red);
@@ -39,7 +40,9 @@ public class MapPanel extends JPanel implements JMapViewerEventListener, SensorR
 		double longitude = sensor.getLongitude();
 		double latitude = sensor.getLatitude();
 		
-		map.setDisplayPositionByLatLon(latitude, longitude, 15);
+		int zoom = map.getZoom();
+		//map.setDisplayPositionByLatLon(latitude, longitude, 15);
+		map.setDisplayPositionByLatLon(latitude, longitude, zoom);
 		
 		airplaneMarker.setLat(latitude);
 		airplaneMarker.setLon(longitude);

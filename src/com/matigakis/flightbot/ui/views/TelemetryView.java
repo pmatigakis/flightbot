@@ -4,6 +4,7 @@ import javax.swing.JFrame;
 
 import java.awt.GridBagLayout;
 import java.awt.GridBagConstraints;
+import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
@@ -71,8 +72,8 @@ public class TelemetryView extends JFrame implements AircraftDataRenderer{
 		
 		exitMenuItem.addActionListener(new ActionListener() {
 			@Override
-			public void actionPerformed(ActionEvent arg0) {
-				dispose();				
+			public void actionPerformed(ActionEvent e) {
+				close();
 			}
 		});
 		
@@ -203,5 +204,9 @@ public class TelemetryView extends JFrame implements AircraftDataRenderer{
 	
 	public boolean isAutopilotActivated(){
 		return autopilotActivated;
+	}
+	
+	public void close(){
+		this.dispatchEvent(new WindowEvent(this, WindowEvent.WINDOW_CLOSING));
 	}
 }

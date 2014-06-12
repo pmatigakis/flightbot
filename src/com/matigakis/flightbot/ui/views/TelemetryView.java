@@ -2,16 +2,21 @@ package com.matigakis.flightbot.ui.views;
 
 import javax.swing.JFrame;
 
+import java.awt.Component;
+import java.awt.ComponentOrientation;
 import java.awt.GridBagLayout;
 import java.awt.GridBagConstraints;
+import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 
+import javax.swing.BoxLayout;
 import javax.swing.JMenuBar;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
+import javax.swing.JPanel;
 
 import com.matigakis.flightbot.aircraft.Aircraft;
 
@@ -34,14 +39,10 @@ class ExitAdapter extends WindowAdapter{
 public class TelemetryView extends JFrame implements AircraftDataRenderer{
 	private static final long serialVersionUID = 1L;
 	
-	private final GPSPanel gpsPanel;
-	private final AccelerometerPanel accelerometerPanel;
-	private final GyroscopePanel gyroscopePanel;
-	private final MagnetometerPanel magnetormeterPanel;
-	private final AtmosphericPanel atmosphericpanel;
-	private final ControlsPanel controlsPanel;
-	private final OrientationPanel orientationPanel;
-	private final InstrumentationPanel instrumentationPanel;
+	private final SensorsPanel sensorsPanel;
+	private final AircraftPanel aircraftPanel; 
+	private final MapPanel mapPanel;
+	
 	//private final OperationPanel operationPanel;
 	
 	private final JMenuItem startMenuItem; 
@@ -109,52 +110,22 @@ public class TelemetryView extends JFrame implements AircraftDataRenderer{
 		
 		GridBagConstraints c = new GridBagConstraints();
 		c.anchor = GridBagConstraints.NORTHWEST;
+		c.insets = new Insets(10, 10, 10, 10);
 		
-		accelerometerPanel = new AccelerometerPanel();
+		sensorsPanel = new SensorsPanel();
 		c.gridx = 0;
 		c.gridy = 0;
-		add(accelerometerPanel, c);
+		add(sensorsPanel, c);
 		
-		gyroscopePanel = new GyroscopePanel();
+		mapPanel = new MapPanel();
 		c.gridx = 1;
 		c.gridy = 0;
-		add(gyroscopePanel, c);
-		
-		magnetormeterPanel = new MagnetometerPanel();
+		add(mapPanel, c);
+				
+		aircraftPanel = new AircraftPanel();
 		c.gridx = 2;
 		c.gridy = 0;
-		add(magnetormeterPanel, c);
-		
-		atmosphericpanel = new AtmosphericPanel();
-		c.gridx = 3;
-		c.gridy = 0;
-		add(atmosphericpanel, c);
-		
-		instrumentationPanel = new InstrumentationPanel();
-		c.gridx = 0;
-		c.gridy = 1;
-		add(instrumentationPanel, c);
-		
-		orientationPanel = new OrientationPanel();
-		c.gridx = 1;
-		c.gridy = 1;
-		add(orientationPanel, c);
-		
-		controlsPanel = new ControlsPanel();
-		c.gridx = 2;
-		c.gridy = 1;
-		add(controlsPanel, c);
-		
-		//operationPanel = new OperationPanel();
-		//c.gridx = 3;
-		//c.gridy = 1;
-		//add(operationPanel, c);
-		
-		gpsPanel = new GPSPanel();
-		c.gridx = 0;
-		c.gridy = 3;
-		c.gridwidth = 4;
-		add(gpsPanel, c);
+		add(aircraftPanel, c);
 		
 		setJMenuBar(menuBar);
 	
@@ -170,16 +141,10 @@ public class TelemetryView extends JFrame implements AircraftDataRenderer{
 	
 	@Override
 	public void updateView(Aircraft aircraft) {
-		gpsPanel.updateSensorView(aircraft.getGPS());
-		accelerometerPanel.updateSensorView(aircraft.getAccelerometer());
-		gyroscopePanel.updateSensorView(aircraft.getGyrescope());
-		magnetormeterPanel.updateSensorView(aircraft.getMagnetometer());
-		atmosphericpanel.updateSensorView(aircraft.getPitotTube(), aircraft.getStaticPressureSensor(), aircraft.getTemperatureSensor());
-		controlsPanel.updateFromControls(aircraft.getControls());
-		orientationPanel.updateFromOrientation(aircraft.getOrientation());
-		instrumentationPanel.updateFromInstrumentation(aircraft.getInstrumentation());
+		sensorsPanel.updateFromAircraftData(aircraft);
+		aircraftPanel.updateFromAircraftData(aircraft);
+		mapPanel.updateSensorView(aircraft.getGPS());
 		
-		//aircraft.setAutopilotState(operationPanel.isAutopilotActive());
 		aircraft.setAutopilotState(autopilotActivated);
 	}
 

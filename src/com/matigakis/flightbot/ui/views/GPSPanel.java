@@ -23,7 +23,7 @@ import com.matigakis.flightbot.sensors.GPS;
 /**
  * The GPSPanel shows information received from the gps.
  */
-public class GPSPanel extends JPanel implements JMapViewerEventListener, SensorRenderer<GPS>{
+public class GPSPanel extends JPanel implements SensorRenderer<GPS>{
 	private static final long serialVersionUID = 1L;
 	
 	private final JTextField longitudeText;
@@ -31,9 +31,6 @@ public class GPSPanel extends JPanel implements JMapViewerEventListener, SensorR
 	private final JTextField altitudeText;
 	private final JTextField airspeedText;
 	private final JTextField headingText;
-	private final JMapViewer map;
-	
-	private final MapMarkerDot airplaneMarker;
 	
 	public GPSPanel(){
 		super();
@@ -98,31 +95,9 @@ public class GPSPanel extends JPanel implements JMapViewerEventListener, SensorR
 		c.gridy = 4;
 		add(headingText, c);
 		
-		map = new JMapViewer();
-		map.addJMVListener(this);
-		OsmTileLoader tileLoader = new OsmTileLoader(map); 
-		map.setTileLoader(tileLoader);
-		c.gridx = 2;
-		c.gridy = 0;
-		c.gridwidth = 4;
-		c.gridheight = 6;
-		add(map, c);
-		
-		airplaneMarker = new MapMarkerDot(0.0, 0.0);
-		map.addMapMarker(airplaneMarker);
-		airplaneMarker.setVisible(true);
-		airplaneMarker.setColor(Color.red);
-		airplaneMarker.setBackColor(Color.red);
-		
 		setVisible(true);
 	}
 	
-	@Override
-	public void processCommand(JMVCommandEvent arg0) {
-		// TODO Auto-generated method stub
-		
-	}
-
 	@Override
 	public void updateSensorView(GPS sensor) {
 		double longitude = sensor.getLongitude();
@@ -135,12 +110,6 @@ public class GPSPanel extends JPanel implements JMapViewerEventListener, SensorR
 		latitudeText.setText(String.valueOf(latitude));
 		altitudeText.setText(String.valueOf(altitude));
 		airspeedText.setText(String.valueOf(airspeed));
-		headingText.setText(String.valueOf(heading));
-		
-		map.setDisplayPositionByLatLon(latitude, longitude, 15);
-		
-		airplaneMarker.setLat(latitude);
-		airplaneMarker.setLon(longitude);
-		
+		headingText.setText(String.valueOf(heading));		
 	}
 }

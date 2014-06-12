@@ -1,4 +1,4 @@
-package com.matigakis.flightbot.flightgear.fdm;
+package com.matigakis.flightbot.network;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

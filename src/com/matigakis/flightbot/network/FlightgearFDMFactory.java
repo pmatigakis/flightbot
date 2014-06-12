@@ -1,4 +1,4 @@
-package com.matigakis.flightbot.flightgear.fdm;
+package com.matigakis.flightbot.network;
 
 /**
  * The FlightgearFDMFactory class is a Factory class that can be used to create

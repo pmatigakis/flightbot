@@ -1,4 +1,4 @@
-package com.matigakis.flightbot.flightgear.controllers;
+package com.matigakis.flightbot.aircraft.controllers.loaders;
 
 import org.python.core.Py;
 import org.python.core.PyObject;
@@ -7,7 +7,6 @@ import org.python.core.PySystemState;
 import org.python.util.PythonInterpreter;
 
 import com.matigakis.flightbot.aircraft.controllers.AircraftController;
-import com.matigakis.flightbot.aircraft.controllers.AutopilotLoader;
 
 public class JythonAutopilotLoader implements AutopilotLoader {
 	public AircraftController getAutopilot(String autopilotName){

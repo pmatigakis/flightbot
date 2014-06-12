@@ -1,4 +1,4 @@
-package com.matigakis.flightbot.flightgear.data;
+package com.matigakis.flightbot.network.sensors;
 
 import com.matigakis.flightbot.sensors.SensorData;
 

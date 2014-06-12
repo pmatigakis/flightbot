@@ -1,15 +1,16 @@
-package com.matigakis.flightbot.flightgear.fdm;
+package com.matigakis.flightbot.network;
 
 import java.util.LinkedList;
 import java.util.List;
 
+import com.matigakis.flightbot.network.sensors.SensorDataFactory;
 import com.matigakis.flightbot.sensors.SensorData;
-import com.matigakis.flightbot.flightgear.data.SensorDataFactory;
 
 import io.netty.channel.socket.DatagramPacket;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.util.CharsetUtil;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

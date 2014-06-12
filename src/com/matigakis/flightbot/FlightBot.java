@@ -13,10 +13,10 @@ import org.apache.commons.configuration.Configuration;
 
 import com.matigakis.flightbot.aircraft.controllers.AircraftController;
 import com.matigakis.flightbot.aircraft.controllers.Autopilot;
-import com.matigakis.flightbot.aircraft.controllers.AutopilotLoader;
-import com.matigakis.flightbot.flightgear.controllers.JythonAutopilotLoader;
-import com.matigakis.flightbot.flightgear.fdm.ControlsClient;
-import com.matigakis.flightbot.flightgear.fdm.SensorServer;
+import com.matigakis.flightbot.aircraft.controllers.loaders.AutopilotLoader;
+import com.matigakis.flightbot.aircraft.controllers.loaders.JythonAutopilotLoader;
+import com.matigakis.flightbot.network.ControlsClient;
+import com.matigakis.flightbot.network.SensorServer;
 import com.matigakis.flightbot.ui.controllers.SensorDataRenderer;
 import com.matigakis.flightbot.ui.views.TelemetryView;
 

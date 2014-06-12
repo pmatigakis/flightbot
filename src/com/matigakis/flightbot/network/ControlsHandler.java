@@ -1,4 +1,4 @@
-package com.matigakis.flightbot.flightgear.fdm;
+package com.matigakis.flightbot.network;
 
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;

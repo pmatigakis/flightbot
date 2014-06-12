@@ -64,7 +64,7 @@
 		</junit>
 	</target>
 	
-	<target name="testreport" depends="test">
+	<target name="test-report" depends="test">
 		<junitreport todir="${reports}">
 			<fileset dir="${reports.tests}" />
 			<report todir="${reports.test_results}" />
@@ -83,17 +83,6 @@
 				<include name="**/*.java"/>
 			</fileset>
 		</pmd>
-	</target>
-	
-	<target name="run" depends="dist">
-		<property name="autopilot" value="simple" />
-		<java fork="true" classname="${main-class}">
-			<arg value="--autopilot=${autopilot}"/>
-			<classpath> 
-				<path refid="lib.path" />
-				<path location="${dist}/FlightBot.jar" />
-			</classpath>
-		</java>
 	</target>
 	
 	<target name="clean">

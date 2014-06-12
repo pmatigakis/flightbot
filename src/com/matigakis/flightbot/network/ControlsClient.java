@@ -1,4 +1,4 @@
-package com.matigakis.flightbot.flightgear.fdm;
+package com.matigakis.flightbot.network;
 
 import java.net.InetSocketAddress;
 

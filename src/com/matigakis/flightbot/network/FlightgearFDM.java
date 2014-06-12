@@ -1,4 +1,4 @@
-package com.matigakis.flightbot.flightgear.fdm;
+package com.matigakis.flightbot.network;
 
 import com.matigakis.flightbot.aircraft.Aircraft;
 import com.matigakis.flightbot.fdm.FDM;
@@ -20,7 +20,7 @@ public class FlightgearFDM implements FDM, SensorDataListener{
 	}
 	
 	public void startFDM(){
-		sensorServer.startServer();
+		sensorServer.start();
 	}
 	
 	public void shutdownFDM(){

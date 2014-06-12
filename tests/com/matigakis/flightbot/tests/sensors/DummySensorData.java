@@ -34,5 +34,12 @@ public class DummySensorData extends SensorData{
 		altitude = 1010.5;
 		airspeed = 65.4;
 		heading = 172.1;
+		
+		elevator = 0.5;
+		aileron = -0.6;
+		rudder = 0.7;
+		throttle = 0.9;
+		
+		simulationTime = 120.67;
 	}
 }

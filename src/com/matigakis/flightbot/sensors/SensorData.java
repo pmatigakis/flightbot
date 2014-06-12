@@ -34,6 +34,13 @@ public class SensorData {
 	public double airspeed; 
 	public double heading;
 	
+	public double elevator;
+	public double aileron;
+	public double rudder;
+	public double throttle;
+	
+	public double simulationTime;
+	
 	public SensorData(){
 		longitude = 0.0;
 		latitude = 0.0;
@@ -64,5 +71,12 @@ public class SensorData {
 		altitude = 0.0;
 		airspeed = 0.0; 
 		heading = 0.0;
+		
+		elevator = 0.0;
+		aileron = 0.0;
+		rudder = 0.0;
+		throttle = 0.0;
+		
+		simulationTime = 0.0;
 	}
 }

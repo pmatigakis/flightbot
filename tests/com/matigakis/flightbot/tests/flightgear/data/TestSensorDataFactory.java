@@ -36,7 +36,12 @@ public class TestSensorDataFactory {
 				dummySensorData.pitch + "\t" +
 				dummySensorData.altitude + "\t" +
 				dummySensorData.airspeed + "\t" +
-				dummySensorData.heading;
+				dummySensorData.heading + "\t" +
+				dummySensorData.simulationTime + "\t" +
+				dummySensorData.elevator + "\t" + 
+				dummySensorData.aileron + "\t" +
+				dummySensorData.rudder + "\t" +
+				dummySensorData.throttle;
 		
 		SensorData sensorData = SensorDataFactory.fromString(telemetryString);
 		
@@ -59,5 +64,10 @@ public class TestSensorDataFactory {
 		assertEquals(dummySensorData.altitude, sensorData.altitude, 0.0);
 		assertEquals(dummySensorData.airspeed, sensorData.airspeed, 0.0);
 		assertEquals(dummySensorData.heading, sensorData.heading, 0.0);
+		assertEquals(dummySensorData.simulationTime, sensorData.simulationTime, 0.0);
+		assertEquals(dummySensorData.elevator, sensorData.elevator, 0.0);
+		assertEquals(dummySensorData.aileron, sensorData.aileron, 0.0);
+		assertEquals(dummySensorData.rudder, sensorData.rudder, 0.0);
+		assertEquals(dummySensorData.throttle, sensorData.throttle, 0.0);
 	}
 }

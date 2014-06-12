@@ -165,5 +165,6 @@ public class Aircraft {
 		temperatureSensor.updateFromSensorData(sensorData);
 		instrumentation.updateFromSensorData(sensorData);
 		orientation.updateFromSensordata(sensorData);
+		controls.updateFromSensorData(sensorData);
 	}
 }

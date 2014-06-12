@@ -53,6 +53,15 @@ public class SensorDataFactory {
 		sensorData.airspeed = Double.parseDouble(values[17]);
 		sensorData.heading = Double.parseDouble(values[18]);
 		
+		//simulation
+		sensorData.simulationTime = Double.parseDouble(values[19]);
+		
+		//controls
+		sensorData.elevator = Double.parseDouble(values[20]);
+		sensorData.aileron = Double.parseDouble(values[21]);
+		sensorData.rudder = Double.parseDouble(values[22]);
+		sensorData.throttle = Double.parseDouble(values[23]);
+		
 		return sensorData;
 	}
 }

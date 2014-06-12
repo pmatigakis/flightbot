@@ -147,6 +147,43 @@
         <type>float</type>
         <format>%04.9f</format>
       </chunk>
+      
+      <!--  simulation -->
+      <chunk>
+           <name>Simulation time</name>
+           <node>/fdm/jsbsim/simulation/sim-time-sec</node>
+           <type>float</type>
+           <format>%f</format>
+       </chunk>
+      
+      <!-- flight controls -->
+      <chunk>
+           <name>Elevator</name>
+           <node>/controls/flight/elevator</node>
+           <type>float</type>
+           <format>%f</format>
+       </chunk>
+
+       <chunk>
+           <name>Aileron</name>
+           <node>/controls/flight/aileron</node>
+           <type>float</type>
+           <format>%f</format>
+       </chunk>
+
+       <chunk>
+           <name>Rudder</name>
+           <node>/controls/flight/rudder</node>
+           <type>float</type>
+           <format>%f</format>
+       </chunk>
+       
+       <chunk>
+           <name>Throttle</name>
+           <node>/controls/engines/engine/throttle</node>
+           <type>float</type>
+           <format>%f</format>
+       </chunk>
     </output>
     
    	<input>

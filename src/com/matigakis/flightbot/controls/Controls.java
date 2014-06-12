@@ -1,5 +1,7 @@
 package com.matigakis.flightbot.controls;
 
+import com.matigakis.flightbot.sensors.SensorData;
+
 /**
  * The Controls object holds the state of the aircraft's controls.
  */
@@ -111,5 +113,12 @@ public class Controls {
 		}
 		
 		this.throttle = throttle;
+	}
+	
+	public void updateFromSensorData(SensorData sensorData){
+		setElevator(sensorData.elevator);
+		setAileron(sensorData.aileron);
+		setRudder(sensorData.rudder);
+		setThrottle(sensorData.throttle);
 	}
 }

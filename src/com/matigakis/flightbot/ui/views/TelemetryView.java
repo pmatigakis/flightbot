@@ -43,7 +43,6 @@ class ExitAdapter extends WindowAdapter{
 		// TODO Auto-generated method stub
 		super.windowClosing(e);
 		running = false;
-		System.out.println("CLOSING THE DAMN THING");
 	}
 }
 

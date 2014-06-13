@@ -17,36 +17,46 @@ public class SensorDataRenderer extends Thread implements SensorDataListener{
 	private TelemetryView telemetryView;
 	private Aircraft aircraft;
 	
+	private SensorData sensorData;
+	
 	public SensorDataRenderer(TelemetryView telemetryView){
 		super();
 		
 		sensorDataQueue = new LinkedBlockingQueue<SensorData>(10);
 		this.telemetryView = telemetryView;
 		aircraft = new Aircraft();
+		
+		sensorData = new SensorData();
 	}
 	
 	@Override
 	public void handleSensorData(SensorData sensorData) {
+		/*
 		boolean result = sensorDataQueue.offer(sensorData);
 		 
 		if(!result){
 			logger.debug("The sensor data queue is full. Ignoring last operation");
 		}
+		*/
+		this.sensorData = sensorData;
 	}
 
 	@Override
 	public void run() {
-		SensorData sensorData;
+		//SensorData sensorData;
 		
 		logger.info("The sensor data renderer has started");
 		
 		running = true;
 		while(running){
+			/*
 			 sensorData = sensorDataQueue.poll();
 			
 			if(sensorData != null){
 				aircraft.updateFromSensorData(sensorData);
 			}
+			*/
+			aircraft.updateFromSensorData(sensorData);
 			
 			telemetryView.updateView(aircraft);
 		}

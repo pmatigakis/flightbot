@@ -19,6 +19,8 @@ public class Autopilot extends Thread implements SensorDataListener{
 	private LinkedBlockingQueue<SensorData> sensorDataQueue;
 	private volatile boolean running;
 	
+	private SensorData sensorData;
+	
 	public Autopilot(AircraftController aircraftController, ControlsClient controlsClient, TelemetryView telemetryView){
 		super();
 		
@@ -26,6 +28,8 @@ public class Autopilot extends Thread implements SensorDataListener{
 		this.controlsClient = controlsClient;
 		this.telemetryView = telemetryView;
 		sensorDataQueue = new LinkedBlockingQueue<SensorData>(10);
+		
+		sensorData = new SensorData(); 
 	}
 	
 	@Override
@@ -41,6 +45,7 @@ public class Autopilot extends Thread implements SensorDataListener{
 		while(running){
 			long timeSinceControlsUpdate = System.nanoTime();
 			
+			/*
 			SensorData sensorData = sensorDataQueue.poll();
 			
 			if(sensorData != null && telemetryView.isAutopilotActivated()){
@@ -52,14 +57,22 @@ public class Autopilot extends Thread implements SensorDataListener{
 				//the sensor data that are saved in the queue are the most current data available.
 				sensorDataQueue.clear();
 			}
+			*/
 			
-			long diff = (updateRate - System.nanoTime() - timeSinceControlsUpdate) / 1000000;
+			if(telemetryView.isAutopilotActivated()){
+				aircraft.updateFromSensorData(sensorData);
+				aircraftController.updateAircraftControls(aircraft);
+				controlsClient.transmitControls(aircraft.getControls());
+			}
+			
+			long diff = (updateRate - (System.nanoTime() - timeSinceControlsUpdate)) / 1000000;
 			
 			if(diff > 0){
 				try{
+					//System.out.println("Sleeping for " + diff);
 					Thread.sleep(diff);
 				}catch(InterruptedException ex){
-					logger.error("The autopilot encountered an erroe", ex);
+					logger.error("The autopilot encountered an error", ex);
 				}
 			}
 		}
@@ -75,6 +88,7 @@ public class Autopilot extends Thread implements SensorDataListener{
 	
 	@Override
 	public void handleSensorData(SensorData sensorData) {
-		sensorDataQueue.offer(sensorData);
+		//sensorDataQueue.offer(sensorData);
+		this.sensorData = sensorData;
 	}
 }

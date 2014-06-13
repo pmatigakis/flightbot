@@ -10,16 +10,18 @@ class PID(object):
         self.sum_e = 0.0
 
     def update(self, e):
-        self.sum_e += e
+        self.sum_e += e * self.dt
 
         if self.sum_e > self.max_e:
             self.sum_e = self.max_e
         elif self.sum_e < -self.max_e:
             self.sum_e = -self.max_e
 
+        derivative = (e - self.last_e) / self.dt
+
         kp = self.kp * e
         ki = self.ki * self.sum_e
-        kd = self.kd * (self.last_e - e) * self.dt
+        kd = self.kd * derivative
 
         output = kp + ki + kd
 

@@ -2,6 +2,8 @@ package com.matigakis.flightbot.ui.views;
 
 import javax.swing.JFrame;
 
+import java.util.LinkedList;
+import java.awt.Color;
 import java.awt.Component;
 import java.awt.ComponentOrientation;
 import java.awt.GridBagLayout;
@@ -11,12 +13,21 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.io.BufferedReader;
+import java.io.DataInputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileReader;
+import java.io.InputStreamReader;
 
 import javax.swing.BoxLayout;
+import javax.swing.JFileChooser;
 import javax.swing.JMenuBar;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
+
+import org.openstreetmap.gui.jmapviewer.MapMarkerDot;
 
 import com.matigakis.flightbot.aircraft.Aircraft;
 
@@ -77,6 +88,62 @@ public class TelemetryView extends JFrame implements AircraftDataRenderer{
 			}
 		});
 		
+		JMenu mapMenu = new JMenu("Map");
+		JMenuItem addMarkersMenuItem = new JMenuItem("Add markers");
+		JMenuItem clearMarkersMenuItem = new JMenuItem("Clear markers");
+		mapMenu.add(addMarkersMenuItem);
+		mapMenu.add(clearMarkersMenuItem);
+		
+		addMarkersMenuItem.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				LinkedList<MapMarkerDot> markers = new LinkedList<MapMarkerDot>();
+				
+				JFileChooser openFileDialog = new JFileChooser();
+				
+				int returnValue = openFileDialog.showOpenDialog(null);
+				
+				if (returnValue == JFileChooser.APPROVE_OPTION){
+					File f = openFileDialog.getSelectedFile();
+					
+					try{
+						FileReader fr = new FileReader(f);
+						BufferedReader br = new BufferedReader(fr);
+						
+						String line;
+						while((line = br.readLine()) != null){
+							String[] values = line.split(",");
+							
+							double latitude= Double.parseDouble(values[0]);
+							double longitude = Double.parseDouble(values[1]);
+							
+							MapMarkerDot marker = new MapMarkerDot(latitude, longitude);
+							
+							marker.setVisible(true);
+							marker.setColor(Color.blue);
+							marker.setBackColor(Color.blue);
+							
+							markers.add(marker);
+						}
+						
+						br.close();
+						
+					}catch(Exception ex){
+						//TODO: log the error
+					}
+				}
+				
+				mapPanel.addMarkers(markers);
+			}
+		});
+		
+		clearMarkersMenuItem.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				mapPanel.clearAllMarkers();
+			}
+		});
+		
 		JMenu autopilotMenu = new JMenu("Autopilot");
 		startMenuItem = new JMenuItem("Start");
 		stopMenuItem = new JMenuItem("Stop");
@@ -105,6 +172,7 @@ public class TelemetryView extends JFrame implements AircraftDataRenderer{
 		helpMenu.add(aboutMenuItem);
 		
 		menuBar.add(fileMenu);
+		menuBar.add(mapMenu);
 		menuBar.add(autopilotMenu);
 		menuBar.add(helpMenu);
 		

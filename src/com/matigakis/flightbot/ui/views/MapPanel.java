@@ -1,6 +1,8 @@
 package com.matigakis.flightbot.ui.views;
 
 import java.awt.Color;
+import java.util.LinkedList;
+import java.util.List;
 
 import javax.swing.JPanel;
 
@@ -18,6 +20,7 @@ public class MapPanel extends JPanel implements JMapViewerEventListener, SensorR
 	private final JMapViewer map;
 	
 	private final MapMarkerDot airplaneMarker;
+	private final LinkedList<MapMarkerDot> markers;
 	
 	public MapPanel(){
 		map = new JMapViewer();
@@ -33,6 +36,8 @@ public class MapPanel extends JPanel implements JMapViewerEventListener, SensorR
 		airplaneMarker.setVisible(true);
 		airplaneMarker.setColor(Color.red);
 		airplaneMarker.setBackColor(Color.red);
+		
+		markers = new LinkedList<MapMarkerDot>();
 	}
 	
 	@Override
@@ -54,4 +59,18 @@ public class MapPanel extends JPanel implements JMapViewerEventListener, SensorR
 		
 	}
 
+	public void addMarkers(List<MapMarkerDot> markers){
+		for(MapMarkerDot marker: markers){
+			this.markers.add(marker);
+			map.addMapMarker(marker);
+		}
+	}
+	
+	public void clearAllMarkers(){
+		for(MapMarkerDot marker: markers){
+			map.removeMapMarker(marker);
+		}
+		
+		this.markers.clear();
+	}
 }

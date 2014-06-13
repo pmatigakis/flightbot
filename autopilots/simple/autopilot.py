@@ -73,7 +73,7 @@ class Autopilot(AircraftController):
 
             self.updateCnt = 20
             
-            if distance_to_point < 0.1:
+            if distance_to_point < 0.2:
                 self.waypoint_index += 1
                 self.waypoint_index %= len(self.waypoints)
 
@@ -84,7 +84,7 @@ class Autopilot(AircraftController):
         if course_e < -180.0:
             course_e = course_e + 360
         elif course_e > 180.0:
-            cource_e =  course_e - 360
+            course_e =  course_e - 360
 
         target_roll = self.course_pid.update(course_e)
 

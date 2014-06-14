@@ -1,23 +1,23 @@
 from java.lang import Math
 
 from com.matigakis.flightbot.aircraft.controllers import AircraftController
-from com.matigakis.flightbot.util import PID
+from com.matigakis.flightbot.util import PID, Navigator
 
 #from pid import PID
 
-def distance(lat1, lon1, lat2, lon2):
-    phi1 = Math.toRadians(lat1)
-    phi2 = Math.toRadians(lat2)
-    lam1 = Math.toRadians(lon1)
-    lam2 = Math.toRadians(lon2)
+#def distance(lat1, lon1, lat2, lon2):
+#    phi1 = Math.toRadians(lat1)
+#    phi2 = Math.toRadians(lat2)
+#    lam1 = Math.toRadians(lon1)
+#    lam2 = Math.toRadians(lon2)
 
-    return 6371.01 * Math.acos( Math.sin(phi1) * Math.sin(phi2) + Math.cos(phi1) * Math.cos(phi2) * Math.cos(lam2 - lam1) );
+#    return 6371.01 * Math.acos( Math.sin(phi1) * Math.sin(phi2) + Math.cos(phi1) * Math.cos(phi2) * Math.cos(lam2 - lam1) );
 
-def bearing(lat1, lon1, lat2, lon2):
-    brng = Math.atan2(Math.sin(lon2-lon1)*Math.cos(lat2),
-                      Math.cos(lat1)*Math.sin(lat2)-Math.sin(lat1)*Math.cos(lat2)*Math.cos(lon2-lon1))
+#def bearing(lat1, lon1, lat2, lon2):
+#    brng = Math.atan2(Math.sin(lon2-lon1)*Math.cos(lat2),
+#                      Math.cos(lat1)*Math.sin(lat2)-Math.sin(lat1)*Math.cos(lat2)*Math.cos(lon2-lon1))
 
-    return Math.toDegrees(brng % (2.0 * 3.1415))
+#    return Math.toDegrees(brng % (2.0 * 3.1415))
 
 class Autopilot(AircraftController):
     def __init__(self):
@@ -26,6 +26,8 @@ class Autopilot(AircraftController):
         self.aileron_pid = PID(0.1, 0.005, 0.001, 0.05, 10.0)
         self.pitch_pid = PID(0.5, 0.0, 0.0, 0.05, 0.0)
         self.elevator_pid = PID(0.055, 0.0005, 0.0001, 0.05, 200.0)
+
+        self.navigator = Navigator()
 
         self.updateCnt = 0;
         self.target_course = 100;
@@ -66,11 +68,11 @@ class Autopilot(AircraftController):
         waypoint = self.waypoints[self.waypoint_index]
         
         if self.updateCnt == 0:
-            distance_to_point = distance(gps.getLatitude(), gps.getLongitude(),
-                                         waypoint[0], waypoint[1])
+            distance_to_point = self.navigator.distance(gps.getLatitude(), gps.getLongitude(),
+                                                   waypoint[0], waypoint[1])
 
-            self.target_course = bearing(gps.getLatitude(), gps.getLongitude(),
-                                         waypoint[0], waypoint[1])
+            self.target_course = self.navigator.bearing(gps.getLatitude(), gps.getLongitude(),
+                                                        waypoint[0], waypoint[1])
 
             self.updateCnt = 20
             

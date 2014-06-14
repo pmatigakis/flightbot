@@ -20,7 +20,7 @@ import com.matigakis.flightbot.aircraft.controllers.loaders.AutopilotLoader;
 import com.matigakis.flightbot.aircraft.controllers.loaders.JythonAutopilotLoader;
 import com.matigakis.flightbot.network.ControlsClient;
 import com.matigakis.flightbot.network.SensorServer;
-import com.matigakis.flightbot.ui.controllers.SensorDataRenderer;
+import com.matigakis.flightbot.ui.controllers.TelemetryViewController;
 import com.matigakis.flightbot.ui.views.TelemetryView;
 
 /**
@@ -28,7 +28,7 @@ import com.matigakis.flightbot.ui.views.TelemetryView;
  */
 public final class FlightBot{
 	private SensorServer sensorServer;
-	private SensorDataRenderer telemetryViewController;
+	private TelemetryViewController telemetryViewController;
 	private ControlsClient controlsClient;
 	private Autopilot autopilot;
 	
@@ -42,7 +42,7 @@ public final class FlightBot{
 		sensorServer = new SensorServer(sensorsPort);
 		
 		TelemetryView telemetryView = new TelemetryView();
-		telemetryViewController = new SensorDataRenderer(telemetryView);
+		telemetryViewController = new TelemetryViewController(telemetryView);
 		
 		sensorServer.addSensorDataListener(telemetryViewController);
 		

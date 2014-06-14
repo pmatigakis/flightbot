@@ -8,15 +8,15 @@ import com.matigakis.flightbot.network.SensorDataListener;
 import com.matigakis.flightbot.sensors.SensorData;
 import com.matigakis.flightbot.ui.views.TelemetryView;
 
-public class SensorDataRenderer extends Thread implements SensorDataListener{
-	private static final Logger logger = LoggerFactory.getLogger(SensorDataRenderer.class);
+public class TelemetryViewController extends Thread implements SensorDataListener{
+	private static final Logger logger = LoggerFactory.getLogger(TelemetryViewController.class);
 	private volatile boolean running;
 	private TelemetryView telemetryView;
 	private final Aircraft aircraft;
 	
 	private SensorData sensorData;
 	
-	public SensorDataRenderer(TelemetryView telemetryView){
+	public TelemetryViewController(TelemetryView telemetryView){
 		super();
 		
 		this.telemetryView = telemetryView;

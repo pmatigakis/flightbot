@@ -20,9 +20,11 @@ public class MapPanel extends JPanel implements JMapViewerEventListener, SensorR
 	private final JMapViewer map;
 	
 	private final MapMarkerDot airplaneMarker;
-	private final LinkedList<MapMarkerDot> markers;
+	private final List<MapMarkerDot> markers;
 	
 	public MapPanel(){
+		super();
+		
 		map = new JMapViewer();
 		map.addJMVListener(this);
 		OsmTileLoader tileLoader = new OsmTileLoader(map); 

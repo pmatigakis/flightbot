@@ -1,6 +1,5 @@
 package com.matigakis.flightbot.ui.views;
 
-import java.awt.Color;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.LayoutManager;
@@ -10,12 +9,6 @@ import javax.swing.JTextField;
 import javax.swing.JLabel;
 import javax.swing.BorderFactory;
 import javax.swing.border.Border;
-
-import org.openstreetmap.gui.jmapviewer.JMapViewer;
-import org.openstreetmap.gui.jmapviewer.MapMarkerDot;
-import org.openstreetmap.gui.jmapviewer.OsmTileLoader;
-import org.openstreetmap.gui.jmapviewer.events.JMVCommandEvent;
-import org.openstreetmap.gui.jmapviewer.interfaces.JMapViewerEventListener;
 
 import com.matigakis.flightbot.sensors.GPS;
 

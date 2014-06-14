@@ -43,7 +43,9 @@ public class TestSensorDataFactory {
 				dummySensorData.rudder + "\t" +
 				dummySensorData.throttle;
 		
-		SensorData sensorData = SensorDataFactory.fromString(telemetryString);
+		SensorDataFactory sensorDataFactory = new SensorDataFactory();
+		
+		SensorData sensorData = sensorDataFactory.fromString(telemetryString);
 		
 		assertEquals(dummySensorData.gpsAltitude, sensorData.gpsAltitude, 0.0);
 		assertEquals(dummySensorData.gpsAirspeed, sensorData.gpsAirspeed, 0.0);

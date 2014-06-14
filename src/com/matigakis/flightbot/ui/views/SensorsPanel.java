@@ -18,6 +18,8 @@ public class SensorsPanel extends JPanel{
 	private final AtmosphericPanel atmosphericpanel;
 	
 	public SensorsPanel(){
+		super();
+		
 		GridBagLayout layout = new GridBagLayout();    
 		setLayout(layout);
 		

@@ -14,7 +14,7 @@ public class SensorDataFactory {
 	 * @param data
 	 * @return SensorData object
 	 */
-	public static SensorData fromString(String data){
+	public SensorData fromString(String data){
 		String[] values = data.split("\t");
 		
 		SensorData sensorData = new SensorData();

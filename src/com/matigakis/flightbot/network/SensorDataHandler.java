@@ -20,11 +20,14 @@ import org.slf4j.LoggerFactory;
 public class SensorDataHandler extends SimpleChannelInboundHandler<DatagramPacket> implements SensorDataReceiver{
 	private static final Logger logger = LoggerFactory.getLogger(SensorDataHandler.class);
 	private final List<SensorDataListener> listeners;
+	private final SensorDataFactory sensorDataFactory;
 	
 	public SensorDataHandler(){
 		super();
 		
 		listeners = new LinkedList<SensorDataListener>();
+		
+		sensorDataFactory = new SensorDataFactory();
 	}
 	
 	@Override
@@ -32,7 +35,7 @@ public class SensorDataHandler extends SimpleChannelInboundHandler<DatagramPacke
 		//System.out.println(msg.content().toString(CharsetUtil.US_ASCII));
 		String data = msg.content().toString(CharsetUtil.US_ASCII);
 		
-		SensorData sensorData = SensorDataFactory.fromString(data);
+		SensorData sensorData = sensorDataFactory.fromString(data);
 		
 		notifyListeners(sensorData);
 	}

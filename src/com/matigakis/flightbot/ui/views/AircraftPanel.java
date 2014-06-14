@@ -16,6 +16,8 @@ public class AircraftPanel extends JPanel{
 	private final InstrumentationPanel instrumentationPanel;
 	
 	public AircraftPanel(){
+		super();
+		
 		GridBagLayout layout = new GridBagLayout();    
 		setLayout(layout);
 		

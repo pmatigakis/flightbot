@@ -4,8 +4,6 @@ import javax.swing.JFrame;
 
 import java.util.LinkedList;
 import java.awt.Color;
-import java.awt.Component;
-import java.awt.ComponentOrientation;
 import java.awt.GridBagLayout;
 import java.awt.GridBagConstraints;
 import java.awt.Insets;
@@ -14,20 +12,17 @@ import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.BufferedReader;
-import java.io.DataInputStream;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileReader;
-import java.io.InputStreamReader;
 
-import javax.swing.BoxLayout;
 import javax.swing.JFileChooser;
 import javax.swing.JMenuBar;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
-import javax.swing.JPanel;
 
 import org.openstreetmap.gui.jmapviewer.MapMarkerDot;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.matigakis.flightbot.aircraft.Aircraft;
 
@@ -35,6 +30,8 @@ class ExitAdapter extends WindowAdapter{
 	public volatile boolean running;
 	
 	public ExitAdapter(){
+		super();
+		
 		running = true;
 	}
 	
@@ -48,6 +45,7 @@ class ExitAdapter extends WindowAdapter{
 
 public class TelemetryView extends JFrame implements AircraftDataRenderer{
 	private static final long serialVersionUID = 1L;
+	private static final Logger logger = LoggerFactory.getLogger(TelemetryView.class);
 	
 	private final SensorsPanel sensorsPanel;
 	private final AircraftPanel aircraftPanel; 
@@ -128,7 +126,7 @@ public class TelemetryView extends JFrame implements AircraftDataRenderer{
 						br.close();
 						
 					}catch(Exception ex){
-						//TODO: log the error
+						logger.error("Failed to load markers", ex);
 					}
 				}
 				
@@ -201,7 +199,6 @@ public class TelemetryView extends JFrame implements AircraftDataRenderer{
 		
 		setVisible(true);
 		
-		System.out.println("Window state STARTING" );
 		exitAdapter = new ExitAdapter();
 		addWindowListener(exitAdapter);
 	}

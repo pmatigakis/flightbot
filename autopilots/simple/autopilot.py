@@ -1,8 +1,9 @@
 from java.lang import Math
 
 from com.matigakis.flightbot.aircraft.controllers import AircraftController
+from com.matigakis.flightbot.util import PID
 
-from pid import PID
+#from pid import PID
 
 def distance(lat1, lon1, lat2, lon2):
     phi1 = Math.toRadians(lat1)

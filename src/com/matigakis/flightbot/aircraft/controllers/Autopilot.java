@@ -7,23 +7,23 @@ import com.matigakis.flightbot.aircraft.Aircraft;
 import com.matigakis.flightbot.network.ControlsClient;
 import com.matigakis.flightbot.network.SensorDataListener;
 import com.matigakis.flightbot.sensors.SensorData;
-import com.matigakis.flightbot.ui.views.TelemetryView;
+import com.matigakis.flightbot.ui.controllers.TelemetryViewController;
 
 public class Autopilot extends Thread implements SensorDataListener{
 	private static final Logger logger = LoggerFactory.getLogger(Autopilot.class);
 	private AircraftController aircraftController;
 	private final ControlsClient controlsClient;
-	private final TelemetryView telemetryView;
+	private final TelemetryViewController telemetryViewController;
 	private volatile boolean running;
 	
 	private SensorData sensorData;
 	
-	public Autopilot(AircraftController aircraftController, ControlsClient controlsClient, TelemetryView telemetryView){
+	public Autopilot(AircraftController aircraftController, ControlsClient controlsClient, TelemetryViewController telemetryViewController){
 		super();
 		
 		this.aircraftController = aircraftController;
 		this.controlsClient = controlsClient;
-		this.telemetryView = telemetryView;
+		this.telemetryViewController = telemetryViewController;
 		
 		sensorData = new SensorData(); 
 	}
@@ -41,7 +41,8 @@ public class Autopilot extends Thread implements SensorDataListener{
 		while(running){
 			long timeSinceControlsUpdate = System.nanoTime();
 			
-			if(telemetryView.isAutopilotActivated()){
+			if(telemetryViewController.getAutopilotState()){
+				System.out.println("ACTIVE");
 				aircraft.updateFromSensorData(sensorData);
 				aircraftController.updateAircraftControls(aircraft);
 				controlsClient.transmitControls(aircraft.getControls());

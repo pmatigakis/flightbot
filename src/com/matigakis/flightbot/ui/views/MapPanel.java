@@ -11,6 +11,7 @@ import org.openstreetmap.gui.jmapviewer.MapMarkerDot;
 import org.openstreetmap.gui.jmapviewer.OsmTileLoader;
 import org.openstreetmap.gui.jmapviewer.events.JMVCommandEvent;
 import org.openstreetmap.gui.jmapviewer.interfaces.JMapViewerEventListener;
+import org.openstreetmap.gui.jmapviewer.interfaces.MapMarker;
 
 import com.matigakis.flightbot.sensors.GPS;
 
@@ -20,7 +21,7 @@ public class MapPanel extends JPanel implements JMapViewerEventListener, SensorR
 	private final JMapViewer map;
 	
 	private final MapMarkerDot airplaneMarker;
-	private final List<MapMarkerDot> markers;
+	private final List<MapMarker> markers;
 	
 	public MapPanel(){
 		super();
@@ -39,7 +40,7 @@ public class MapPanel extends JPanel implements JMapViewerEventListener, SensorR
 		airplaneMarker.setColor(Color.red);
 		airplaneMarker.setBackColor(Color.red);
 		
-		markers = new LinkedList<MapMarkerDot>();
+		markers = new LinkedList<MapMarker>();
 	}
 	
 	@Override
@@ -61,15 +62,15 @@ public class MapPanel extends JPanel implements JMapViewerEventListener, SensorR
 		
 	}
 
-	public void addMarkers(List<MapMarkerDot> markers){
-		for(MapMarkerDot marker: markers){
+	public void addMarkers(List<MapMarker> markers){
+		for(MapMarker marker: markers){
 			this.markers.add(marker);
 			map.addMapMarker(marker);
 		}
 	}
 	
 	public void clearAllMarkers(){
-		for(MapMarkerDot marker: markers){
+		for(MapMarker marker: markers){
 			map.removeMapMarker(marker);
 		}
 		

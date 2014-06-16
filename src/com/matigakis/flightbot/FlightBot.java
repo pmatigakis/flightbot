@@ -43,6 +43,7 @@ public final class FlightBot{
 		
 		TelemetryView telemetryView = new TelemetryView();
 		telemetryViewController = new TelemetryViewController(telemetryView);
+		telemetryView.addTelemetryViewListener(telemetryViewController);
 		
 		sensorServer.addSensorDataListener(telemetryViewController);
 		
@@ -52,7 +53,7 @@ public final class FlightBot{
 		AutopilotLoader autopilotLoader = new JythonAutopilotLoader();
 		AircraftController aircraftController = autopilotLoader.getAutopilot(autopilotName);
 		
-		autopilot = new Autopilot(aircraftController, controlsClient, telemetryView);
+		autopilot = new Autopilot(aircraftController, controlsClient, telemetryViewController);
 		sensorServer.addSensorDataListener(autopilot);
 		
 		telemetryViewController.start();

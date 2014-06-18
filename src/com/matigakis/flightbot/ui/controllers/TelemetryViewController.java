@@ -19,48 +19,54 @@ import com.matigakis.flightbot.network.SensorDataListener;
 import com.matigakis.flightbot.sensors.SensorData;
 import com.matigakis.flightbot.ui.views.TelemetryView;
 
+/**
+ * The TelemetryViewController is responsible for the rendering of sensor data
+ * to the telemetry view.
+ */
 public class TelemetryViewController extends Thread implements SensorDataListener, TelemetryViewListener{
 	private static final Logger logger = LoggerFactory.getLogger(TelemetryViewController.class);
 	private volatile boolean running;
-	private TelemetryView telemetryView;
+	private final TelemetryView telemetryView;
 	private final Aircraft aircraft;
-	
-	private SensorData sensorData;
 	
 	public TelemetryViewController(TelemetryView telemetryView){
 		super();
 		
 		this.telemetryView = telemetryView;
 		aircraft = new Aircraft();
-		
-		sensorData = new SensorData();
 	}
 	
 	@Override
 	public void handleSensorData(SensorData sensorData) {
-		this.sensorData = sensorData;
+		synchronized(aircraft){
+			aircraft.updateFromSensorData(sensorData);
+		}
 	}
 
 	@Override
 	public void run() {
-		logger.info("The sensor data renderer has started");
+		logger.debug("The sensor data renderer has started");
 		
 		running = true;
 		while(running){
-			aircraft.updateFromSensorData(sensorData);
-			
-			telemetryView.updateView(aircraft);
+			synchronized(aircraft){
+				telemetryView.updateView(aircraft);
+			}
 		}
 		
-		logger.info("The sensor data renderer has been terminated");
+		logger.debug("The sensor data renderer has been terminated");
 	}
 
+	/**
+	 * Stop the controller
+	 */
 	public void stopController(){
-		logger.info("Terminating the sensor data renderer");
+		logger.debug("Terminating the sensor data renderer");
 		
 		running = false;
 	}
-	
+
+	/*
 	public void setTelemetryView(TelemetryView telemetryView){
 		this.telemetryView = telemetryView;
 	}
@@ -68,33 +74,43 @@ public class TelemetryViewController extends Thread implements SensorDataListene
 	public TelemetryView getTelemetryView(){
 		return telemetryView;
 	}
+	*/
 
+	/**
+	 * Close the view
+	 */
 	@Override
 	public void close() {
 		telemetryView.dispatchEvent(new WindowEvent(telemetryView, WindowEvent.WINDOW_CLOSING));
 	}
 
+	/**
+	 * Set the state of the autopilot
+	 */
 	@Override
 	public void setAutopilotState(boolean autopilotState) {
 		aircraft.setAutopilotState(autopilotState);
 	}
 
+	/**
+	 * Add markers to the view
+	 */
 	@Override
-	public void setMapMarkers() {
-		telemetryView.clearMarkers();
-		
-		LinkedList<MapMarker> markers = new LinkedList<MapMarker>();
-		
+	public void setMapMarkers() {		
 		JFileChooser openFileDialog = new JFileChooser();
 		
 		int returnValue = openFileDialog.showOpenDialog(null);
 		
 		if (returnValue == JFileChooser.APPROVE_OPTION){
+			telemetryView.clearMarkers();
+			
 			File f = openFileDialog.getSelectedFile();
+			
+			LinkedList<MapMarker> markers = new LinkedList<MapMarker>();
 			
 			try{
 				FileReader fr = new FileReader(f);
-				BufferedReader br = new BufferedReader(fr);
+				BufferedReader br = new BufferedReader(fr);	
 				
 				String line;
 				while((line = br.readLine()) != null){
@@ -113,20 +129,27 @@ public class TelemetryViewController extends Thread implements SensorDataListene
 				}
 				
 				br.close();
-				
 			}catch(Exception ex){
 				logger.error("Failed to load markers", ex);
 			}
+			
+			telemetryView.addMapMarkers(markers);
 		}
-		
-		telemetryView.addMapMarkers(markers);
 	}
 
+	/**
+	 * Remove all markers from the view
+	 */
 	@Override
 	public void clearMapMerkers() {
 		telemetryView.clearMarkers();
 	}
 	
+	/**
+	 * Get the state of the autopilot
+	 * 
+	 * @return The state of the autopilot
+	 */
 	public boolean getAutopilotState() {
 		return aircraft.isAutopilotActive();
 	}

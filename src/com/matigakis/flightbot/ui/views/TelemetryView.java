@@ -15,8 +15,6 @@ import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 
 import org.openstreetmap.gui.jmapviewer.interfaces.MapMarker;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.matigakis.flightbot.aircraft.Aircraft;
 import com.matigakis.flightbot.ui.controllers.TelemetryViewListener;
@@ -32,12 +30,15 @@ class ExitAdapter extends WindowAdapter{
 	
 	@Override
 	public void windowClosing(WindowEvent e) {
-		// TODO Auto-generated method stub
 		super.windowClosing(e);
 		running = false;
 	}
 }
 
+/**
+ * The TelemetryView is a simple window that displays the data that where received
+ * from Flightgear
+ */
 public class TelemetryView extends JFrame implements AircraftDataRenderer{
 	private static final long serialVersionUID = 1L;
 	
@@ -51,10 +52,8 @@ public class TelemetryView extends JFrame implements AircraftDataRenderer{
 	private final JMenuItem startMenuItem; 
 	private final JMenuItem stopMenuItem; 
 	
-	JMenuItem addMarkersMenuItem;
-	JMenuItem clearMarkersMenuItem;
-	
-	private ExitAdapter exitAdapter;
+	private final JMenuItem addMarkersMenuItem;
+	private final JMenuItem clearMarkersMenuItem;
 	
 	public TelemetryView(){
 		super();
@@ -121,7 +120,7 @@ public class TelemetryView extends JFrame implements AircraftDataRenderer{
 		
 		setVisible(true);
 		
-		exitAdapter = new ExitAdapter();
+		ExitAdapter exitAdapter = new ExitAdapter();
 		addWindowListener(exitAdapter);
 	}
 	
@@ -132,14 +131,27 @@ public class TelemetryView extends JFrame implements AircraftDataRenderer{
 		mapPanel.updateSensorView(aircraft.getGPS());
 	}
 	
+	/**
+	 * Add map markers.
+	 * 
+	 * @param markers The map markers to add
+	 */
 	public void addMapMarkers(List<MapMarker> markers){
 		mapPanel.addMarkers(markers);
 	}
 	
+	/**
+	 * Remove all the map markers. 
+	 */
 	public void clearMarkers(){
 		mapPanel.clearAllMarkers();
 	}
 	
+	/**
+	 * Attach a controller to the view
+	 * 
+	 * @param telemetryViewListener The controller the attach to
+	 */
 	public void addTelemetryViewListener(final TelemetryViewListener telemetryViewListener){
 		exitMenuItem.addActionListener(new ActionListener() {
 			@Override

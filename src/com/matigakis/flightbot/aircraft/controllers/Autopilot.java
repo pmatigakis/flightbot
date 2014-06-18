@@ -9,14 +9,18 @@ import com.matigakis.flightbot.network.SensorDataListener;
 import com.matigakis.flightbot.sensors.SensorData;
 import com.matigakis.flightbot.ui.controllers.TelemetryViewController;
 
+/**
+ * The Autopilot class is used to interface the object that is controlling the aircraft
+ * with the client that sends control commands to Flightgear.
+ */
 public class Autopilot extends Thread implements SensorDataListener{
-	private static final Logger logger = LoggerFactory.getLogger(Autopilot.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(Autopilot.class);
+	
 	private AircraftController aircraftController;
 	private final ControlsClient controlsClient;
 	private final TelemetryViewController telemetryViewController;
+	private final Aircraft aircraft;
 	private volatile boolean running;
-	
-	private SensorData sensorData;
 	
 	public Autopilot(AircraftController aircraftController, ControlsClient controlsClient, TelemetryViewController telemetryViewController){
 		super();
@@ -24,61 +28,90 @@ public class Autopilot extends Thread implements SensorDataListener{
 		this.aircraftController = aircraftController;
 		this.controlsClient = controlsClient;
 		this.telemetryViewController = telemetryViewController;
-		
-		sensorData = new SensorData(); 
+		 
+		aircraft = new Aircraft();
 	}
 	
 	@Override
 	public void run() {
-		logger.info("Starting the autopilot");
-		
-		Aircraft aircraft = new Aircraft();
+		LOGGER.debug("Starting the autopilot");
 		
 		double dt = 0.05;
 		long updateRate = (long) (dt * 1000000000);
 		
-		running = true;
-		while(running){
+		setAutopilotState(true);
+		while(isAutopilotActive()){
 			long timeSinceControlsUpdate = System.nanoTime();
 			
 			if(telemetryViewController.getAutopilotState()){
-				System.out.println("ACTIVE");
-				aircraft.updateFromSensorData(sensorData);
-				aircraftController.updateAircraftControls(aircraft);
-				controlsClient.transmitControls(aircraft.getControls());
+				synchronized(aircraft){
+					aircraftController.updateAircraftControls(aircraft);
+					controlsClient.transmitControls(aircraft.getControls());
+				}
 			}
 			
-			long diff = (updateRate - (System.nanoTime() - timeSinceControlsUpdate)) / 1000000;
+			long runningTime = System.nanoTime() - timeSinceControlsUpdate;
+			long diff = (updateRate - runningTime) / 1000000;
 			
 			if(diff > 0){
 				try{
 					Thread.sleep(diff);
 				}catch(InterruptedException ex){
-					logger.error("The autopilot encountered an error", ex);
+					LOGGER.error("The autopilot encountered an error", ex);
 				}
 			}
 		}
 		
-		logger.info("The autopilot has terminated successfully");
+		LOGGER.debug("The autopilot has terminated successfully");
 	}
 
+	/**
+	 * Stop the autopilot.
+	 */
 	public void shutdown(){
-		logger.info("Shutting down the autopilot");
+		LOGGER.info("Shutting down the autopilot");
 		
-		running = false;
+		setAutopilotState(false);
 	}
 	
 	@Override
 	public void handleSensorData(SensorData sensorData) {
-		//sensorDataQueue.offer(sensorData);
-		this.sensorData = sensorData;
+		synchronized(aircraft){
+			aircraft.updateFromSensorData(sensorData);
+		}
 	}
 	
+	/**
+	 * Set the aircraft controller.
+	 */
 	public void setAircraftController(AircraftController aircraftController){
 		this.aircraftController = aircraftController;
 	}
 	
+	/**
+	 * Get the aircraft controller object.
+	 * 
+	 * @return The current aircraft controller
+	 */
 	public AircraftController getAircraftController(){
 		return aircraftController;
+	}
+	
+	/**
+	 * Set the autopilot state
+	 * 
+	 * @param state The autopilot state
+	 */
+	public void setAutopilotState(boolean state){
+		running = state;
+	}
+	
+	/**
+	 * Check if the autopilot is active
+	 * 
+	 * @return The autopilot state
+	 */
+	public boolean isAutopilotActive(){
+		return running;
 	}
 }

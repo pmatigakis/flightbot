@@ -3,8 +3,8 @@ package com.matigakis.flightbot.network;
 import java.util.LinkedList;
 import java.util.List;
 
+import com.matigakis.flightbot.aircraft.sensors.SensorData;
 import com.matigakis.flightbot.network.sensors.SensorDataFactory;
-import com.matigakis.flightbot.sensors.SensorData;
 
 import io.netty.channel.socket.DatagramPacket;
 import io.netty.channel.ChannelHandlerContext;

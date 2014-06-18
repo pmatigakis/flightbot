@@ -1,6 +1,6 @@
 package com.matigakis.flightbot.network.sensors;
 
-import com.matigakis.flightbot.sensors.SensorData;
+import com.matigakis.flightbot.aircraft.sensors.SensorData;
 
 /**
  * The SensorDataFactory is used to convert a telemetry String that was received from

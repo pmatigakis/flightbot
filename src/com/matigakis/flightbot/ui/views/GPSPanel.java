@@ -10,7 +10,7 @@ import javax.swing.JLabel;
 import javax.swing.BorderFactory;
 import javax.swing.border.Border;
 
-import com.matigakis.flightbot.sensors.GPS;
+import com.matigakis.flightbot.aircraft.sensors.GPS;
 
 
 /**

@@ -1,6 +1,6 @@
 package com.matigakis.flightbot.network;
 
-import com.matigakis.flightbot.sensors.SensorData;
+import com.matigakis.flightbot.aircraft.sensors.SensorData;
 
 /**
  * This interface must be implemented by any object that is able to

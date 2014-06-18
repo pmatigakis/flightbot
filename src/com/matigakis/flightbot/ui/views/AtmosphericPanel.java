@@ -12,9 +12,9 @@ import javax.swing.JFormattedTextField;
 
 import java.text.NumberFormat;
 
-import com.matigakis.flightbot.sensors.PitotTube;
-import com.matigakis.flightbot.sensors.StaticPressureSensor;
-import com.matigakis.flightbot.sensors.TemperatureSensor;
+import com.matigakis.flightbot.aircraft.sensors.PitotTube;
+import com.matigakis.flightbot.aircraft.sensors.StaticPressureSensor;
+import com.matigakis.flightbot.aircraft.sensors.TemperatureSensor;
 
 public class AtmosphericPanel extends JPanel{
 	private static final long serialVersionUID = 1L;

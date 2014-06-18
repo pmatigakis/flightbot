@@ -9,7 +9,7 @@ import javax.swing.BorderFactory;
 import javax.swing.JLabel;
 import javax.swing.JTextField;
 
-import com.matigakis.flightbot.sensors.Magnetometer;
+import com.matigakis.flightbot.aircraft.sensors.Magnetometer;
 
 public class MagnetometerPanel extends JPanel implements SensorRenderer<Magnetometer>{	
 	private static final long serialVersionUID = 1L;

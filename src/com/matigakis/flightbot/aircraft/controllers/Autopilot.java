@@ -4,9 +4,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.matigakis.flightbot.aircraft.Aircraft;
+import com.matigakis.flightbot.aircraft.sensors.SensorData;
 import com.matigakis.flightbot.network.ControlsClient;
 import com.matigakis.flightbot.network.SensorDataListener;
-import com.matigakis.flightbot.sensors.SensorData;
 import com.matigakis.flightbot.ui.controllers.TelemetryViewController;
 
 /**

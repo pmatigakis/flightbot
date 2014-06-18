@@ -15,7 +15,7 @@ import io.netty.channel.socket.DatagramPacket;
 import io.netty.buffer.Unpooled;
 import io.netty.util.CharsetUtil;
 
-import com.matigakis.flightbot.controls.Controls;
+import com.matigakis.flightbot.aircraft.controls.Controls;
 
 public class ControlsClient {
 	private static final Logger logger = LoggerFactory.getLogger(ControlsClient.class);

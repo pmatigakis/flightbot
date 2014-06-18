@@ -13,7 +13,7 @@ import org.openstreetmap.gui.jmapviewer.events.JMVCommandEvent;
 import org.openstreetmap.gui.jmapviewer.interfaces.JMapViewerEventListener;
 import org.openstreetmap.gui.jmapviewer.interfaces.MapMarker;
 
-import com.matigakis.flightbot.sensors.GPS;
+import com.matigakis.flightbot.aircraft.sensors.GPS;
 
 public class MapPanel extends JPanel implements JMapViewerEventListener, SensorRenderer<GPS>{
 	private static final long serialVersionUID = 1L;

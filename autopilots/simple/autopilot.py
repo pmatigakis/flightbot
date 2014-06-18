@@ -1,7 +1,9 @@
 from java.lang import Math
 
 from com.matigakis.flightbot.aircraft.controllers import AircraftController
-from com.matigakis.flightbot.util import PID, Navigator
+from com.matigakis.flightbot.navigation import Navigator
+from com.matigakis.flightbot.control import PID
+
 
 #from pid import PID
 

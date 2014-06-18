@@ -1,8 +1,8 @@
 package com.matigakis.flightbot.network;
 
 import com.matigakis.flightbot.aircraft.Aircraft;
+import com.matigakis.flightbot.aircraft.sensors.SensorData;
 import com.matigakis.flightbot.fdm.FDM;
-import com.matigakis.flightbot.sensors.SensorData;
 
 /**
  * The FlightgearFDM object is a proxy to Flightgear's flight dynamic model

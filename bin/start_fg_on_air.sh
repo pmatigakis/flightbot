@@ -1,0 +1,12 @@
+fgfs --geometry=480x360 \
+--in-air \
+--altitude=1000 \
+--vc=60 \
+--heading=0 \
+--aircraft=c172p \
+--timeofday=noon \
+--disable-real-weather-fetch \
+--prop:/engines/engine/running=true \
+--prop:/engines/engine/rpm=1000 \
+--generic=socket,out,20,localhost,10500,udp,flightbot \
+--generic=socket,in,20,localhost,10501,udp,flightbot

@@ -1,6 +1,6 @@
 package com.matigakis.flightbot.aircraft;
 
-import com.matigakis.flightbot.sensors.SensorData;
+import com.matigakis.flightbot.aircraft.sensors.SensorData;
 
 /**
  * The Instrumentation object holds information about like altitude, airspeed and 

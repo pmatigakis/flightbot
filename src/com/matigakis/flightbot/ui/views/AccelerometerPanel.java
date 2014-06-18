@@ -9,7 +9,7 @@ import javax.swing.BorderFactory;
 import javax.swing.JLabel;
 import javax.swing.JTextField;
 
-import com.matigakis.flightbot.sensors.Accelerometer;
+import com.matigakis.flightbot.aircraft.sensors.Accelerometer;
 
 public class AccelerometerPanel extends JPanel implements SensorRenderer<Accelerometer>{	
 	private static final long serialVersionUID = 1L;

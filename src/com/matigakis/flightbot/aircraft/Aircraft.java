@@ -1,14 +1,14 @@
 package com.matigakis.flightbot.aircraft;
 
-import com.matigakis.flightbot.sensors.Accelerometer;
-import com.matigakis.flightbot.sensors.GPS;
-import com.matigakis.flightbot.sensors.Gyroscope;
-import com.matigakis.flightbot.sensors.Magnetometer;
-import com.matigakis.flightbot.sensors.PitotTube;
-import com.matigakis.flightbot.sensors.SensorData;
-import com.matigakis.flightbot.sensors.StaticPressureSensor;
-import com.matigakis.flightbot.sensors.TemperatureSensor;
-import com.matigakis.flightbot.controls.Controls;
+import com.matigakis.flightbot.aircraft.controls.Controls;
+import com.matigakis.flightbot.aircraft.sensors.Accelerometer;
+import com.matigakis.flightbot.aircraft.sensors.GPS;
+import com.matigakis.flightbot.aircraft.sensors.Gyroscope;
+import com.matigakis.flightbot.aircraft.sensors.Magnetometer;
+import com.matigakis.flightbot.aircraft.sensors.PitotTube;
+import com.matigakis.flightbot.aircraft.sensors.SensorData;
+import com.matigakis.flightbot.aircraft.sensors.StaticPressureSensor;
+import com.matigakis.flightbot.aircraft.sensors.TemperatureSensor;
 
 /**
  *  The Aircraft object contains references to the instruments and

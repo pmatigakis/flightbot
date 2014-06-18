@@ -3,13 +3,14 @@ package com.matigakis.flightbot.ui.views;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.LayoutManager;
+
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.JLabel;
 import javax.swing.BorderFactory;
 import javax.swing.border.Border;
 
-import com.matigakis.flightbot.controls.Controls;
+import com.matigakis.flightbot.aircraft.controls.Controls;
 
 /**
  * The ControlsPanel panel shows the state of the aircraft's controls

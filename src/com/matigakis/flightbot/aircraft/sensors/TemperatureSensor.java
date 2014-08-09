@@ -1,5 +1,7 @@
 package com.matigakis.flightbot.aircraft.sensors;
 
+import com.matigakis.fgcontrol.sensors.SensorData;
+
 /**
  * The TemperatureSensor measures the air temperature.
  */

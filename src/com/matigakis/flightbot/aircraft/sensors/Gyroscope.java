@@ -1,5 +1,7 @@
 package com.matigakis.flightbot.aircraft.sensors;
 
+import com.matigakis.fgcontrol.sensors.SensorData;
+
 public class Gyroscope implements Sensor{
 	protected double xRot;
 	protected double yRot;

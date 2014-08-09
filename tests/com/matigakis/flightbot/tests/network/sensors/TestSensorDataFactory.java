@@ -7,8 +7,8 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
 
-import com.matigakis.flightbot.aircraft.sensors.SensorData;
-import com.matigakis.flightbot.network.sensors.SensorDataFactory;
+import com.matigakis.fgcontrol.sensors.SensorData;
+import com.matigakis.flightbot.network.SensorDataFactory;
 import com.matigakis.flightbot.tests.aircraft.sensors.DummySensorData;
 
 @RunWith(JUnit4.class)

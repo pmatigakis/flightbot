@@ -8,5 +8,6 @@ fgfs --geometry=480x360 \
 --disable-real-weather-fetch \
 --prop:/engines/engine/running=true \
 --prop:/engines/engine/rpm=1000 \
---generic=socket,out,20,localhost,10500,udp,flightbot \
---generic=socket,in,20,localhost,10501,udp,flightbot
+--generic=socket,out,2,localhost,10500,udp,fgcontrol \
+--generic=socket,in,20,localhost,10501,udp,fgcontrol \
+--generic=socket,out,20,localhost,10502,udp,fgcontrol

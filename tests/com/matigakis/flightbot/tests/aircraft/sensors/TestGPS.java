@@ -8,7 +8,7 @@ import org.junit.runners.JUnit4;
 import org.junit.Before;
 
 import com.matigakis.flightbot.aircraft.sensors.GPS;
-import com.matigakis.flightbot.aircraft.sensors.SensorData;
+import com.matigakis.fgcontrol.sensors.SensorData;
 
 @RunWith(JUnit4.class)
 public class TestGPS {

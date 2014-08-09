@@ -15,8 +15,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.matigakis.flightbot.aircraft.Aircraft;
-import com.matigakis.flightbot.aircraft.sensors.SensorData;
-import com.matigakis.flightbot.network.SensorDataListener;
+import com.matigakis.fgcontrol.sensors.SensorData;
+import com.matigakis.fgcontrol.SensorDataListener;
 import com.matigakis.flightbot.ui.views.TelemetryView;
 
 /**
@@ -82,14 +82,6 @@ public class TelemetryViewController extends Thread implements SensorDataListene
 	@Override
 	public void close() {
 		telemetryView.dispatchEvent(new WindowEvent(telemetryView, WindowEvent.WINDOW_CLOSING));
-	}
-
-	/**
-	 * Set the state of the autopilot
-	 */
-	@Override
-	public void setAutopilotState(boolean autopilotState) {
-		aircraft.setAutopilotState(autopilotState);
 	}
 
 	/**

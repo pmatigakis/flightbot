@@ -1,5 +1,7 @@
 package com.matigakis.flightbot.aircraft.sensors;
 
+import com.matigakis.fgcontrol.sensors.SensorData;
+
 /**
  * The Sensor interface defines the operations every sensor must provide.
  */

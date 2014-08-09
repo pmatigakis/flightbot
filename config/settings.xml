@@ -1,9 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <settings>
-	<protocol>
+	<telemetryviewer>
+		<port>10500</port>
+	</telemetryviewer>
+	
+	<controls>
 		<host>127.0.0.1</host>
-		<sensors>10500</sensors>
-		<controls>10501</controls>
-	</protocol>
+		<port>10501</port>
+	</controls>
+	
+	<sensors>
+		<port>10502</port>
+	</sensors>
 </settings>

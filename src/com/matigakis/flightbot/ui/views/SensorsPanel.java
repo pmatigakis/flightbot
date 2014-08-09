@@ -56,7 +56,7 @@ public class SensorsPanel extends JPanel{
 	public void updateFromAircraftData(Aircraft aircraft){
 		gpsPanel.updateSensorView(aircraft.getGPS());
 		accelerometerPanel.updateSensorView(aircraft.getAccelerometer());
-		gyroscopePanel.updateSensorView(aircraft.getGyrescope());
+		gyroscopePanel.updateSensorView(aircraft.getGyroscope());
 		magnetormeterPanel.updateSensorView(aircraft.getMagnetometer());
 		atmosphericpanel.updateSensorView(aircraft.getPitotTube(), aircraft.getStaticPressureSensor(), aircraft.getTemperatureSensor());
 	}

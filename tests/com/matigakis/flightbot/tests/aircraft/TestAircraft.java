@@ -14,7 +14,7 @@ import com.matigakis.flightbot.aircraft.sensors.Accelerometer;
 import com.matigakis.flightbot.aircraft.sensors.GPS;
 import com.matigakis.flightbot.aircraft.sensors.Gyroscope;
 import com.matigakis.flightbot.aircraft.sensors.PitotTube;
-import com.matigakis.flightbot.aircraft.sensors.SensorData;
+import com.matigakis.fgcontrol.sensors.SensorData;
 import com.matigakis.flightbot.aircraft.sensors.StaticPressureSensor;
 import com.matigakis.flightbot.aircraft.sensors.TemperatureSensor;
 import com.matigakis.flightbot.tests.aircraft.sensors.DummySensorData;
@@ -48,7 +48,7 @@ public class TestAircraft {
 		assertEquals(sensorData.yAcceleration, accelerometer.getYAcceleration(), 0.0);
 		assertEquals(sensorData.zAcceleration, accelerometer.getZAcceleration(), 0.0);
 		
-		Gyroscope gyroscope = aircraft.getGyrescope();
+		Gyroscope gyroscope = aircraft.getGyroscope();
 		
 		assertEquals(sensorData.xRotation, gyroscope.getXRotation(), 0.0);
 		assertEquals(sensorData.yRotation, gyroscope.getYRotation(), 0.0);

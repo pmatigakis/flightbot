@@ -1,5 +1,7 @@
 package com.matigakis.flightbot.aircraft.sensors;
 
+import com.matigakis.fgcontrol.sensors.SensorData;
+
 /**
  * The Accelerometer object contains the accelerations measured by the sensors.
  */

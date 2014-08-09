@@ -1,5 +1,7 @@
 package com.matigakis.flightbot.aircraft.sensors;
 
+import com.matigakis.fgcontrol.sensors.SensorData;
+
 /**
  * The StaticPressureSensor holds the pressure of the air around the aircraft.
  */

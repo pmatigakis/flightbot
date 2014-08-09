@@ -1,6 +1,6 @@
 package com.matigakis.flightbot.aircraft;
 
-import com.matigakis.flightbot.aircraft.sensors.SensorData;
+import com.matigakis.fgcontrol.sensors.SensorData;
 
 /**
  * The Orientation object holds information about the orientation of the aircraft.

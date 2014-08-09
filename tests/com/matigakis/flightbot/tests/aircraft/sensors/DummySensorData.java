@@ -1,6 +1,6 @@
 package com.matigakis.flightbot.tests.aircraft.sensors;
 
-import com.matigakis.flightbot.aircraft.sensors.SensorData;
+import com.matigakis.fgcontrol.sensors.SensorData;
 
 public class DummySensorData extends SensorData{
 	public DummySensorData(){

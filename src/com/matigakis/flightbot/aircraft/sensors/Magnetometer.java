@@ -1,5 +1,7 @@
 package com.matigakis.flightbot.aircraft.sensors;
 
+import com.matigakis.fgcontrol.sensors.SensorData;
+
 /**
  * The Magnetometer objects contains measurements about the magnetic field arount the aircraft
  */

@@ -9,9 +9,9 @@ import org.python.util.PythonInterpreter;
 import com.matigakis.flightbot.aircraft.controllers.AircraftController;
 
 public class JythonAutopilotLoader implements AutopilotLoader {
-	public AircraftController getAutopilot(String autopilotName){
+	public AircraftController getAutopilot(String autopilotPackage){
 		PySystemState sys = Py.getSystemState();
-		sys.path.append(new PyString(autopilotName));
+		sys.path.append(new PyString(autopilotPackage));
 		
 		PythonInterpreter interpreter = new PythonInterpreter(null, sys);
 		

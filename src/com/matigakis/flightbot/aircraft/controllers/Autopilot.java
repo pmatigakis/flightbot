@@ -4,10 +4,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.matigakis.flightbot.aircraft.Aircraft;
-import com.matigakis.flightbot.aircraft.sensors.SensorData;
-import com.matigakis.flightbot.network.ControlsClient;
-import com.matigakis.flightbot.network.SensorDataListener;
-import com.matigakis.flightbot.ui.controllers.TelemetryViewController;
+import com.matigakis.fgcontrol.sensors.SensorData;
+import com.matigakis.fgcontrol.ControlsClient;
+import com.matigakis.fgcontrol.SensorDataListener;
 
 /**
  * The Autopilot class is used to interface the object that is controlling the aircraft
@@ -18,23 +17,21 @@ public class Autopilot extends Thread implements SensorDataListener{
 	
 	private AircraftController aircraftController;
 	private final ControlsClient controlsClient;
-	private final TelemetryViewController telemetryViewController;
 	private final Aircraft aircraft;
 	private volatile boolean running;
 	
-	public Autopilot(AircraftController aircraftController, ControlsClient controlsClient, TelemetryViewController telemetryViewController){
+	public Autopilot(AircraftController aircraftController, ControlsClient controlsClient){
 		super();
 		
 		this.aircraftController = aircraftController;
 		this.controlsClient = controlsClient;
-		this.telemetryViewController = telemetryViewController;
 		 
 		aircraft = new Aircraft();
 	}
 	
 	@Override
 	public void run() {
-		LOGGER.debug("Starting the autopilot");
+		LOGGER.info("Starting the autopilot");
 		
 		double dt = 0.05;
 		long updateRate = (long) (dt * 1000000000);
@@ -43,11 +40,9 @@ public class Autopilot extends Thread implements SensorDataListener{
 		while(isAutopilotActive()){
 			long timeSinceControlsUpdate = System.nanoTime();
 			
-			if(telemetryViewController.getAutopilotState()){
-				synchronized(aircraft){
-					aircraftController.updateAircraftControls(aircraft);
-					controlsClient.transmitControls(aircraft.getControls());
-				}
+			synchronized(aircraft){
+				aircraftController.updateAircraftControls(aircraft);
+				controlsClient.transmitControls(aircraft.getControls());
 			}
 			
 			long runningTime = System.nanoTime() - timeSinceControlsUpdate;
@@ -62,7 +57,7 @@ public class Autopilot extends Thread implements SensorDataListener{
 			}
 		}
 		
-		LOGGER.debug("The autopilot has terminated successfully");
+		LOGGER.info("The autopilot has terminated successfully");
 	}
 
 	/**

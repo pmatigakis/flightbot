@@ -49,8 +49,6 @@ public class TelemetryView extends JFrame implements AircraftDataRenderer{
 	//private final OperationPanel operationPanel;
 	
 	private final JMenuItem exitMenuItem;
-	private final JMenuItem startMenuItem; 
-	private final JMenuItem stopMenuItem; 
 	
 	private final JMenuItem addMarkersMenuItem;
 	private final JMenuItem clearMarkersMenuItem;
@@ -76,23 +74,8 @@ public class TelemetryView extends JFrame implements AircraftDataRenderer{
 		mapMenu.add(addMarkersMenuItem);
 		mapMenu.add(clearMarkersMenuItem);
 		
-		JMenu autopilotMenu = new JMenu("Autopilot");
-		startMenuItem = new JMenuItem("Start");
-		stopMenuItem = new JMenuItem("Stop");
-		stopMenuItem.setEnabled(false);
-		JMenuItem resetMenuItem = new JMenuItem("Reset");
-		autopilotMenu.add(startMenuItem);
-		autopilotMenu.add(stopMenuItem);
-		autopilotMenu.add(resetMenuItem);
-		
-		JMenu helpMenu = new JMenu("Help");
-		JMenuItem aboutMenuItem = new JMenuItem("About");
-		helpMenu.add(aboutMenuItem);
-		
 		menuBar.add(fileMenu);
 		menuBar.add(mapMenu);
-		menuBar.add(autopilotMenu);
-		menuBar.add(helpMenu);
 		
 		GridBagConstraints c = new GridBagConstraints();
 		c.anchor = GridBagConstraints.NORTHWEST;
@@ -171,24 +154,6 @@ public class TelemetryView extends JFrame implements AircraftDataRenderer{
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
 				telemetryViewListener.clearMapMerkers();
-			}
-		});
-		
-		startMenuItem.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				startMenuItem.setEnabled(false);
-				stopMenuItem.setEnabled(true);
-				telemetryViewListener.setAutopilotState(true);
-			}
-		});
-		
-		stopMenuItem.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				startMenuItem.setEnabled(true);
-				stopMenuItem.setEnabled(false);
-				telemetryViewListener.setAutopilotState(false);
 			}
 		});
 	}

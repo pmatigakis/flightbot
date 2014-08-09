@@ -8,7 +8,8 @@ import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
 
 import com.matigakis.flightbot.aircraft.sensors.Gyroscope;
-import com.matigakis.flightbot.aircraft.sensors.SensorData;
+import com.matigakis.fgcontrol.sensors.SensorData;
+
 @RunWith(JUnit4.class)
 public class TestGyroscope {
 	private Gyroscope gyroscope;

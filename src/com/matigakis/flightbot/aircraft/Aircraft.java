@@ -1,12 +1,12 @@
 package com.matigakis.flightbot.aircraft;
 
-import com.matigakis.flightbot.aircraft.controls.Controls;
+import com.matigakis.fgcontrol.controls.Controls;
 import com.matigakis.flightbot.aircraft.sensors.Accelerometer;
 import com.matigakis.flightbot.aircraft.sensors.GPS;
 import com.matigakis.flightbot.aircraft.sensors.Gyroscope;
 import com.matigakis.flightbot.aircraft.sensors.Magnetometer;
 import com.matigakis.flightbot.aircraft.sensors.PitotTube;
-import com.matigakis.flightbot.aircraft.sensors.SensorData;
+import com.matigakis.fgcontrol.sensors.SensorData;
 import com.matigakis.flightbot.aircraft.sensors.StaticPressureSensor;
 import com.matigakis.flightbot.aircraft.sensors.TemperatureSensor;
 
@@ -67,7 +67,7 @@ public class Aircraft {
 	 * 
 	 * @return gyroscope
 	 */
-	public Gyroscope getGyrescope(){
+	public Gyroscope getGyroscope(){
 		return gyroscope;
 	}
 	
@@ -165,6 +165,10 @@ public class Aircraft {
 		temperatureSensor.updateFromSensorData(sensorData);
 		instrumentation.updateFromSensorData(sensorData);
 		orientation.updateFromSensordata(sensorData);
-		controls.updateFromSensorData(sensorData);
+		
+		controls.setAileron(sensorData.aileron);
+		controls.setElevator(sensorData.elevator);
+		controls.setRudder(sensorData.rudder);
+		controls.setThrottle(sensorData.throttle);
 	}
 }

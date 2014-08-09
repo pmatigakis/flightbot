@@ -18,8 +18,8 @@ import com.matigakis.flightbot.aircraft.controllers.AircraftController;
 import com.matigakis.flightbot.aircraft.controllers.Autopilot;
 import com.matigakis.flightbot.aircraft.controllers.loaders.AutopilotLoader;
 import com.matigakis.flightbot.aircraft.controllers.loaders.JythonAutopilotLoader;
-import com.matigakis.flightbot.network.ControlsClient;
-import com.matigakis.flightbot.network.SensorServer;
+//import com.matigakis.flightbot.network.ControlsClient;
+import com.matigakis.fgcontrol.SensorServer;
 import com.matigakis.flightbot.ui.controllers.TelemetryViewController;
 import com.matigakis.flightbot.ui.views.TelemetryView;
 
@@ -29,7 +29,7 @@ import com.matigakis.flightbot.ui.views.TelemetryView;
 public final class FlightBot{
 	private SensorServer sensorServer;
 	private TelemetryViewController telemetryViewController;
-	private ControlsClient controlsClient;
+	//private ControlsClient controlsClient;
 	private Autopilot autopilot;
 	
 	public void run(CommandLine commandLine, Configuration configuration) throws Exception{
@@ -47,14 +47,14 @@ public final class FlightBot{
 		
 		sensorServer.addSensorDataListener(telemetryViewController);
 		
-		controlsClient = new ControlsClient(host, controlsPort);
-		controlsClient.openConnection();
+		//controlsClient = new ControlsClient(host, controlsPort);
+		//controlsClient.openConnection();
 		
 		AutopilotLoader autopilotLoader = new JythonAutopilotLoader();
 		AircraftController aircraftController = autopilotLoader.getAutopilot(autopilotName);
 		
-		autopilot = new Autopilot(aircraftController, controlsClient, telemetryViewController);
-		sensorServer.addSensorDataListener(autopilot);
+		//autopilot = new Autopilot(aircraftController, controlsClient, telemetryViewController);
+		//sensorServer.addSensorDataListener(autopilot);
 		
 		telemetryViewController.start();
 		autopilot.start();
@@ -66,7 +66,7 @@ public final class FlightBot{
 				sensorServer.stopServer();
 				telemetryViewController.stopController();
 				autopilot.shutdown();
-				controlsClient.closeConnection();
+				//controlsClient.closeConnection();
 			}
 		});
 	}

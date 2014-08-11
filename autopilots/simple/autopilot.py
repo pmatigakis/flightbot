@@ -1,6 +1,6 @@
 from java.lang import Math
 
-from com.matigakis.flightbot.aircraft.controllers import AircraftController
+from com.matigakis.flightbot.aircraft.controllers import Autopilot
 from com.matigakis.flightbot.navigation import Navigator
 from com.matigakis.flightbot.control import PID
 
@@ -21,7 +21,7 @@ from com.matigakis.flightbot.control import PID
 
 #    return Math.toDegrees(brng % (2.0 * 3.1415))
 
-class Autopilot(AircraftController):
+class Autopilot(Autopilot):
     def __init__(self):
         self.throttle_pid = PID(0.1, 0.07, 0.05, 0.05, 10.0)
         self.course_pid = PID(1.0, 0.0, 0.0, 0.05, 0.0)
@@ -36,17 +36,20 @@ class Autopilot(AircraftController):
         self.target_airspeed = 60.0;
         self.target_altitude = 1000.0
 
-        self.waypoints = []
+        self.waypoints = [(37.614299,-122.357153),
+                          (37.602468,-122.398867),
+                          (37.630683,-122.415518),
+                          (37.638364,-122.385477)]
 
-        f = open("./autopilots/simple/waypoints.csv", "r")
+        #f = open("waypoints.csv", "r")
 
-        for line in f:
-            lat, lon = line.split(",")
-            lat = float(lat)
-            lon = float(lon)
-            self.waypoints.append([lat, lon])
+        #for line in f:
+        #    lat, lon = line.split(",")
+        #    lat = float(lat)
+        #    lon = float(lon)
+        #    self.waypoints.append([lat, lon])
         
-        f.close()
+        #f.close()
 
         self.waypoint_index = 0
 
@@ -134,7 +137,7 @@ class Autopilot(AircraftController):
 
         controls.setElevator(target_elevator)
 
-    def updateAircraftControls(self, aircraft):
+    def updateControls(self, aircraft):
         controls = aircraft.getControls()
         instrumentation = aircraft.getInstrumentation()
         orientation = aircraft.getOrientation()

@@ -15,16 +15,16 @@ In order to build FlightBot you must install Ant first.
 
     ant dist
 
-3. Copy flightbot.xml from the flightgear/protocol directory to Flightgear's Protocol directory
+3. Copy fgcontrol.xml from the flightgear/protocol directory to Flightgear's Protocol directory
 
 4. Create a variable named FLIGHTBOT_HOME that is pointing to FlightBot's installation path.
-5. Start Flightgear with the following command.
+5. Go to the scripts directory and Start Flightgear with the following command.
 
-    bin/start_fg.sh
+    ./start_fg_on_air.sh
 
-6. To run FlightBot go to the installation directory and give the following command on the console.
+6. To run FlightBot give the following command on the console.
 
-    bin/start_flightbot.sh ./autopilots/simple/
+    ./run_autopilot.sh ./autopilots/simple/
 
 # Documentation
 There isn't any documentation yet. However you can check how the sample autopilot at

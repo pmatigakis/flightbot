@@ -6,10 +6,16 @@ import org.python.core.PyString;
 import org.python.core.PySystemState;
 import org.python.util.PythonInterpreter;
 
-import com.matigakis.flightbot.aircraft.controllers.AircraftController;
+import com.matigakis.flightbot.aircraft.controllers.Autopilot;
 
 public class JythonAutopilotLoader implements AutopilotLoader {
-	public AircraftController getAutopilot(String autopilotPackage){
+	private String autopilotPackage;
+	
+	public JythonAutopilotLoader(String autopilotPackage){
+		this.autopilotPackage = autopilotPackage;
+	}
+	
+	public Autopilot getAutopilot(){
 		PySystemState sys = Py.getSystemState();
 		sys.path.append(new PyString(autopilotPackage));
 		
@@ -21,6 +27,6 @@ public class JythonAutopilotLoader implements AutopilotLoader {
 		
 		PyObject controllerObject = controllerClass.__call__();
 		
-		return (AircraftController) controllerObject.__tojava__(AircraftController.class);
+		return (Autopilot) controllerObject.__tojava__(Autopilot.class);
 	}
 }

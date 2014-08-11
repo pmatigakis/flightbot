@@ -1,8 +1,7 @@
 package com.matigakis.flightbot.aircraft.controllers.loaders;
 
-import com.matigakis.flightbot.aircraft.controllers.AircraftController;
-
+import com.matigakis.flightbot.aircraft.controllers.Autopilot;
 
 public interface AutopilotLoader {
-	AircraftController getAutopilot(String autopilotName);
+	Autopilot getAutopilot();
 }

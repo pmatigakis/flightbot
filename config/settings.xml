@@ -1,6 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <settings>
+	<simulation>
+		<dt>0.05</dt>
+	</simulation>
+
 	<telemetryviewer>
 		<port>10500</port>
 	</telemetryviewer>

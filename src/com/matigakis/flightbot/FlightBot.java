@@ -12,36 +12,13 @@ import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.configuration.XMLConfiguration;
 import org.apache.log4j.BasicConfigurator;
 
-import com.matigakis.fgcontrol.ControlsClient;
-import com.matigakis.fgcontrol.SensorDataListener;
-import com.matigakis.fgcontrol.SensorServer;
-import com.matigakis.fgcontrol.sensors.SensorData;
 import com.matigakis.flightbot.aircraft.Aircraft;
 import com.matigakis.flightbot.aircraft.controllers.Autopilot;
 import com.matigakis.flightbot.aircraft.controllers.loaders.AutopilotLoader;
 import com.matigakis.flightbot.aircraft.controllers.loaders.JythonAutopilotLoader;
+import com.matigakis.flightbot.fdm.NetworkFDM;
 
-public final class FlightBot implements SensorDataListener{
-	private Aircraft aircraft;
-	private Autopilot autopilot;
-	private ControlsClient controlsClient;
-	
-	public FlightBot(Autopilot autopilot, ControlsClient controlsClient){
-		this.autopilot = autopilot;
-		this.controlsClient = controlsClient;
-		
-		aircraft = new Aircraft();
-	}
-	
-	@Override
-	public void handleSensorData(SensorData sensorData) {
-		aircraft.updateFromSensorData(sensorData);
-		
-		autopilot.updateControls(aircraft);
-		
-		controlsClient.transmitControls(aircraft.getControls());
-	}
-	
+public final class FlightBot{	
 	public static void main(String[] args){
 		CommandLine commandLine;
 		
@@ -78,6 +55,8 @@ public final class FlightBot implements SensorDataListener{
 			return;
 		}
 		
+		double dt = configuration.getDouble("simulation.dt");
+		
 		String host = configuration.getString("controls.host");
 		int sensorsPort = configuration.getInt("sensors.port");
 		int controlsPort = configuration.getInt("controls.port");
@@ -87,33 +66,30 @@ public final class FlightBot implements SensorDataListener{
 		AutopilotLoader autopilotLoader = new JythonAutopilotLoader(autopilotPackage);
 		Autopilot autopilot = autopilotLoader.getAutopilot();
 
-		final ControlsClient controlsClient = new ControlsClient(host, controlsPort);
+		Aircraft aircraft = new Aircraft();
 		
-		final SensorServer sensorServer = new SensorServer(sensorsPort);
+		NetworkFDM fdm = new NetworkFDM(host, sensorsPort, controlsPort);
 		
-		Runtime runtime = Runtime.getRuntime();
-		
-		runtime.addShutdownHook(new Thread(){
-			@Override
-			public void run() {
-				super.run();
-				
-				sensorServer.stopServer();
-				controlsClient.closeConnection();
-			}
-		});
-		
-		FlightBot flightbot = new FlightBot(autopilot, controlsClient);
-		
-		sensorServer.addSensorDataListener(flightbot);
-		
-		try{
-			controlsClient.openConnection();
-		}catch(InterruptedException ex){
-			System.out.println("Failed to open controls connection");
+		try {
+			fdm.connect();
+		} catch (InterruptedException e) {
+			System.out.println("Failed to connect to fdm");
 			return;
 		}
 		
-		sensorServer.start();	
+		int waitTime = (int)(1000 * dt);
+		
+		try{
+			while(true){
+				fdm.run(aircraft);
+				autopilot.updateControls(aircraft);
+				
+				Thread.sleep(waitTime);
+			}
+		}catch(InterruptedException ex){
+			System.out.println("Shutting down");
+		}
+		
+		fdm.disconnect();
 	}
 }

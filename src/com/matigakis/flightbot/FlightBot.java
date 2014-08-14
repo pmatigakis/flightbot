@@ -1,5 +1,8 @@
 package com.matigakis.flightbot;
 
+import java.util.concurrent.ScheduledThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
+
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
 import org.apache.commons.cli.Option;
@@ -16,7 +19,11 @@ import com.matigakis.flightbot.aircraft.Aircraft;
 import com.matigakis.flightbot.aircraft.controllers.Autopilot;
 import com.matigakis.flightbot.aircraft.controllers.loaders.AutopilotLoader;
 import com.matigakis.flightbot.aircraft.controllers.loaders.JythonAutopilotLoader;
-import com.matigakis.flightbot.fdm.NetworkFDM;
+import com.matigakis.flightbot.configuration.FDMConfigurationException;
+import com.matigakis.flightbot.configuration.FDMManager;
+import com.matigakis.flightbot.fdm.FDM;
+import com.matigakis.flightbot.fdm.FDMFactory;
+import com.matigakis.flightbot.fdm.NetworkFDMFactory;
 
 public final class FlightBot{	
 	public static void main(String[] args){
@@ -50,46 +57,44 @@ public final class FlightBot{
 			configuration = new XMLConfiguration("config/settings.xml");
 		} catch (ConfigurationException e) {
 			// TODO Auto-generated catch block
-			//e.printStackTrace();
+			e.printStackTrace();
 			System.out.println("Failed to load configuration");
 			return;
 		}
 		
 		double dt = configuration.getDouble("simulation.dt");
-		
-		String host = configuration.getString("controls.host");
-		int sensorsPort = configuration.getInt("sensors.port");
-		int controlsPort = configuration.getInt("controls.port");
 	
-		String autopilotPackage = commandLine.getOptionValue("autopilot");
+		FDMManager fdmManager = new FDMManager(configuration);
 		
-		AutopilotLoader autopilotLoader = new JythonAutopilotLoader(autopilotPackage);
-		Autopilot autopilot = autopilotLoader.getAutopilot();
-
-		Aircraft aircraft = new Aircraft();
-		
-		NetworkFDM fdm = new NetworkFDM(host, sensorsPort, controlsPort);
-		
-		try {
-			fdm.connect();
-		} catch (InterruptedException e) {
-			System.out.println("Failed to connect to fdm");
+		FDMFactory fdmFactory;
+		try{
+			fdmFactory = fdmManager.getFDMFactory();
+		}catch(FDMConfigurationException ex){
+			ex.printStackTrace();
+			System.out.println("Failed to load the FDM");
 			return;
 		}
 		
-		int waitTime = (int)(1000 * dt);
+		final FDM fdm = fdmFactory.createFDM();
 		
-		try{
-			while(true){
+		String autopilotPackage = commandLine.getOptionValue("autopilot");
+		
+		AutopilotLoader autopilotLoader = new JythonAutopilotLoader(autopilotPackage);
+		
+		final Autopilot autopilot = autopilotLoader.getAutopilot();
+		
+		ScheduledThreadPoolExecutor executor = new ScheduledThreadPoolExecutor(1);
+		
+		Runnable updateSimulation = new Runnable() {
+			private Aircraft aircraft = new Aircraft();
+			
+			@Override
+			public void run() {
 				fdm.run(aircraft);
 				autopilot.updateControls(aircraft);
-				
-				Thread.sleep(waitTime);
 			}
-		}catch(InterruptedException ex){
-			System.out.println("Shutting down");
-		}
+		};
 		
-		fdm.disconnect();
+		executor.scheduleAtFixedRate(updateSimulation, 0, (long)(dt*1000), TimeUnit.MILLISECONDS);
 	}
 }

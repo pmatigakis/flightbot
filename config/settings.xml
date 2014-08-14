@@ -3,6 +3,17 @@
 <settings>
 	<simulation>
 		<dt>0.05</dt>
+		
+		<fdm>
+			<type>network</type>
+			<sensors>
+				<port>10502</port>
+			</sensors>
+			<controls>
+				<host>127.0.0.1</host>
+				<port>10501</port>
+			</controls>
+		</fdm>
 	</simulation>
 
 	<telemetryviewer>

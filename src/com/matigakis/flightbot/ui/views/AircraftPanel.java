@@ -1,9 +1,12 @@
 package com.matigakis.flightbot.ui.views;
 
+import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
 
+import javax.swing.Box;
+import javax.swing.BoxLayout;
 import javax.swing.JPanel;
 
 import com.matigakis.flightbot.aircraft.Aircraft;
@@ -18,27 +21,20 @@ public class AircraftPanel extends JPanel{
 	public AircraftPanel(){
 		super();
 		
-		GridBagLayout layout = new GridBagLayout();    
+		BoxLayout layout = new BoxLayout(this, BoxLayout.PAGE_AXIS);
 		setLayout(layout);
 		
-		GridBagConstraints c = new GridBagConstraints();
-		c.anchor = GridBagConstraints.NORTHWEST;
-		c.insets = new Insets(0, 0, 10, 0);
+		setAlignmentX(LEFT_ALIGNMENT);
+		setAlignmentY(BOTTOM_ALIGNMENT);
 		
 		instrumentationPanel = new InstrumentationPanel();
-		c.gridx = 0;
-		c.gridy = 0;
-		add(instrumentationPanel, c);
+		add(instrumentationPanel);
 		
 		orientationPanel = new OrientationPanel();
-		c.gridx = 0;
-		c.gridy = 1;
-		add(orientationPanel, c);
+		add(orientationPanel);
 		
 		controlsPanel = new ControlsPanel();
-		c.gridx = 0;
-		c.gridy = 2;
-		add(controlsPanel, c);
+		add(controlsPanel);
 	}
 	
 	public void updateFromAircraftData(Aircraft aircraft){

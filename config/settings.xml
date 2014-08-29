@@ -10,22 +10,9 @@
 				<port>10502</port>
 			</sensors>
 			<controls>
-				<host>127.0.0.1</host>
+				<host>localhost</host>
 				<port>10501</port>
 			</controls>
 		</fdm>
 	</simulation>
-
-	<telemetryviewer>
-		<port>10500</port>
-	</telemetryviewer>
-	
-	<controls>
-		<host>127.0.0.1</host>
-		<port>10501</port>
-	</controls>
-	
-	<sensors>
-		<port>10502</port>
-	</sensors>
 </settings>

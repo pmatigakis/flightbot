@@ -27,6 +27,10 @@ public class MagnetometerPanel extends JPanel implements SensorRenderer<Magnetom
 		
 		GridBagConstraints c = new GridBagConstraints();
 		c.anchor = GridBagConstraints.NORTHWEST;
+		c.fill = GridBagConstraints.NONE;
+		
+		c.weightx = 1.0;
+		c.weighty = 1.0;
 		
 		JLabel xLabel = new JLabel("X magnitude");
 		xText = new JTextField(10);
@@ -36,7 +40,7 @@ public class MagnetometerPanel extends JPanel implements SensorRenderer<Magnetom
 		add(xLabel, c);
 		c.gridx = 1;
 		c.gridy = 0;
-		add(xText);
+		add(xText, c);
 		
 		JLabel yLabel = new JLabel("Y magnitude");
 		yText = new JTextField(10);

@@ -8,6 +8,10 @@ import org.python.util.PythonInterpreter;
 
 import com.matigakis.flightbot.aircraft.controllers.Autopilot;
 
+/**
+ * The JythonAutopilotLoader is used to create a new Autopilot object
+ * using a Jython package.
+ */
 public class JythonAutopilotLoader implements AutopilotLoader {
 	private String autopilotPackage;
 	
@@ -15,6 +19,9 @@ public class JythonAutopilotLoader implements AutopilotLoader {
 		this.autopilotPackage = autopilotPackage;
 	}
 	
+	/**
+	 * Create a Jython autopilot.
+	 */
 	public Autopilot getAutopilot(){
 		PySystemState sys = Py.getSystemState();
 		sys.path.append(new PyString(autopilotPackage));

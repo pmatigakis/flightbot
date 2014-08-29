@@ -166,6 +166,7 @@ public class Aircraft {
 		instrumentation.updateFromSensorData(sensorData);
 		orientation.updateFromSensordata(sensorData);
 		
+		//TODO: I should update the controls from the sensor data
 		controls.setAileron(sensorData.aileron);
 		controls.setElevator(sensorData.elevator);
 		controls.setRudder(sensorData.rudder);

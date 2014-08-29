@@ -35,6 +35,10 @@ public class ControlsPanel extends JPanel{
 		
 		GridBagConstraints c = new GridBagConstraints();
 		c.anchor = GridBagConstraints.NORTHWEST;
+		c.fill = GridBagConstraints.NONE;
+
+		c.weightx = 1.0;
+		c.weighty = 1.0;
 		
 		JLabel aileronLabel = new JLabel("Aileron");
 		aileronText = new JTextField(10);

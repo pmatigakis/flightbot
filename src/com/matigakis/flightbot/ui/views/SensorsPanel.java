@@ -4,6 +4,8 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
 
+import javax.swing.Box;
+import javax.swing.BoxLayout;
 import javax.swing.JPanel;
 
 import com.matigakis.flightbot.aircraft.Aircraft;
@@ -20,37 +22,29 @@ public class SensorsPanel extends JPanel{
 	public SensorsPanel(){
 		super();
 		
-		GridBagLayout layout = new GridBagLayout();    
+		//GridBagLayout layout = new GridBagLayout();
+		BoxLayout layout = new BoxLayout(this, BoxLayout.PAGE_AXIS);
 		setLayout(layout);
 		
-		GridBagConstraints c = new GridBagConstraints();
-		c.anchor = GridBagConstraints.NORTHWEST;
-		c.insets = new Insets(0, 0, 10, 0);
+		setAlignmentX(LEFT_ALIGNMENT);
+		setAlignmentY(BOTTOM_ALIGNMENT);
 		
 		gpsPanel = new GPSPanel();
-		c.gridx = 0;
-		c.gridy = 0;
-		add(gpsPanel, c);
+		add(gpsPanel);
 		
 		accelerometerPanel = new AccelerometerPanel();
-		c.gridx = 0;
-		c.gridy = 1;
-		add(accelerometerPanel, c);
+		add(accelerometerPanel);
 		
 		gyroscopePanel = new GyroscopePanel();
-		c.gridx = 0;
-		c.gridy = 2;
-		add(gyroscopePanel, c);
+		add(gyroscopePanel);
 		
 		magnetormeterPanel = new MagnetometerPanel();
-		c.gridx = 0;
-		c.gridy = 3;
-		add(magnetormeterPanel, c);
+		add(magnetormeterPanel);
 		
 		atmosphericpanel = new AtmosphericPanel();
-		c.gridx = 0;
-		c.gridy = 4;
-		add(atmosphericpanel, c);
+		add(atmosphericpanel);
+		
+		//add(Box.createGlue());
 	}
 	
 	public void updateFromAircraftData(Aircraft aircraft){

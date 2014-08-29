@@ -28,6 +28,12 @@ public class GyroscopePanel extends JPanel implements SensorRenderer<Gyroscope>{
 		
 		GridBagConstraints c = new GridBagConstraints();
 		c.anchor = GridBagConstraints.NORTHWEST;
+		c.fill = GridBagConstraints.NONE;
+
+		c.weightx = 1.0;
+		c.weighty = 1.0;
+		
+		setAlignmentY(TOP_ALIGNMENT);
 		
 		JLabel xRotationLabel = new JLabel("X rotation (dps)");
 		xRotationText = new JTextField(10);

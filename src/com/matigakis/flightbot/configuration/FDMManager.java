@@ -5,6 +5,10 @@ import org.apache.commons.configuration.Configuration;
 import com.matigakis.flightbot.fdm.FDMFactory;
 import com.matigakis.flightbot.fdm.NetworkFDMFactory;
 
+/**
+ * FDMManager is responsible for the creation of an FDM based
+ * on the settings of the configuration file.
+ */
 public final class FDMManager {
 	private Configuration configuration;
 	

@@ -34,9 +34,14 @@ public class GPSPanel extends JPanel implements SensorRenderer<GPS>{
 		LayoutManager layout = new GridBagLayout();
 		
 		setLayout(layout);
+		//setAlignmentX(RIGHT_ALIGNMENT);
 		
 		GridBagConstraints c = new GridBagConstraints();
 		c.anchor = GridBagConstraints.NORTHWEST;
+		c.fill = GridBagConstraints.NONE;
+		
+		c.weightx = 1.0;
+		c.weighty = 1.0;
 		
 		JLabel longitudeLabel = new JLabel("Longitude (deg)");
 		longitudeText = new JTextField(10);

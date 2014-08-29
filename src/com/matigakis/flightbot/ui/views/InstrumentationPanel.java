@@ -33,6 +33,11 @@ public class InstrumentationPanel extends JPanel{
 		
 		GridBagConstraints c = new GridBagConstraints();
 		c.anchor = GridBagConstraints.NORTHWEST;
+		c.fill = GridBagConstraints.NONE;
+		
+		c.weightx = 1.0;
+		c.weighty = 1.0;
+		
 		
 		NumberFormat textFormat = NumberFormat.getInstance();
 		textFormat.setMaximumFractionDigits(0);

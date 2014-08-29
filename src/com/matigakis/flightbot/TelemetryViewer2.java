@@ -8,16 +8,25 @@ import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.configuration.XMLConfiguration;
 import org.apache.log4j.BasicConfigurator;
 
-import com.matigakis.flightbot.ui.views.TelemetryView;
-import com.matigakis.flightbot.ui.controllers.TelemetryViewController;
+import com.matigakis.flightbot.ui.views.TelemetryWindow;
+import com.matigakis.flightbot.ui.controllers.TelemetryWindowController;
+import com.matigakis.fgcontrol.SensorDataListener;
 import com.matigakis.fgcontrol.SensorServer;
+import com.matigakis.fgcontrol.sensors.SensorData;
 
-public class TelemetryViewer {
+public class TelemetryViewer2 implements SensorDataListener{
+	@Override
+	public void handleSensorData(SensorData arg0) {
+		// TODO Auto-generated method stub
+		
+	}
+	
 	public static void main(String[] args){
 		BasicConfigurator.configure();
 		
 		Configuration configuration;
 		
+		/*
 		try {
 			configuration = new XMLConfiguration("settings.xml");
 		} catch (ConfigurationException e) {
@@ -25,28 +34,28 @@ public class TelemetryViewer {
 			System.out.println("Failed to load configuration");
 			return;
 		}
+		*/
 		
-		int sensorsPort = configuration.getInt("telemetryviewer.port");
+		//int sensorsPort = configuration.getInt("telemetryviewer.port");
+		int sensorsPort = 10501;
 		
 		final SensorServer sensorServer = new SensorServer(sensorsPort);
 		
-		TelemetryView view = new TelemetryView();
+		TelemetryWindow view = new TelemetryWindow();
 		
-		final TelemetryViewController controller = new TelemetryViewController(view);
+		final TelemetryWindowController controller = new TelemetryWindowController(view);
 		
-		view.addTelemetryViewListener(controller);
+		view.attachController(controller);
 		
-		sensorServer.addSensorDataListener(controller);
+		//sensorServer.addSensorDataListener(controller);
 		
 		view.addWindowListener(new WindowAdapter() {
 			@Override
 			public void windowClosing(WindowEvent e) {
 				sensorServer.stopServer();
-				controller.stopController();
 			}
 		});
 		
 		sensorServer.start();
-		controller.start();
 	}
 }

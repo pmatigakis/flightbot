@@ -1,7 +1,7 @@
 package com.matigakis.flightbot;
 
-import java.util.concurrent.ScheduledThreadPoolExecutor;
-import java.util.concurrent.TimeUnit;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
@@ -14,24 +14,105 @@ import org.apache.commons.configuration.Configuration;
 import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.configuration.XMLConfiguration;
 import org.apache.log4j.BasicConfigurator;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.matigakis.flightbot.aircraft.Aircraft;
 import com.matigakis.flightbot.aircraft.controllers.Autopilot;
 import com.matigakis.flightbot.aircraft.controllers.loaders.AutopilotLoader;
 import com.matigakis.flightbot.aircraft.controllers.loaders.JythonAutopilotLoader;
-import com.matigakis.flightbot.configuration.FDMConfigurationException;
-import com.matigakis.flightbot.configuration.FDMManager;
-import com.matigakis.flightbot.fdm.FDM;
-import com.matigakis.flightbot.fdm.FDMFactory;
-import com.matigakis.flightbot.fdm.NetworkFDMFactory;
+import com.matigakis.flightbot.fdm.NetworkFDMEventListener;
+import com.matigakis.flightbot.fdm.NetworkFDM;
+import com.matigakis.flightbot.ui.controllers.TelemetryViewController;
+import com.matigakis.flightbot.ui.controllers.TelemetryWindowController;
+import com.matigakis.flightbot.ui.views.TelemetryWindow;
 
-public final class FlightBot{	
-	public static void main(String[] args){
-		CommandLine commandLine;
+/**
+ * FlightBot is an autopilot simulator application. At the momment it
+ * supports autopilots written in Jython. FlightBot is using Flightgear as
+ * it's flight dynamics model.
+ */
+public final class FlightBot{
+	private static Logger LOGGER = LoggerFactory.getLogger(FlightBot.class);
+	
+	private NetworkFDM fdm;
+	
+	private TelemetryViewController controller;
+	//private TelemetryView view;
+	
+	private Aircraft aircraft;
+	private final Autopilot autopilot;
+	
+	public FlightBot(NetworkFDM fdm, Autopilot autopilot){
+		//view = new TelemetryWindow();
+		//controller = new TelemetryWindowController((TelemetryWindow) view);
 		
-		BasicConfigurator.configure();
+		//view.attachController(controller);
+		
+		aircraft = new Aircraft();
+		
+		TelemetryWindow telemetryWindow = new TelemetryWindow();
+		controller = new TelemetryWindowController(telemetryWindow);
+		
+		telemetryWindow.attachController(controller);
+		
+		this.autopilot = autopilot;
+		this.fdm = fdm;
+		
+		fdm.addEventListener(new NetworkFDMEventListener() {			
+			@Override
+			public void stateUpdated(NetworkFDM fdm) {
+				fdm.updateAircraftState(aircraft);
 				
-		//load an autopilot
+				controller.updateAircraft(aircraft);
+				controller.updateView();
+				
+				if(controller.getAutopilotState()){
+					updateAutopilot();
+				
+					fdm.transmitAircraftControls(aircraft.getControls());
+				}
+			}
+		});
+		
+		telemetryWindow.addWindowListener(new WindowAdapter() {
+			@Override
+			public void windowClosing(WindowEvent e) {
+				super.windowClosing(e);
+				stop();
+			}
+		});
+	}
+
+	
+	private void updateAutopilot(){
+		autopilot.updateControls(aircraft);
+	}
+	
+	/**
+	 * Run the simulation
+	 * 
+	 * @throws InterruptedException
+	 */
+	public void run() throws InterruptedException{
+		LOGGER.info("Starting the telemetry viewer");
+		fdm.connect();
+	}
+	
+	/**
+	 * Stop the simulation
+	 */
+	public void stop(){
+		LOGGER.info("Stopping the telemetry viewer");
+		fdm.disconnect();
+	}
+	
+	public static void main(String[] args) throws Exception{
+		BasicConfigurator.configure();
+		
+		//Initialize the command line parser an read the arguments
+		CommandLine commandLine;
+				
 		Options options = new Options();
 		Option autopilotOption = OptionBuilder
 				.withLongOpt("autopilot")
@@ -58,43 +139,26 @@ public final class FlightBot{
 		} catch (ConfigurationException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-			System.out.println("Failed to load configuration");
 			return;
 		}
 		
-		double dt = configuration.getDouble("simulation.dt");
-	
-		FDMManager fdmManager = new FDMManager(configuration);
+		//Create a network fdm from using the configuration data
+		String host = configuration.getString("simulation.fdm.controls.host");
+		int sensorsPort = configuration.getInt("simulation.fdm.sensors.port");
+		int controlsPort = configuration.getInt("simulation.fdm.controls.port");
 		
-		FDMFactory fdmFactory;
-		try{
-			fdmFactory = fdmManager.getFDMFactory();
-		}catch(FDMConfigurationException ex){
-			ex.printStackTrace();
-			System.out.println("Failed to load the FDM");
-			return;
-		}
+		NetworkFDM fdm = new NetworkFDM(host, sensorsPort, controlsPort);
 		
-		final FDM fdm = fdmFactory.createFDM();
-		
+		//Load an autopilot
 		String autopilotPackage = commandLine.getOptionValue("autopilot");
 		
 		AutopilotLoader autopilotLoader = new JythonAutopilotLoader(autopilotPackage);
 		
-		final Autopilot autopilot = autopilotLoader.getAutopilot();
+		Autopilot autopilot = autopilotLoader.getAutopilot();
 		
-		ScheduledThreadPoolExecutor executor = new ScheduledThreadPoolExecutor(1);
+		//Create the telemetry window
+		FlightBot flightbot = new FlightBot(fdm, autopilot);
 		
-		Runnable updateSimulation = new Runnable() {
-			private Aircraft aircraft = new Aircraft();
-			
-			@Override
-			public void run() {
-				fdm.run(aircraft);
-				autopilot.updateControls(aircraft);
-			}
-		};
-		
-		executor.scheduleAtFixedRate(updateSimulation, 0, (long)(dt*1000), TimeUnit.MILLISECONDS);
+		flightbot.run();
 	}
 }

@@ -5,13 +5,6 @@ public class NetworkFDMFactory implements FDMFactory{
 	private int sensorsPort;
 	private int controlsPort;
 	
-	public NetworkFDMFactory(){
-		//TODO: make sure this is corrent
-		this.host = "localhost";
-		this.sensorsPort = 10501;
-		this.controlsPort = 10502;
-	}
-	
 	public NetworkFDMFactory(String host, int sensorsPort, int controlsPort) {
 		this.host = host;
 		this.sensorsPort = sensorsPort;

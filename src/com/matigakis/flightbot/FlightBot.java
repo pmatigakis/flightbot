@@ -21,8 +21,10 @@ import com.matigakis.flightbot.aircraft.Aircraft;
 import com.matigakis.flightbot.aircraft.controllers.Autopilot;
 import com.matigakis.flightbot.aircraft.controllers.loaders.AutopilotLoader;
 import com.matigakis.flightbot.aircraft.controllers.loaders.JythonAutopilotLoader;
+import com.matigakis.flightbot.configuration.FDMManager;
 import com.matigakis.flightbot.fdm.NetworkFDMEventListener;
 import com.matigakis.flightbot.fdm.NetworkFDM;
+import com.matigakis.flightbot.fdm.NetworkFDMFactory;
 import com.matigakis.flightbot.ui.controllers.TelemetryViewController;
 import com.matigakis.flightbot.ui.controllers.TelemetryWindowController;
 import com.matigakis.flightbot.ui.views.TelemetryWindow;
@@ -142,12 +144,12 @@ public final class FlightBot{
 			return;
 		}
 		
-		//Create a network fdm from using the configuration data
-		String host = configuration.getString("simulation.fdm.controls.host");
-		int sensorsPort = configuration.getInt("simulation.fdm.sensors.port");
-		int controlsPort = configuration.getInt("simulation.fdm.controls.port");
+		//Create a network fdm using the configuration data
+		FDMManager fdmManager = new FDMManager(configuration);
 		
-		NetworkFDM fdm = new NetworkFDM(host, sensorsPort, controlsPort);
+		NetworkFDMFactory fdmFactory = (NetworkFDMFactory) fdmManager.getFDMFactory();
+		
+		NetworkFDM fdm = (NetworkFDM) fdmFactory.createFDM();
 		
 		//Load an autopilot
 		String autopilotPackage = commandLine.getOptionValue("autopilot");

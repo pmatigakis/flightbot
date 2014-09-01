@@ -16,16 +16,27 @@ public final class FDMManager {
 		this.configuration = configuration;
 	}
 	
+	/**
+	 * Create a NetworkFDMFactory
+	 * 
+	 * @return
+	 */
 	private FDMFactory createNetworkFDMFactory(){
-		String host = configuration.getString("controls.host");
-		int sensorsPort = configuration.getInt("sensors.port");
-		int controlsPort = configuration.getInt("controls.port");
+		String host = configuration.getString("simulation.fdm.controls.host");
+		int sensorsPort = configuration.getInt("simulation.fdm.sensors.port");
+		int controlsPort = configuration.getInt("simulation.fdm.controls.port");
 		
 		FDMFactory fdmFactory = new NetworkFDMFactory(host, sensorsPort, controlsPort);
 		
 		return fdmFactory;
 	}
 	
+	/**
+	 * Create an FDMFactory using the settings in the configuration object
+	 * 
+	 * @return
+	 * @throws FDMConfigurationException
+	 */
 	public FDMFactory getFDMFactory() throws FDMConfigurationException{
 		FDMFactory fdmFactory;
 		

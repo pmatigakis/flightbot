@@ -13,6 +13,10 @@ import com.matigakis.fgcontrol.controls.Controls;
 import com.matigakis.fgcontrol.sensors.SensorData;
 import com.matigakis.flightbot.aircraft.Aircraft;
 
+/**
+ * The NetworkFDM object is used to connect to a flight dynamics model
+ * via an UDP connection
+ */
 public class NetworkFDM implements FDM, SensorDataListener, NetworkFDMEventNotifier{
 	protected static final Logger LOGGER = LoggerFactory.getLogger(NetworkFDM.class);
 	
@@ -42,12 +46,20 @@ public class NetworkFDM implements FDM, SensorDataListener, NetworkFDMEventNotif
 		fdmEventListeners = new LinkedList<NetworkFDMEventListener>();
 	}
 	
+	/**
+	 * Connect to the flight dynamics model
+	 * 
+	 * @throws InterruptedException
+	 */
 	public void connect() throws InterruptedException {
 			sensorServer.start();
 			controlsClient.openConnection();
 			LOGGER.debug("Connecting to the FDM");
 	}
 	
+	/**
+	 * Disconnect
+	 */
 	public void disconnect() {
 			sensorServer.stopServer();
 			controlsClient.closeConnection();
@@ -62,11 +74,17 @@ public class NetworkFDM implements FDM, SensorDataListener, NetworkFDMEventNotif
 		stateUpdated();
 	}
 	
+	/**
+	 * Initialize an aircraft
+	 */
 	@Override
 	public void init(Aircraft aircraft) {
 		aircraft.updateFromSensorData(sensorData);
 	}
 	
+	/**
+	 * Update an aircraft
+	 */
 	@Override
 	public void updateAircraftState(Aircraft aircraft) {
 		//controlsClient.transmitControls(aircraft.getControls());

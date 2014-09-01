@@ -11,6 +11,9 @@ public class NetworkFDMFactory implements FDMFactory{
 		this.controlsPort = controlsPort;
 	}
 	
+	/**
+	 * Create a new NetworkFDM object
+	 */
 	@Override
 	public FDM createFDM() {
 		NetworkFDM fdm = new NetworkFDM(host, sensorsPort, controlsPort);

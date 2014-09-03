@@ -43,9 +43,10 @@ public final class FlightBot{
 	//private TelemetryView view;
 	
 	private Aircraft aircraft;
-	private final Autopilot autopilot;
+	//private final Autopilot autopilot;
 	
-	public FlightBot(NetworkFDM fdm, Autopilot autopilot){
+	//public FlightBot(NetworkFDM fdm, Autopilot autopilot){
+	public FlightBot(NetworkFDM fdm){
 		//view = new TelemetryWindow();
 		//controller = new TelemetryWindowController((TelemetryWindow) view);
 		
@@ -58,7 +59,7 @@ public final class FlightBot{
 		
 		telemetryWindow.attachController(controller);
 		
-		this.autopilot = autopilot;
+		//this.autopilot = autopilot;
 		this.fdm = fdm;
 		
 		fdm.addEventListener(new NetworkFDMEventListener() {			
@@ -70,8 +71,10 @@ public final class FlightBot{
 				controller.updateView();
 				
 				if(controller.getAutopilotState()){
-					updateAutopilot();
+					controller.updateAircraftControls();
 				
+					aircraft = controller.getAircraft();
+					
 					fdm.transmitAircraftControls(aircraft.getControls());
 				}
 			}
@@ -87,9 +90,11 @@ public final class FlightBot{
 	}
 
 	
+	/*
 	private void updateAutopilot(){
 		autopilot.updateControls(aircraft);
 	}
+	*/
 	
 	/**
 	 * Run the simulation
@@ -112,6 +117,7 @@ public final class FlightBot{
 	public static void main(String[] args) throws Exception{
 		BasicConfigurator.configure();
 		
+		/*
 		//Initialize the command line parser an read the arguments
 		CommandLine commandLine;
 				
@@ -132,6 +138,7 @@ public final class FlightBot{
 			System.out.println("Failed to parse arguments");
 			return;
 		}
+		*/
 		
 		//load the configuration
 		Configuration configuration;
@@ -151,15 +158,18 @@ public final class FlightBot{
 		
 		NetworkFDM fdm = (NetworkFDM) fdmFactory.createFDM();
 		
+		/*
 		//Load an autopilot
 		String autopilotPackage = commandLine.getOptionValue("autopilot");
 		
 		AutopilotLoader autopilotLoader = new JythonAutopilotLoader(autopilotPackage);
 		
 		Autopilot autopilot = autopilotLoader.getAutopilot();
+		*/
 		
 		//Create the telemetry window
-		FlightBot flightbot = new FlightBot(fdm, autopilot);
+		//FlightBot flightbot = new FlightBot(fdm, autopilot);
+		FlightBot flightbot = new FlightBot(fdm);
 		
 		flightbot.run();
 	}

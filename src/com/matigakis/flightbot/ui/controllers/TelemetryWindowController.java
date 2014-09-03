@@ -21,6 +21,9 @@ import org.slf4j.LoggerFactory;
 import com.matigakis.flightbot.aircraft.Aircraft;
 import com.matigakis.flightbot.aircraft.Instrumentation;
 import com.matigakis.flightbot.aircraft.Orientation;
+import com.matigakis.flightbot.aircraft.controllers.Autopilot;
+import com.matigakis.flightbot.aircraft.controllers.loaders.AutopilotLoader;
+import com.matigakis.flightbot.aircraft.controllers.loaders.JythonAutopilotLoader;
 import com.matigakis.flightbot.aircraft.sensors.Accelerometer;
 import com.matigakis.flightbot.aircraft.sensors.GPS;
 import com.matigakis.flightbot.aircraft.sensors.Gyroscope;
@@ -43,6 +46,7 @@ public class TelemetryWindowController implements TelemetryViewController{
 	private final TelemetryWindow telemetryView;
 	private final Aircraft aircraft;
 	private List<MapMarker> markers;
+	private Autopilot autopilot;
 	
 	public TelemetryWindowController(TelemetryWindow telemetryView){	
 		this.telemetryView = telemetryView;
@@ -198,5 +202,36 @@ public class TelemetryWindowController implements TelemetryViewController{
 	@Override
 	public void setAutopilotState(boolean state) {
 		aircraft.setAutopilotState(state);
+	}
+
+	@Override
+	public void loadAutopilot() {
+		JFileChooser fileChooser = new JFileChooser();
+		fileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+		
+		int result = fileChooser.showOpenDialog(telemetryView);
+		
+		if(result == JFileChooser.APPROVE_OPTION){
+			aircraft.setAutopilotState(false);
+			telemetryView.deactivateAutopilotControls(); //This is necessary because the autopilot loader can crush
+			
+			File f = fileChooser.getSelectedFile();
+			
+			AutopilotLoader autopilotLoader = new JythonAutopilotLoader(f.getAbsolutePath());
+			
+			autopilot = autopilotLoader.getAutopilot();
+			
+			telemetryView.activateAutopilotControls();
+		}
+	}
+
+	@Override
+	public void updateAircraftControls() {
+		autopilot.updateControls(aircraft);
+	}
+
+	@Override
+	public Aircraft getAircraft() {
+		return aircraft;
 	}
 }

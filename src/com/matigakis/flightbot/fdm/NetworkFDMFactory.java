@@ -18,11 +18,13 @@ public class NetworkFDMFactory implements FDMFactory{
 	public FDM createFDM() {
 		NetworkFDM fdm = new NetworkFDM(host, sensorsPort, controlsPort);
 		
+		/*
 		try {
 			fdm.connect();
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
+		*/
 		
 		return fdm;
 	}

@@ -13,6 +13,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 
+import javax.swing.JFileChooser;
 import javax.swing.JMenuBar;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
@@ -63,6 +64,7 @@ public class TelemetryWindow extends JFrame implements TelemetryView, JMapViewer
 	private final JMapViewer mapViewer;
 	//private final OperationPanel operationPanel;
 	
+	private final JMenuItem loadAutopilotMenuItem;
 	private final JMenuItem exitMenuItem;
 	
 	private final JMenuItem addMarkersMenuItem;
@@ -86,8 +88,10 @@ public class TelemetryWindow extends JFrame implements TelemetryView, JMapViewer
 		JMenuBar menuBar = new JMenuBar();
 		
 		JMenu fileMenu = new JMenu("File");
+		loadAutopilotMenuItem = new JMenuItem("Load autopilot");
 		exitMenuItem = new JMenuItem("Exit");
 		
+		fileMenu.add(loadAutopilotMenuItem);
 		fileMenu.add(exitMenuItem);
 		
 		menuBar.add(fileMenu);
@@ -95,6 +99,7 @@ public class TelemetryWindow extends JFrame implements TelemetryView, JMapViewer
 		JMenu autopilotMenu = new JMenu("autopilot");
 	
 		startAutopilotMenuItem = new JMenuItem("Start");
+		startAutopilotMenuItem.setEnabled(false);
 		autopilotMenu.add(startAutopilotMenuItem);
 		
 		stopAutopilotMenuItem = new JMenuItem("Stop");
@@ -263,6 +268,14 @@ public class TelemetryWindow extends JFrame implements TelemetryView, JMapViewer
 				viewController.clearmarkers();
 			}
 		});
+		
+		loadAutopilotMenuItem.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				viewController.loadAutopilot();
+				//startAutopilotMenuItem.setEnabled(true);
+			}
+		});
 	}
 	
 	@Override
@@ -275,5 +288,15 @@ public class TelemetryWindow extends JFrame implements TelemetryView, JMapViewer
 	public void processCommand(JMVCommandEvent arg0) {
 		// TODO Auto-generated method stub
 		
+	}
+	
+	public void activateAutopilotControls(){
+		startAutopilotMenuItem.setEnabled(true);
+		stopAutopilotMenuItem.setEnabled(false);
+	}
+	
+	public void deactivateAutopilotControls(){
+		startAutopilotMenuItem.setEnabled(false);
+		stopAutopilotMenuItem.setEnabled(false);
 	}
 }

@@ -12,4 +12,7 @@ public interface TelemetryViewController {
 	void close();
 	void setAutopilotState(boolean state);
 	boolean getAutopilotState();
+	void loadAutopilot();
+	void updateAircraftControls();
+	Aircraft getAircraft();
 }

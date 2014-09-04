@@ -3,13 +3,6 @@ package com.matigakis.flightbot;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 
-import org.apache.commons.cli.CommandLine;
-import org.apache.commons.cli.CommandLineParser;
-import org.apache.commons.cli.Option;
-import org.apache.commons.cli.OptionBuilder;
-import org.apache.commons.cli.Options;
-import org.apache.commons.cli.ParseException;
-import org.apache.commons.cli.PosixParser;
 import org.apache.commons.configuration.Configuration;
 import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.configuration.XMLConfiguration;
@@ -19,8 +12,6 @@ import org.slf4j.LoggerFactory;
 
 import com.matigakis.flightbot.aircraft.Aircraft;
 import com.matigakis.flightbot.aircraft.controllers.Autopilot;
-import com.matigakis.flightbot.aircraft.controllers.loaders.AutopilotLoader;
-import com.matigakis.flightbot.aircraft.controllers.loaders.JythonAutopilotLoader;
 import com.matigakis.flightbot.configuration.FDMManager;
 import com.matigakis.flightbot.fdm.NetworkFDMEventListener;
 import com.matigakis.flightbot.fdm.NetworkFDM;
@@ -35,14 +26,14 @@ import com.matigakis.flightbot.ui.views.TelemetryWindow;
  * it's flight dynamics model.
  */
 public final class FlightBot{
-	private static Logger LOGGER = LoggerFactory.getLogger(FlightBot.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(FlightBot.class);
 	
-	private NetworkFDM fdm;
+	private final NetworkFDM fdm;
 	
-	private TelemetryViewController controller;
+	private final TelemetryViewController controller;
 	//private TelemetryView view;
 	
-	private Aircraft aircraft;
+	private final Aircraft aircraft;
 	//private final Autopilot autopilot;
 	
 	//public FlightBot(NetworkFDM fdm, Autopilot autopilot){

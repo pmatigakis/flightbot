@@ -45,14 +45,18 @@ import com.matigakis.flightbot.ui.views.TelemetryWindow;
 public class TelemetryWindowController implements TelemetryViewController{
 	private static final Logger logger = LoggerFactory.getLogger(TelemetryWindowController.class);
 	private final TelemetryWindow telemetryView;
-	private final Aircraft aircraft;
+	//private final Aircraft aircraft;
 	private List<MapMarker> markers;
 	private Autopilot autopilot;
 	
+	private boolean autopilotRunning;
+	
 	public TelemetryWindowController(TelemetryWindow telemetryView){	
 		this.telemetryView = telemetryView;
-		aircraft = new Aircraft();
+		//aircraft = new Aircraft();
 		markers = new LinkedList<MapMarker>();
+		
+		autopilotRunning = false;
 	}
 
 	/**
@@ -70,16 +74,12 @@ public class TelemetryWindowController implements TelemetryViewController{
 	 * @return The state of the autopilot
 	 */
 	public boolean getAutopilotState() {
-		return aircraft.isAutopilotActive();
+		//return aircraft.isAutopilotActive();
+		return autopilotRunning;
 	}
 
 	@Override
-	public void updateAircraft(SensorData sensorData) {
-		aircraft.updateFromSensorData(sensorData);
-	}
-
-	@Override
-	public void updateView() {
+	public void updateView(Aircraft aircraft) {
 		telemetryView.updateView(aircraft);
 	}
 
@@ -132,77 +132,9 @@ public class TelemetryWindowController implements TelemetryViewController{
 	}
 
 	@Override
-	public void updateAircraft(Aircraft aircraft) {
-		Accelerometer acc1 = this.aircraft.getAccelerometer();
-		Accelerometer acc2 = aircraft.getAccelerometer();
-		
-		acc1.setXAcceleration(acc2.getXAcceleration());
-		acc1.setYAcceleration(acc2.getYAcceleration());
-		acc1.setZAcceleration(acc2.getZAcceleration());
-		
-		Gyroscope gyro1 = this.aircraft.getGyroscope();
-		Gyroscope gyro2 = aircraft.getGyroscope();
-		
-		gyro1.setXRotation(gyro2.getXRotation());
-		gyro1.setYRotation(gyro2.getYRotation());
-		gyro1.setZRotation(gyro2.getZRotation());
-		
-		Magnetometer magn1 = this.aircraft.getMagnetometer();
-		Magnetometer magn2 = aircraft.getMagnetometer();
-		
-		magn1.setXAxis(magn2.getXAxis());
-		magn1.setYAxis(magn2.getYAxis());
-		magn1.setZAxis(magn2.getZAxis());
-		
-		GPS gps1 = this.aircraft.getGPS();
-		GPS gps2 = aircraft.getGPS();
-		
-		gps1.setAirspeed(gps2.getAirspeed());
-		gps1.setAltitude(gps2.getAltitude());
-		gps1.setHeading(gps2.getHeading());
-		gps1.setLatitude(gps2.getLatitude());
-		gps1.setLongitude(gps2.getLongitude());
-		
-		StaticPressureSensor sps1 = this.aircraft.getStaticPressureSensor();
-		StaticPressureSensor sps2 = aircraft.getStaticPressureSensor();
-		
-		sps1.setPressure(sps2.getPressure());
-		
-		PitotTube pt1 = this.aircraft.getPitotTube();
-		PitotTube pt2 = aircraft.getPitotTube();
-		
-		pt1.setPressure(pt2.getPressure());
-		
-		TemperatureSensor tmp1 = this.aircraft.getTemperatureSensor();
-		TemperatureSensor tmp2 = aircraft.getTemperatureSensor();
-		
-		tmp1.setTemperature(tmp2.getTemperature());
-		
-		Orientation or1 = this.aircraft.getOrientation();
-		Orientation or2 = aircraft.getOrientation();
-		
-		or1.setPitch(or2.getPitch());
-		or1.setRoll(or2.getRoll());
-		
-		Instrumentation inst1 = this.aircraft.getInstrumentation();
-		Instrumentation inst2 = aircraft.getInstrumentation();
-		
-		inst1.setAirspeed(inst2.getAirspeed());
-		inst1.setAltitude(inst2.getAltitude());
-		inst1.setHeading(inst2.getHeading());
-		
-		Controls ctrl1 = this.aircraft.getControls();
-		Controls ctrl2 = aircraft.getControls();
-		
-		ctrl1.setAileron(ctrl2.getAileron());
-		ctrl1.setElevator(ctrl2.getElevator());
-		ctrl1.setRudder(ctrl2.getRudder());
-		ctrl1.setThrottle(ctrl2.getThrottle());
-	}
-
-	@Override
 	public void setAutopilotState(boolean state) {
-		aircraft.setAutopilotState(state);
+		//aircraft.setAutopilotState(state);
+		autopilotRunning = state;
 	}
 
 	@Override
@@ -213,7 +145,8 @@ public class TelemetryWindowController implements TelemetryViewController{
 		int result = fileChooser.showOpenDialog(telemetryView);
 		
 		if(result == JFileChooser.APPROVE_OPTION){
-			aircraft.setAutopilotState(false);
+			//aircraft.setAutopilotState(false);
+			autopilotRunning = false;
 			telemetryView.deactivateAutopilotControls(); //This is necessary because the autopilot loader can crush
 			
 			File f = fileChooser.getSelectedFile();
@@ -231,12 +164,7 @@ public class TelemetryWindowController implements TelemetryViewController{
 	}
 
 	@Override
-	public void updateAircraftControls() {
-		autopilot.updateControls(aircraft);
-	}
-
-	@Override
-	public Aircraft getAircraft() {
-		return aircraft;
+	public Autopilot getAutopilot() {
+		return autopilot;
 	}
 }

@@ -66,17 +66,17 @@ public final class FlightBot{
 			@Override
 			public void stateUpdated(NetworkFDM fdm) {
 				fdm.updateAircraftState(aircraft);
-				
-				controller.updateAircraft(aircraft);
-				controller.updateView();
-				
+			
 				if(controller.getAutopilotState()){
-					controller.updateAircraftControls();
+					//controller.updateAircraftControls();
+					Autopilot autopilot = controller.getAutopilot();
 				
-					aircraft = controller.getAircraft();
+					autopilot.updateControls(aircraft);
 					
 					fdm.transmitAircraftControls(aircraft.getControls());
 				}
+				
+				controller.updateView(aircraft);
 			}
 		});
 		

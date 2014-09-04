@@ -12,6 +12,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.io.IOException;
+import java.io.OutputStream;
 
 import javax.swing.JFileChooser;
 import javax.swing.JMenuBar;
@@ -79,6 +81,9 @@ public class TelemetryWindow extends JFrame implements TelemetryView, JMapViewer
 	private ActionListener clearMarkerActionListener;
 	private ActionListener startAutopilotActionListener;
 	private ActionListener stopAutopilotActionListener;
+	
+	private final JTextArea debugText;
+	private OutputStream consoleStream;
 	
 	private final MapMarkerDot airplaneMarker;
 
@@ -175,7 +180,7 @@ public class TelemetryWindow extends JFrame implements TelemetryView, JMapViewer
 		c.weighty = 0.0;
 		c.gridwidth = 3;
 		c.gridheight = 1;
-		JTextArea debugText = new JTextArea();
+		debugText = new JTextArea();
 		debugText.setRows(10);
 		debugText.setEditable(false);
 		JScrollPane scrollPane = new JScrollPane(debugText);
@@ -192,6 +197,14 @@ public class TelemetryWindow extends JFrame implements TelemetryView, JMapViewer
 		airplaneMarker.setVisible(true);
 		airplaneMarker.setColor(Color.red);
 		airplaneMarker.setBackColor(Color.red);
+		
+		consoleStream = new OutputStream() {
+			@Override
+			public void write(int b) throws IOException {
+				debugText.append(String.valueOf((char)b));
+				debugText.setCaretPosition(debugText.getDocument().getLength());
+			}
+		};
 	}
 	
 	@Override
@@ -314,5 +327,9 @@ public class TelemetryWindow extends JFrame implements TelemetryView, JMapViewer
 	public void deactivateAutopilotControls(){
 		startAutopilotMenuItem.setEnabled(false);
 		stopAutopilotMenuItem.setEnabled(false);
+	}
+	
+	public OutputStream getDebugConsoleStream(){
+		return consoleStream;
 	}
 }

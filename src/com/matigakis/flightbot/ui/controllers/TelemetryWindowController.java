@@ -22,6 +22,7 @@ import com.matigakis.flightbot.aircraft.Aircraft;
 import com.matigakis.flightbot.aircraft.Instrumentation;
 import com.matigakis.flightbot.aircraft.Orientation;
 import com.matigakis.flightbot.aircraft.controllers.Autopilot;
+import com.matigakis.flightbot.aircraft.controllers.JythonAutopilot;
 import com.matigakis.flightbot.aircraft.controllers.loaders.AutopilotLoader;
 import com.matigakis.flightbot.aircraft.controllers.loaders.JythonAutopilotLoader;
 import com.matigakis.flightbot.aircraft.sensors.Accelerometer;
@@ -217,9 +218,13 @@ public class TelemetryWindowController implements TelemetryViewController{
 			
 			File f = fileChooser.getSelectedFile();
 			
-			AutopilotLoader autopilotLoader = new JythonAutopilotLoader(f.getAbsolutePath());
+			JythonAutopilotLoader autopilotLoader = new JythonAutopilotLoader(f.getAbsolutePath());
 			
-			autopilot = autopilotLoader.getAutopilot();
+			JythonAutopilot jythonAutopilot = (JythonAutopilot) autopilotLoader.getAutopilot();
+			
+			jythonAutopilot.setOutputStream(telemetryView.getDebugConsoleStream());
+			
+			autopilot = jythonAutopilot;
 			
 			telemetryView.activateAutopilotControls();
 		}

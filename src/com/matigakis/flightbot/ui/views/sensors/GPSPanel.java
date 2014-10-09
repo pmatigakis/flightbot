@@ -1,4 +1,4 @@
-package com.matigakis.flightbot.ui.views;
+package com.matigakis.flightbot.ui.views.sensors;
 
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -11,6 +11,7 @@ import javax.swing.BorderFactory;
 import javax.swing.border.Border;
 
 import com.matigakis.flightbot.aircraft.sensors.GPS;
+import com.matigakis.flightbot.ui.views.SensorRenderer;
 
 
 /**

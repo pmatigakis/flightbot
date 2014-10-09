@@ -1,4 +1,4 @@
-package com.matigakis.flightbot.ui.views;
+package com.matigakis.flightbot.ui.views.sensors;
 
 import javax.swing.JPanel;
 
@@ -10,6 +10,7 @@ import javax.swing.JLabel;
 import javax.swing.JTextField;
 
 import com.matigakis.flightbot.aircraft.sensors.Gyroscope;
+import com.matigakis.flightbot.ui.views.SensorRenderer;
 
 public class GyroscopePanel extends JPanel implements SensorRenderer<Gyroscope>{	
 	private static final long serialVersionUID = 1L;

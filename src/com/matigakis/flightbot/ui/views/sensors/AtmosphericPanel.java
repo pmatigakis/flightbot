@@ -1,4 +1,4 @@
-package com.matigakis.flightbot.ui.views;
+package com.matigakis.flightbot.ui.views.sensors;
 
 import javax.swing.JPanel;
 

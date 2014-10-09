@@ -1,4 +1,4 @@
-package com.matigakis.flightbot.ui.views;
+package com.matigakis.flightbot.ui.views.information;
 
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;

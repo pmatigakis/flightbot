@@ -32,6 +32,7 @@ import org.openstreetmap.gui.jmapviewer.interfaces.MapMarker;
 import com.matigakis.flightbot.aircraft.Aircraft;
 import com.matigakis.flightbot.ui.controllers.TelemetryViewController;
 import com.matigakis.flightbot.ui.controllers.TelemetryViewListener;
+import com.matigakis.flightbot.ui.views.information.AircraftPanel;
 
 /*
 class ExitAdapter extends WindowAdapter{

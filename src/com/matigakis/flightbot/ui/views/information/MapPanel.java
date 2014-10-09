@@ -1,4 +1,4 @@
-package com.matigakis.flightbot.ui.views;
+package com.matigakis.flightbot.ui.views.information;
 
 import java.awt.Color;
 import java.util.LinkedList;
@@ -14,6 +14,7 @@ import org.openstreetmap.gui.jmapviewer.interfaces.JMapViewerEventListener;
 import org.openstreetmap.gui.jmapviewer.interfaces.MapMarker;
 
 import com.matigakis.flightbot.aircraft.sensors.GPS;
+import com.matigakis.flightbot.ui.views.SensorRenderer;
 
 public class MapPanel extends JPanel implements JMapViewerEventListener, SensorRenderer<GPS>{
 	private static final long serialVersionUID = 1L;

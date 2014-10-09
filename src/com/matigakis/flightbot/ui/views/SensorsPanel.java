@@ -9,6 +9,11 @@ import javax.swing.BoxLayout;
 import javax.swing.JPanel;
 
 import com.matigakis.flightbot.aircraft.Aircraft;
+import com.matigakis.flightbot.ui.views.sensors.AccelerometerPanel;
+import com.matigakis.flightbot.ui.views.sensors.AtmosphericPanel;
+import com.matigakis.flightbot.ui.views.sensors.GPSPanel;
+import com.matigakis.flightbot.ui.views.sensors.GyroscopePanel;
+import com.matigakis.flightbot.ui.views.sensors.MagnetometerPanel;
 
 public class SensorsPanel extends JPanel{
 	private static final long serialVersionUID = 1L;

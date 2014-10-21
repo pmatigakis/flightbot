@@ -31,18 +31,10 @@ public final class FlightBot{
 	private final NetworkFDM fdm;
 	
 	private final TelemetryViewController controller;
-	//private TelemetryView view;
 	
 	private final Aircraft aircraft;
-	//private final Autopilot autopilot;
 	
-	//public FlightBot(NetworkFDM fdm, Autopilot autopilot){
 	public FlightBot(NetworkFDM fdm){
-		//view = new TelemetryWindow();
-		//controller = new TelemetryWindowController((TelemetryWindow) view);
-		
-		//view.attachController(controller);
-		
 		aircraft = new Aircraft();
 		
 		TelemetryWindow telemetryWindow = new TelemetryWindow();
@@ -50,7 +42,6 @@ public final class FlightBot{
 		
 		telemetryWindow.attachController(controller);
 		
-		//this.autopilot = autopilot;
 		this.fdm = fdm;
 		
 		fdm.addEventListener(new NetworkFDMEventListener() {			
@@ -59,7 +50,6 @@ public final class FlightBot{
 				fdm.updateAircraftState(aircraft);
 			
 				if(controller.getAutopilotState()){
-					//controller.updateAircraftControls();
 					Autopilot autopilot = controller.getAutopilot();
 				
 					autopilot.updateControls(aircraft);
@@ -80,13 +70,6 @@ public final class FlightBot{
 		});
 	}
 
-	
-	/*
-	private void updateAutopilot(){
-		autopilot.updateControls(aircraft);
-	}
-	*/
-	
 	/**
 	 * Run the simulation
 	 * 
@@ -108,29 +91,6 @@ public final class FlightBot{
 	public static void main(String[] args) throws Exception{
 		BasicConfigurator.configure();
 		
-		/*
-		//Initialize the command line parser an read the arguments
-		CommandLine commandLine;
-				
-		Options options = new Options();
-		Option autopilotOption = OptionBuilder
-				.withLongOpt("autopilot")
-				.hasArgs()
-				.withArgName("NAME")
-				.withDescription("The name of he autopilot to load")
-				.create();
-		options.addOption(autopilotOption);
-		
-		CommandLineParser parser = new PosixParser();
-		
-		try{
-			commandLine = parser.parse(options, args);
-		}catch(ParseException ex){
-			System.out.println("Failed to parse arguments");
-			return;
-		}
-		*/
-		
 		//load the configuration
 		Configuration configuration;
 		
@@ -148,15 +108,6 @@ public final class FlightBot{
 		NetworkFDMFactory fdmFactory = (NetworkFDMFactory) fdmManager.getFDMFactory();
 		
 		NetworkFDM fdm = (NetworkFDM) fdmFactory.createFDM();
-		
-		/*
-		//Load an autopilot
-		String autopilotPackage = commandLine.getOptionValue("autopilot");
-		
-		AutopilotLoader autopilotLoader = new JythonAutopilotLoader(autopilotPackage);
-		
-		Autopilot autopilot = autopilotLoader.getAutopilot();
-		*/
 		
 		//Create the telemetry window
 		//FlightBot flightbot = new FlightBot(fdm, autopilot);

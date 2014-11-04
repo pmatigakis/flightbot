@@ -49,6 +49,8 @@ public final class FlightBot{
 			public void stateUpdated(NetworkFDM fdm) {
 				fdm.updateAircraftState(aircraft);
 			
+				//Update the aircraft controls and transmit the new values
+				//to the FDM, If the autopilot is activated
 				if(controller.getAutopilotState()){
 					Autopilot autopilot = controller.getAutopilot();
 				

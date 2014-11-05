@@ -2,16 +2,13 @@ package com.matigakis.flightbot.ui.views;
 
 import javax.swing.JFrame;
 
-import java.util.List;
 import java.awt.Color;
-import java.awt.Dimension;
 import java.awt.GridBagLayout;
 import java.awt.GridBagConstraints;
-import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
 
@@ -30,8 +27,8 @@ import org.openstreetmap.gui.jmapviewer.interfaces.JMapViewerEventListener;
 import org.openstreetmap.gui.jmapviewer.interfaces.MapMarker;
 
 import com.matigakis.flightbot.aircraft.Aircraft;
+import com.matigakis.flightbot.ui.controllers.AutopilotViewController;
 import com.matigakis.flightbot.ui.controllers.TelemetryViewController;
-import com.matigakis.flightbot.ui.controllers.TelemetryViewListener;
 import com.matigakis.flightbot.ui.views.information.AircraftPanel;
 
 /*
@@ -53,13 +50,10 @@ class ExitAdapter extends WindowAdapter{
 */
 
 /**
- * The TelemetryView is a simple window that displays the data that where received
- * from Flightgear
+ * The main application window. Everything is controlled and displayed here.
  */
-public class TelemetryWindow extends JFrame implements TelemetryView, JMapViewerEventListener{
+public class FlightBotWindow extends JFrame implements TelemetryView, AutopilotView, JMapViewerEventListener{
 	private static final long serialVersionUID = 1L;
-	
-	private TelemetryViewController viewController;
 	
 	private final SensorsPanel sensorsPanel;
 	private final AircraftPanel aircraftPanel; 
@@ -75,21 +69,20 @@ public class TelemetryWindow extends JFrame implements TelemetryView, JMapViewer
 
 	private JMenuItem startAutopilotMenuItem;
 	private JMenuItem stopAutopilotMenuItem;
-
-	private ActionListener loadAutopilotActionListener;
-	private ActionListener exitActionListener;
-	private ActionListener addMarkerActionListener;
-	private ActionListener clearMarkerActionListener;
-	private ActionListener startAutopilotActionListener;
-	private ActionListener stopAutopilotActionListener;
 	
 	private final JTextArea debugText;
 	private OutputStream consoleStream;
 	
 	private final MapMarkerDot airplaneMarker;
 
-	public TelemetryWindow(){
+	private AutopilotViewController autopilotViewController;
+	private TelemetryViewController telemetryViewController;
+	
+	public FlightBotWindow(TelemetryViewController telemetryViewController, AutopilotViewController autopilotViewController){
 		super();
+		
+		this.autopilotViewController = autopilotViewController;
+		this.telemetryViewController = telemetryViewController;
 		
 		setTitle("Telemetry viewer");
 		setDefaultCloseOperation(DISPOSE_ON_CLOSE);
@@ -101,8 +94,22 @@ public class TelemetryWindow extends JFrame implements TelemetryView, JMapViewer
 		JMenuBar menuBar = new JMenuBar();
 		
 		JMenu fileMenu = new JMenu("File");
+		
 		loadAutopilotMenuItem = new JMenuItem("Load autopilot");
+		loadAutopilotMenuItem.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				loadNewAutopilot();
+			}
+		});
+		
 		exitMenuItem = new JMenuItem("Exit");
+		exitMenuItem.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				closeWindow();
+			}
+		});
 		
 		fileMenu.add(loadAutopilotMenuItem);
 		fileMenu.add(exitMenuItem);
@@ -113,17 +120,44 @@ public class TelemetryWindow extends JFrame implements TelemetryView, JMapViewer
 	
 		startAutopilotMenuItem = new JMenuItem("Start");
 		startAutopilotMenuItem.setEnabled(false);
+		startAutopilotMenuItem.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				setAutopilotState(true);
+			}
+		});
 		autopilotMenu.add(startAutopilotMenuItem);
 		
 		stopAutopilotMenuItem = new JMenuItem("Stop");
 		stopAutopilotMenuItem.setEnabled(false);
+		stopAutopilotMenuItem.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				setAutopilotState(false);
+			}
+		});
 		autopilotMenu.add(stopAutopilotMenuItem);
 		
 		menuBar.add(autopilotMenu);
 		
 		JMenu mapMenu = new JMenu("Map");
+		
 		addMarkersMenuItem = new JMenuItem("Add markers");
+		addMarkersMenuItem.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				addMarkers();
+			}
+		});
+		
 		clearMarkersMenuItem = new JMenuItem("Clear markers");
+		clearMarkersMenuItem.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				clearMarkers();
+			}
+		});
+		
 		mapMenu.add(addMarkersMenuItem);
 		mapMenu.add(clearMarkersMenuItem);
 		
@@ -209,7 +243,7 @@ public class TelemetryWindow extends JFrame implements TelemetryView, JMapViewer
 	}
 	
 	@Override
-	public void updateView(Aircraft aircraft) {
+	public void updateTelemetry(Aircraft aircraft) {
 		sensorsPanel.updateFromAircraftData(aircraft);
 		aircraftPanel.updateFromAircraftData(aircraft);
 		
@@ -237,77 +271,6 @@ public class TelemetryWindow extends JFrame implements TelemetryView, JMapViewer
 		mapViewer.removeMapMarker(mapMarker);
 	}
 	
-	/**
-	 * Attach a controller to the view
-	 * 
-	 * @param controller The controller the attach to
-	 */
-	@Override
-	public void attachController(TelemetryViewController controller) {
-		this.viewController = controller;
-		
-		exitMenuItem.removeActionListener(exitActionListener);
-		exitActionListener = new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				viewController.close();
-			}
-		};
-		exitMenuItem.addActionListener(exitActionListener);
-		
-		startAutopilotMenuItem.removeActionListener(startAutopilotActionListener);
-		startAutopilotActionListener = new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				startAutopilotMenuItem.setEnabled(false);
-				stopAutopilotMenuItem.setEnabled(true);
-				
-				viewController.setAutopilotState(true);
-			}
-		};
-		startAutopilotMenuItem.addActionListener(startAutopilotActionListener);
-		
-		stopAutopilotMenuItem.removeActionListener(stopAutopilotActionListener);
-		stopAutopilotActionListener = new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				startAutopilotMenuItem.setEnabled(true);
-				stopAutopilotMenuItem.setEnabled(false);
-
-				viewController.setAutopilotState(false);
-			}
-		};
-		stopAutopilotMenuItem.addActionListener(stopAutopilotActionListener);
-		
-		addMarkersMenuItem.removeActionListener(addMarkerActionListener);
-		addMarkerActionListener = new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				viewController.addMarkers();
-			}
-		};
-		addMarkersMenuItem.addActionListener(addMarkerActionListener);
-		
-		clearMarkersMenuItem.removeActionListener(clearMarkerActionListener);
-		clearMarkerActionListener = new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				viewController.clearmarkers();
-			}
-		};
-		clearMarkersMenuItem.addActionListener(clearMarkerActionListener);
-		
-		loadAutopilotMenuItem.removeActionListener(loadAutopilotActionListener);
-		loadAutopilotActionListener = new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				viewController.loadAutopilot();
-				//startAutopilotMenuItem.setEnabled(true);
-			}
-		};
-		loadAutopilotMenuItem.addActionListener(loadAutopilotActionListener);
-	}
-	
 	@Override
 	public void close() {
 		//controller.close();
@@ -320,17 +283,67 @@ public class TelemetryWindow extends JFrame implements TelemetryView, JMapViewer
 		
 	}
 	
-	public void activateAutopilotControls(){
-		startAutopilotMenuItem.setEnabled(true);
-		stopAutopilotMenuItem.setEnabled(false);
-	}
-	
-	public void deactivateAutopilotControls(){
-		startAutopilotMenuItem.setEnabled(false);
-		stopAutopilotMenuItem.setEnabled(false);
-	}
-	
 	public OutputStream getDebugConsoleStream(){
 		return consoleStream;
+	}
+
+	@Override
+	public void setAutopilotControlsState(boolean autopilotControlsState) {
+		if(autopilotControlsState){
+			startAutopilotMenuItem.setEnabled(true);
+			stopAutopilotMenuItem.setEnabled(false);
+		}else{
+			startAutopilotMenuItem.setEnabled(false);
+			stopAutopilotMenuItem.setEnabled(false);
+		}
+	}
+	
+	@Override
+	public void updateAutopilotState(boolean autopilotState) {
+		if(autopilotState){
+			startAutopilotMenuItem.setEnabled(false);
+			stopAutopilotMenuItem.setEnabled(true);
+		}else{
+			startAutopilotMenuItem.setEnabled(true);
+			stopAutopilotMenuItem.setEnabled(false);
+		}	
+	}
+	
+	private void loadNewAutopilot(){
+		JFileChooser fileChooser = new JFileChooser();
+		fileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+		
+		int result = fileChooser.showOpenDialog(this);
+		
+		if(result == JFileChooser.APPROVE_OPTION){
+			//aircraft.setAutopilotState(false);
+			setAutopilotControlsState(false); //This is necessary because the autopilot loader can crush
+			
+			File f = fileChooser.getSelectedFile();
+			
+			autopilotViewController.loadAutopilot(f.getAbsolutePath());
+			
+			setAutopilotControlsState(true);
+		}
+	}
+	
+	private void setAutopilotState(boolean autopilotState){
+		if(autopilotState){
+			autopilotViewController.activateAutopilot();
+		}else{
+			autopilotViewController.deactivateAutopilot();
+		}
+	}
+	
+	private void closeWindow(){
+		telemetryViewController.close();
+	}
+	
+	private void addMarkers(){
+		telemetryViewController.addMarkers();
+	}
+	
+	private void clearMarkers(){
+		telemetryViewController.clearmarkers();
 	}
 }

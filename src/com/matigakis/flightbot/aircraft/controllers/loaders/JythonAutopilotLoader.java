@@ -1,13 +1,5 @@
 package com.matigakis.flightbot.aircraft.controllers.loaders;
 
-import java.io.OutputStream;
-
-import org.python.core.Py;
-import org.python.core.PyObject;
-import org.python.core.PyString;
-import org.python.core.PySystemState;
-import org.python.util.PythonInterpreter;
-
 import com.matigakis.flightbot.aircraft.controllers.Autopilot;
 import com.matigakis.flightbot.aircraft.controllers.JythonAutopilot;
 

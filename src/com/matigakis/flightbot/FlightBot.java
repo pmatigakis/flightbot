@@ -12,64 +12,48 @@ import org.slf4j.LoggerFactory;
 
 import com.matigakis.flightbot.aircraft.Aircraft;
 import com.matigakis.flightbot.aircraft.controllers.Autopilot;
+import com.matigakis.flightbot.configuration.FDMConfigurationException;
 import com.matigakis.flightbot.configuration.FDMManager;
 import com.matigakis.flightbot.fdm.NetworkFDMEventListener;
 import com.matigakis.flightbot.fdm.NetworkFDM;
 import com.matigakis.flightbot.fdm.NetworkFDMFactory;
+import com.matigakis.flightbot.ui.controllers.AutopilotViewController;
+import com.matigakis.flightbot.ui.controllers.JythonAutopilotViewController;
 import com.matigakis.flightbot.ui.controllers.TelemetryViewController;
 import com.matigakis.flightbot.ui.controllers.TelemetryWindowController;
-import com.matigakis.flightbot.ui.views.TelemetryWindow;
+import com.matigakis.flightbot.ui.views.FlightBotWindow;
 
 /**
- * FlightBot is an autopilot simulator application. At the momment it
+ * FlightBot is an autopilot simulator application. At the moment it
  * supports autopilots written in Jython. FlightBot is using Flightgear as
  * it's flight dynamics model.
  */
-public final class FlightBot{
+public final class FlightBot extends WindowAdapter implements NetworkFDMEventListener{
 	private static final Logger LOGGER = LoggerFactory.getLogger(FlightBot.class);
 	
 	private final NetworkFDM fdm;
 	
-	private final TelemetryViewController controller;
+	private final TelemetryViewController telemetryViewController;
+	private final AutopilotViewController autopilotViewController;
 	
 	private final Aircraft aircraft;
 	
-	public FlightBot(NetworkFDM fdm){
-		aircraft = new Aircraft();
-		
-		TelemetryWindow telemetryWindow = new TelemetryWindow();
-		controller = new TelemetryWindowController(telemetryWindow);
-		
-		telemetryWindow.attachController(controller);
-		
+	private FlightBot(NetworkFDM fdm){
 		this.fdm = fdm;
 		
-		fdm.addEventListener(new NetworkFDMEventListener() {			
-			@Override
-			public void stateUpdated(NetworkFDM fdm) {
-				fdm.updateAircraftState(aircraft);
-			
-				//Update the aircraft controls and transmit the new values
-				//to the FDM, If the autopilot is activated
-				if(controller.getAutopilotState()){
-					Autopilot autopilot = controller.getAutopilot();
-				
-					autopilot.updateControls(aircraft);
-					
-					fdm.transmitAircraftControls(aircraft.getControls());
-				}
-				
-				controller.updateView(aircraft);
-			}
-		});
+		aircraft = new Aircraft();
 		
-		telemetryWindow.addWindowListener(new WindowAdapter() {
-			@Override
-			public void windowClosing(WindowEvent e) {
-				super.windowClosing(e);
-				stop();
-			}
-		});
+		autopilotViewController = new JythonAutopilotViewController();
+		telemetryViewController = new TelemetryWindowController();
+		
+		FlightBotWindow FlightBotWindow = new FlightBotWindow(telemetryViewController, autopilotViewController);
+		
+		autopilotViewController.attachAutopilotView(FlightBotWindow);
+		telemetryViewController.attachTelemetryView(FlightBotWindow);
+		
+		fdm.addEventListener(this);
+		
+		FlightBotWindow.addWindowListener(this);
 	}
 
 	/**
@@ -90,6 +74,54 @@ public final class FlightBot{
 		fdm.disconnect();
 	}
 	
+	@Override
+	public void stateUpdated(NetworkFDM fdm) {
+		fdm.updateAircraftState(aircraft);
+		
+		updateAircraftControls();
+		
+		updateViews();
+	}
+	
+	/**
+	 * Update the aircraft controls and transmit the new values
+	 * to the FDM if the autopilot is activated
+	 */
+	private void updateAircraftControls(){
+		if(autopilotViewController.isAutopilotActivated()){
+			Autopilot autopilot = autopilotViewController.getAutopilot();
+						
+			autopilot.updateControls(aircraft);
+							
+			fdm.transmitAircraftControls(aircraft.getControls());
+		}
+	}
+	
+	/**
+	 * Update the views that are active
+	 */
+	private void updateViews(){		
+		telemetryViewController.updateView(aircraft);
+	}
+	
+	@Override
+	public void windowClosing(WindowEvent e) {
+		stop();
+	}
+	
+	public static FlightBot fromConfiguration(Configuration configuration) throws FDMConfigurationException{
+		//Create a network fdm using the configuration data
+		FDMManager fdmManager = new FDMManager(configuration);
+				
+		NetworkFDMFactory fdmFactory = (NetworkFDMFactory) fdmManager.getFDMFactory();
+				
+		NetworkFDM fdm = (NetworkFDM) fdmFactory.createFDM();
+		
+		FlightBot flightbot = new FlightBot(fdm);
+		
+		return flightbot;
+	}
+	
 	public static void main(String[] args) throws Exception{
 		BasicConfigurator.configure();
 		
@@ -99,21 +131,11 @@ public final class FlightBot{
 		try {
 			configuration = new XMLConfiguration("config/settings.xml");
 		} catch (ConfigurationException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 			return;
 		}
 		
-		//Create a network fdm using the configuration data
-		FDMManager fdmManager = new FDMManager(configuration);
-		
-		NetworkFDMFactory fdmFactory = (NetworkFDMFactory) fdmManager.getFDMFactory();
-		
-		NetworkFDM fdm = (NetworkFDM) fdmFactory.createFDM();
-		
-		//Create the telemetry window
-		//FlightBot flightbot = new FlightBot(fdm, autopilot);
-		FlightBot flightbot = new FlightBot(fdm);
+		FlightBot flightbot = FlightBot.fromConfiguration(configuration);
 		
 		flightbot.run();
 	}

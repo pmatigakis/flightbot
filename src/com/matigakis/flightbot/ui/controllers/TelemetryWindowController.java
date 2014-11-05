@@ -1,9 +1,7 @@
 package com.matigakis.flightbot.ui.controllers;
 
 import java.awt.Color;
-import java.awt.event.WindowEvent;
 import java.io.BufferedReader;
-import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
@@ -11,7 +9,6 @@ import java.util.LinkedList;
 import java.util.List;
 
 import javax.swing.JFileChooser;
-import javax.swing.text.View;
 
 import org.openstreetmap.gui.jmapviewer.MapMarkerDot;
 import org.openstreetmap.gui.jmapviewer.interfaces.MapMarker;
@@ -19,24 +16,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.matigakis.flightbot.aircraft.Aircraft;
-import com.matigakis.flightbot.aircraft.Instrumentation;
-import com.matigakis.flightbot.aircraft.Orientation;
-import com.matigakis.flightbot.aircraft.controllers.Autopilot;
-import com.matigakis.flightbot.aircraft.controllers.JythonAutopilot;
-import com.matigakis.flightbot.aircraft.controllers.loaders.AutopilotLoader;
-import com.matigakis.flightbot.aircraft.controllers.loaders.JythonAutopilotLoader;
-import com.matigakis.flightbot.aircraft.sensors.Accelerometer;
-import com.matigakis.flightbot.aircraft.sensors.GPS;
-import com.matigakis.flightbot.aircraft.sensors.Gyroscope;
-import com.matigakis.flightbot.aircraft.sensors.Magnetometer;
-import com.matigakis.flightbot.aircraft.sensors.PitotTube;
-import com.matigakis.flightbot.aircraft.sensors.StaticPressureSensor;
-import com.matigakis.flightbot.aircraft.sensors.TemperatureSensor;
-import com.matigakis.fgcontrol.controls.Controls;
-import com.matigakis.fgcontrol.sensors.SensorData;
-import com.matigakis.fgcontrol.SensorDataListener;
 import com.matigakis.flightbot.ui.views.TelemetryView;
-import com.matigakis.flightbot.ui.views.TelemetryWindow;
 
 /**
  * The TelemetryViewController is responsible for the rendering of sensor data
@@ -44,19 +24,15 @@ import com.matigakis.flightbot.ui.views.TelemetryWindow;
  */
 public class TelemetryWindowController implements TelemetryViewController{
 	private static final Logger logger = LoggerFactory.getLogger(TelemetryWindowController.class);
-	private final TelemetryWindow telemetryView;
 	//private final Aircraft aircraft;
+	private List<TelemetryView> telemetryViews;
 	private List<MapMarker> markers;
-	private Autopilot autopilot;
 	
-	private boolean autopilotRunning;
-	
-	public TelemetryWindowController(TelemetryWindow telemetryView){	
-		this.telemetryView = telemetryView;
+	public TelemetryWindowController(){	
 		//aircraft = new Aircraft();
-		markers = new LinkedList<MapMarker>();
+		telemetryViews = new LinkedList<TelemetryView>();
 		
-		autopilotRunning = false;
+		markers = new LinkedList<MapMarker>();
 	}
 
 	/**
@@ -65,29 +41,23 @@ public class TelemetryWindowController implements TelemetryViewController{
 	@Override
 	public void close() {
 		//telemetryView.dispatchEvent(new WindowEvent(telemetryView, WindowEvent.WINDOW_CLOSING));
-		telemetryView.close();
-	}
-
-	/**
-	 * Get the state of the autopilot
-	 * 
-	 * @return The state of the autopilot
-	 */
-	public boolean getAutopilotState() {
-		//return aircraft.isAutopilotActive();
-		return autopilotRunning;
+		for(TelemetryView telemetryView: telemetryViews){
+			telemetryView.close();
+		}
 	}
 
 	@Override
 	public void updateView(Aircraft aircraft) {
-		telemetryView.updateView(aircraft);
+		for(TelemetryView telemetryView: telemetryViews){
+			telemetryView.updateTelemetry(aircraft);
+		}
 	}
 
 	@Override
 	public void addMarkers() {
 		JFileChooser fileChooser = new JFileChooser();
 		
-		int selection = fileChooser.showOpenDialog(telemetryView);
+		int selection = fileChooser.showOpenDialog(null);
 		
 		if(selection == fileChooser.APPROVE_OPTION){
 			try {
@@ -106,7 +76,9 @@ public class TelemetryWindowController implements TelemetryViewController{
 							marker.setColor(Color.blue);
 							marker.setBackColor(Color.blue);
 							markers.add(marker);
-							telemetryView.addMarker(marker);
+							for(TelemetryView telemetryView: telemetryViews){
+								telemetryView.addMarker(marker);
+							}
 						}else{
 							logger.warn("Invalid marker data");
 						}
@@ -125,46 +97,21 @@ public class TelemetryWindowController implements TelemetryViewController{
 	@Override
 	public void clearmarkers() {
 		for(MapMarker mapMarker: markers){
-			telemetryView.removeMarker(mapMarker);
+			for(TelemetryView telemetryView: telemetryViews){
+				telemetryView.removeMarker(mapMarker);
+			}
 		}
 		
 		markers.clear();
 	}
 
 	@Override
-	public void setAutopilotState(boolean state) {
-		//aircraft.setAutopilotState(state);
-		autopilotRunning = state;
+	public void attachTelemetryView(TelemetryView telemetryView) {
+		telemetryViews.add(telemetryView);
 	}
 
 	@Override
-	public void loadAutopilot() {
-		JFileChooser fileChooser = new JFileChooser();
-		fileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
-		
-		int result = fileChooser.showOpenDialog(telemetryView);
-		
-		if(result == JFileChooser.APPROVE_OPTION){
-			//aircraft.setAutopilotState(false);
-			autopilotRunning = false;
-			telemetryView.deactivateAutopilotControls(); //This is necessary because the autopilot loader can crush
-			
-			File f = fileChooser.getSelectedFile();
-			
-			JythonAutopilotLoader autopilotLoader = new JythonAutopilotLoader(f.getAbsolutePath());
-			
-			JythonAutopilot jythonAutopilot = (JythonAutopilot) autopilotLoader.getAutopilot();
-			
-			jythonAutopilot.setOutputStream(telemetryView.getDebugConsoleStream());
-			
-			autopilot = jythonAutopilot;
-			
-			telemetryView.activateAutopilotControls();
-		}
-	}
-
-	@Override
-	public Autopilot getAutopilot() {
-		return autopilot;
+	public void detachTelemetryView(TelemetryView telemetryView) {
+		telemetryViews.remove(telemetryView);
 	}
 }

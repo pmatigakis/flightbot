@@ -10,6 +10,8 @@
 	<property name="dist" location="dist" />
 	<property name="lib" location="lib" />
 	<property name="main-class" value="com.matigakis.flightbot.FlightBot" />
+	<property file="project.properties" />
+	<property name="project.name" value="FlightBot" />
 	
 	<path id="lib.path">
 		<fileset dir="${lib}">
@@ -39,9 +41,12 @@
 	</target>
 	
 	<target name="dist" depends="compile">
-		<jar jarfile="${dist}/FlightBot.jar" basedir="${build.classes}">
+		<jar jarfile="${dist}/${project.name}-${version.major}.${version.minor}.${version.patch}.jar" basedir="${build.classes}">
 			<manifest>
           		<attribute name="Main-Class" value="${main-class}"/>
+				<attribute name="Implementation-Vendor" value="Panagiotis Matigakis"/>
+				<attribute name="Implementation-Title" value="${project.name}"/>
+				<attribute name="Implementation-Version" value="${version.major}.${version.minor}.${version.patch}"/>
             </manifest>
 		</jar>
 	</target>
@@ -49,7 +54,7 @@
 	<target name="test" depends="dist, compile-tests">
 		<junit printsummary="yes">
 			<classpath>
-				<pathelement location="${dist}/FlightBot.jar"/>
+				<pathelement location="${dist}/${project.name}-${version.major}.${version.minor}.${version.patch}.jar"/>
 				<pathelement location="${build.tests}"/>
 				<path refid="lib.path"/>
 			</classpath>

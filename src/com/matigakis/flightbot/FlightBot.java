@@ -56,6 +56,20 @@ public final class FlightBot extends WindowAdapter implements NetworkFDMEventLis
 		FlightBotWindow.addWindowListener(this);
 	}
 
+
+	public static FlightBot fromConfiguration(Configuration configuration) throws FDMConfigurationException{
+		//Create a network fdm using the configuration data
+		FDMManager fdmManager = new FDMManager(configuration);
+				
+		NetworkFDMFactory fdmFactory = (NetworkFDMFactory) fdmManager.getFDMFactory();
+				
+		NetworkFDM fdm = (NetworkFDM) fdmFactory.createFDM();
+		
+		FlightBot flightbot = new FlightBot(fdm);
+		
+		return flightbot;
+	}
+	
 	/**
 	 * Run the simulation
 	 * 
@@ -83,6 +97,11 @@ public final class FlightBot extends WindowAdapter implements NetworkFDMEventLis
 		updateViews();
 	}
 	
+	@Override
+	public void windowClosing(WindowEvent e) {
+		stop();
+	}
+	
 	/**
 	 * Update the aircraft controls and transmit the new values
 	 * to the FDM if the autopilot is activated
@@ -102,24 +121,6 @@ public final class FlightBot extends WindowAdapter implements NetworkFDMEventLis
 	 */
 	private void updateViews(){		
 		telemetryViewController.updateView(aircraft);
-	}
-	
-	@Override
-	public void windowClosing(WindowEvent e) {
-		stop();
-	}
-	
-	public static FlightBot fromConfiguration(Configuration configuration) throws FDMConfigurationException{
-		//Create a network fdm using the configuration data
-		FDMManager fdmManager = new FDMManager(configuration);
-				
-		NetworkFDMFactory fdmFactory = (NetworkFDMFactory) fdmManager.getFDMFactory();
-				
-		NetworkFDM fdm = (NetworkFDM) fdmFactory.createFDM();
-		
-		FlightBot flightbot = new FlightBot(fdm);
-		
-		return flightbot;
 	}
 	
 	public static void main(String[] args) throws Exception{

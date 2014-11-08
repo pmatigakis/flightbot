@@ -22,7 +22,7 @@ public class NetworkFDM implements FDM, SensorDataListener, NetworkFDMEventNotif
 	
 	protected List<NetworkFDMEventListener> fdmEventListeners;
 	
-	protected SensorData sensorData;;
+	protected SensorData sensorData;
 	
 	protected String host;
 	protected int sensorsPort;
@@ -64,18 +64,18 @@ public class NetworkFDM implements FDM, SensorDataListener, NetworkFDMEventNotif
 			sensorServer.stopServer();
 			controlsClient.closeConnection();
 			
-			LOGGER.debug("Disconnection from the FDM");
+			LOGGER.debug("Disconnected from the FDM");
 	}
 	
 	@Override
 	public void handleSensorData(SensorData sensorData) {
 		this.sensorData = sensorData;
 		
-		stateUpdated();
+		networkFDMStateUpdated();
 	}
 	
 	/**
-	 * Initialize an aircraft
+	 * Initialize an aircraft state
 	 */
 	@Override
 	public void init(Aircraft aircraft) {
@@ -83,7 +83,7 @@ public class NetworkFDM implements FDM, SensorDataListener, NetworkFDMEventNotif
 	}
 	
 	/**
-	 * Update an aircraft
+	 * Update an aircraft state
 	 */
 	@Override
 	public void updateAircraftState(Aircraft aircraft) {
@@ -92,14 +92,14 @@ public class NetworkFDM implements FDM, SensorDataListener, NetworkFDMEventNotif
 	}
 
 	@Override
-	public void addEventListener(NetworkFDMEventListener fdmEventListener) {
+	public void addNetworkFDMEventListener(NetworkFDMEventListener fdmEventListener) {
 		fdmEventListeners.add(fdmEventListener);
 	}
 
 	@Override
-	public void stateUpdated() {
+	public void networkFDMStateUpdated() {
 		for(NetworkFDMEventListener fdmEventListener: fdmEventListeners){
-			fdmEventListener.stateUpdated(this);
+			fdmEventListener.networkFDMStateUpdated(this);
 		}
 	}
 	

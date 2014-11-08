@@ -51,7 +51,7 @@ public final class FlightBot extends WindowAdapter implements NetworkFDMEventLis
 		autopilotViewController.attachAutopilotView(FlightBotWindow);
 		telemetryViewController.attachTelemetryView(FlightBotWindow);
 		
-		fdm.addEventListener(this);
+		fdm.addNetworkFDMEventListener(this);
 		
 		FlightBotWindow.addWindowListener(this);
 	}
@@ -89,7 +89,7 @@ public final class FlightBot extends WindowAdapter implements NetworkFDMEventLis
 	}
 	
 	@Override
-	public void stateUpdated(NetworkFDM fdm) {
+	public void networkFDMStateUpdated(NetworkFDM fdm) {
 		fdm.updateAircraftState(aircraft);
 		
 		updateAircraftControls();

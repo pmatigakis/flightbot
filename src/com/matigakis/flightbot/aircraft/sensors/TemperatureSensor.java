@@ -1,6 +1,6 @@
 package com.matigakis.flightbot.aircraft.sensors;
 
-import com.matigakis.fgcontrol.sensors.SensorData;
+import com.matigakis.fgcontrol.fdm.FDMData;;
 
 /**
  * The TemperatureSensor measures the air temperature.
@@ -20,8 +20,8 @@ public class TemperatureSensor implements Sensor{
 	 * Update the temperature sensor using data from the sensors.
 	 */
 	@Override
-	public void updateFromSensorData(SensorData sensorData) {
-		setTemperature(sensorData.temperature);
+	public void updateFromFDMData(FDMData fdmData) {
+		setTemperature(fdmData.getAtmosphere().getTemperature());
 	}
 
 	/**

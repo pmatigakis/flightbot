@@ -1,6 +1,8 @@
 package com.matigakis.flightbot.aircraft;
 
-import com.matigakis.fgcontrol.sensors.SensorData;
+import com.matigakis.fgcontrol.fdm.FDMData;
+import com.matigakis.fgcontrol.fdm.Location;
+import com.matigakis.fgcontrol.fdm.Velocities;
 
 /**
  * The Instrumentation object holds information about like altitude, airspeed and 
@@ -72,13 +74,16 @@ public class Instrumentation {
 	}
 	
 	/**
-	 * Update the instrument using data from the SensorData object.
+	 * Update the instrument using data from the FDMData object.
 	 * 
-	 * @param sensorData
+	 * @param fdmData
 	 */
-	public void updateFromSensorData(SensorData sensorData){
-		setAltitude(sensorData.altitude);
-		setAirspeed(sensorData.airspeed);
-		setHeading(sensorData.heading);
+	public void updateFromFDMData(FDMData fdmData){
+		Location location = fdmData.getLocation();
+		Velocities velocities = fdmData.getVelocities();
+		
+		setAltitude(location.getAltitude());
+		setAirspeed(velocities.getAirspeed());
+		setHeading(location.getHeading());
 	}
 }

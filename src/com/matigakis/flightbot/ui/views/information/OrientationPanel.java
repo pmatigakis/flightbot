@@ -10,7 +10,7 @@ import javax.swing.JLabel;
 import javax.swing.JFormattedTextField;
 import java.text.NumberFormat;
 
-import com.matigakis.flightbot.aircraft.Orientation;
+import com.matigakis.fgcontrol.fdm.Orientation;
 
 /**
  * The OrientationPanel is used to display information about the orientation

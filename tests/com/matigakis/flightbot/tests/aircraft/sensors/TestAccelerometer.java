@@ -8,7 +8,8 @@ import org.junit.Test;
 import org.junit.Before;
 
 import com.matigakis.flightbot.aircraft.sensors.Accelerometer;
-import com.matigakis.fgcontrol.sensors.SensorData;
+import com.matigakis.fgcontrol.fdm.Accelerations;
+import com.matigakis.fgcontrol.fdm.FDMData;
 
 @RunWith(JUnit4.class)
 public class TestAccelerometer {
@@ -21,12 +22,13 @@ public class TestAccelerometer {
 	
 	@Test
 	public void testUpdateFromSensorData(){		
-		SensorData sensorData = new DummySensorData();
+		FDMData fdmData = new DummyFDMData();
 				
-		accelerometer.updateFromSensorData(sensorData);
+		accelerometer.updateFromFDMData(fdmData);
+		Accelerations accelerations = fdmData.getAccelerations();
 		
-		assertEquals(sensorData.xAcceleration, accelerometer.getXAcceleration(), 0.0);
-		assertEquals(sensorData.yAcceleration, accelerometer.getYAcceleration(), 0.0);
-		assertEquals(sensorData.zAcceleration, accelerometer.getZAcceleration(), 0.0);
+		assertEquals(accelerations.getXAcceleration(), accelerometer.getXAcceleration(), 0.0);
+		assertEquals(accelerations.getYAcceleration(), accelerometer.getYAcceleration(), 0.0);
+		assertEquals(accelerations.getZAcceleration(), accelerometer.getZAcceleration(), 0.0);
 	}
 }

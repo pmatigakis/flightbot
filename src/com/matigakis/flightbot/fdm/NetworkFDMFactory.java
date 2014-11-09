@@ -1,6 +1,8 @@
 package com.matigakis.flightbot.fdm;
 
-public class NetworkFDMFactory implements FDMFactory{
+import com.matigakis.fgcontrol.fdm.NetworkFDM;
+
+public class NetworkFDMFactory{
 	private String host;
 	private int sensorsPort;
 	private int controlsPort;
@@ -14,8 +16,7 @@ public class NetworkFDMFactory implements FDMFactory{
 	/**
 	 * Create a new NetworkFDM object
 	 */
-	@Override
-	public FDM createFDM() {
+	public NetworkFDM createFDM() {
 		NetworkFDM fdm = new NetworkFDM(host, sensorsPort, controlsPort);
 		
 		/*

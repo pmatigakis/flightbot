@@ -2,7 +2,6 @@ package com.matigakis.flightbot.configuration;
 
 import org.apache.commons.configuration.Configuration;
 
-import com.matigakis.flightbot.fdm.FDMFactory;
 import com.matigakis.flightbot.fdm.NetworkFDMFactory;
 
 /**
@@ -21,12 +20,12 @@ public final class FDMManager {
 	 * 
 	 * @return
 	 */
-	private FDMFactory createNetworkFDMFactory(){
+	private NetworkFDMFactory createNetworkFDMFactory(){
 		String host = configuration.getString("simulation.fdm.controls.host");
 		int sensorsPort = configuration.getInt("simulation.fdm.sensors.port");
 		int controlsPort = configuration.getInt("simulation.fdm.controls.port");
 		
-		FDMFactory fdmFactory = new NetworkFDMFactory(host, sensorsPort, controlsPort);
+		NetworkFDMFactory fdmFactory = new NetworkFDMFactory(host, sensorsPort, controlsPort);
 		
 		return fdmFactory;
 	}
@@ -37,8 +36,8 @@ public final class FDMManager {
 	 * @return
 	 * @throws FDMConfigurationException
 	 */
-	public FDMFactory getFDMFactory() throws FDMConfigurationException{
-		FDMFactory fdmFactory;
+	public NetworkFDMFactory getFDMFactory() throws FDMConfigurationException{
+		NetworkFDMFactory fdmFactory;
 		
 		String fdmType = configuration.getString("simulation.fdm.type");
 		

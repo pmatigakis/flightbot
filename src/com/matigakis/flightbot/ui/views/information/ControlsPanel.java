@@ -10,7 +10,7 @@ import javax.swing.JLabel;
 import javax.swing.BorderFactory;
 import javax.swing.border.Border;
 
-import com.matigakis.fgcontrol.controls.Controls;
+import com.matigakis.fgcontrol.fdm.Controls;
 
 /**
  * The ControlsPanel panel shows the state of the aircraft's controls

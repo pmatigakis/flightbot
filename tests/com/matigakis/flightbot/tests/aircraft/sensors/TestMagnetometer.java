@@ -8,7 +8,7 @@ import org.junit.Test;
 import org.junit.Before;
 
 import com.matigakis.flightbot.aircraft.sensors.Magnetometer;
-import com.matigakis.fgcontrol.sensors.SensorData;
+import com.matigakis.fgcontrol.fdm.FDMData;
 
 @RunWith(JUnit4.class)
 public class TestMagnetometer {
@@ -21,12 +21,12 @@ public class TestMagnetometer {
 	
 	@Test
 	public void testUpdateFromSensorData(){
-		SensorData sensorData = new DummySensorData();
+		FDMData fdmData = new DummyFDMData();
 		
-		magnetometer.updateFromSensorData(sensorData);
+		magnetometer.updateFromFDMData(fdmData);
 		
-		assertEquals(sensorData.xMagn, magnetometer.getXAxis(), 0.0);
-		assertEquals(sensorData.yMagn, magnetometer.getYAxis(), 0.0);
-		assertEquals(sensorData.zMagn, magnetometer.getZAxis(), 0.0);
+		assertEquals(0.0, magnetometer.getXAxis(), 0.0);
+		assertEquals(0.0, magnetometer.getYAxis(), 0.0);
+		assertEquals(0.0, magnetometer.getZAxis(), 0.0);
 	}
 }

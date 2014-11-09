@@ -1,10 +1,10 @@
 package com.matigakis.flightbot.aircraft.sensors;
 
-import com.matigakis.fgcontrol.sensors.SensorData;
+import com.matigakis.fgcontrol.fdm.FDMData;;
 
 public class PitotTube extends PressureSensor {
 	@Override
-	public void updateFromSensorData(SensorData sensorData) {
-		setPressure(sensorData.dynamicPressure);
+	public void updateFromFDMData(FDMData fdmData) {
+		setPressure(fdmData.getAtmosphere().getPitotTubePressure());
 	}
 }

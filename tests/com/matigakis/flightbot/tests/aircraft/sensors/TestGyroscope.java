@@ -8,7 +8,8 @@ import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
 
 import com.matigakis.flightbot.aircraft.sensors.Gyroscope;
-import com.matigakis.fgcontrol.sensors.SensorData;
+import com.matigakis.fgcontrol.fdm.Accelerations;
+import com.matigakis.fgcontrol.fdm.FDMData;
 
 @RunWith(JUnit4.class)
 public class TestGyroscope {
@@ -21,12 +22,13 @@ public class TestGyroscope {
 	
 	@Test
 	public void testUpdateFromSensordata(){
-		SensorData sensorData = new DummySensorData();
+		FDMData fdmData = new DummyFDMData();
 				
-		gyroscope.updateFromSensorData(sensorData);
+		gyroscope.updateFromFDMData(fdmData);
+		Accelerations accelerations = fdmData.getAccelerations();
 		
-		assertEquals(sensorData.xRotation, gyroscope.getXRotation(), 0.0);
-		assertEquals(sensorData.yRotation, gyroscope.getYRotation(), 0.0);
-		assertEquals(sensorData.zRotation, gyroscope.getZRotation(), 0.0);
+		assertEquals(accelerations.getRollRate(), gyroscope.getXRotation(), 0.0);
+		assertEquals(accelerations.getPitchRate(), gyroscope.getYRotation(), 0.0);
+		assertEquals(accelerations.getYawRate(), gyroscope.getZRotation(), 0.0);
 	}
 }

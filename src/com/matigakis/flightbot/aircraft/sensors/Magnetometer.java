@@ -1,6 +1,6 @@
 package com.matigakis.flightbot.aircraft.sensors;
 
-import com.matigakis.fgcontrol.sensors.SensorData;
+import com.matigakis.fgcontrol.fdm.FDMData;
 
 /**
  * The Magnetometer objects contains measurements about the magnetic field arount the aircraft
@@ -24,10 +24,11 @@ public class Magnetometer implements Sensor{
 	 * Update the magnetometer using data from the sensors.
 	 */
 	@Override
-	public void updateFromSensorData(SensorData sensorData) {
-		setXAxis(sensorData.xMagn);
-		setYAxis(sensorData.yMagn);
-		setZAxis(sensorData.zMagn);
+	public void updateFromFDMData(FDMData fdmData) {
+		//TODO: not implemented yet
+		setXAxis(0.0);
+		setYAxis(0.0);
+		setZAxis(0.0);
 	}
 
 	/**

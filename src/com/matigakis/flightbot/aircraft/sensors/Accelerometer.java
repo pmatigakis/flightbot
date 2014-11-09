@@ -1,6 +1,7 @@
 package com.matigakis.flightbot.aircraft.sensors;
 
-import com.matigakis.fgcontrol.sensors.SensorData;
+import com.matigakis.fgcontrol.fdm.Accelerations;
+import com.matigakis.fgcontrol.fdm.FDMData;
 
 /**
  * The Accelerometer object contains the accelerations measured by the sensors.
@@ -24,10 +25,12 @@ public class Accelerometer implements Sensor{
 	 * Update the accelerometer data using reading from the sensors.
 	 */
 	@Override
-	public void updateFromSensorData(SensorData sensorData) {
-		setXAcceleration(sensorData.xAcceleration);
-		setYAcceleration(sensorData.yAcceleration);
-		setZAcceleration(sensorData.zAcceleration);
+	public void updateFromFDMData(FDMData fdmData) {
+		Accelerations accelerations = fdmData.getAccelerations();
+		
+		setXAcceleration(accelerations.getXAcceleration());
+		setYAcceleration(accelerations.getYAcceleration());
+		setZAcceleration(accelerations.getZAcceleration());
 	}
 	
 	/**

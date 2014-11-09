@@ -7,7 +7,8 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
 
-import com.matigakis.fgcontrol.sensors.SensorData;
+import com.matigakis.fgcontrol.fdm.Atmosphere;
+import com.matigakis.fgcontrol.fdm.FDMData;
 import com.matigakis.flightbot.aircraft.sensors.StaticPressureSensor;
 
 @RunWith(JUnit4.class)
@@ -21,10 +22,11 @@ public class TestStaticPressureSensor {
 	
 	@Test
 	public void testUpdateFromSensorData(){		
-		SensorData sensorData = new DummySensorData();
+		FDMData fdmData = new DummyFDMData();
 		
-		staticPressureSensor.updateFromSensorData(sensorData);
+		staticPressureSensor.updateFromFDMData(fdmData);
+		Atmosphere atmosphere = fdmData.getAtmosphere();
 		
-		assertEquals(sensorData.staticPressure, staticPressureSensor.getPressure(), 0.0);
+		assertEquals(atmosphere.getStaticPressure(), staticPressureSensor.getPressure(), 0.0);
 	}
 }

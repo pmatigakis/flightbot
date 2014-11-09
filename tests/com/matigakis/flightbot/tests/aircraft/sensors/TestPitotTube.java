@@ -8,7 +8,8 @@ import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
 
 import com.matigakis.flightbot.aircraft.sensors.PitotTube;
-import com.matigakis.fgcontrol.sensors.SensorData;
+import com.matigakis.fgcontrol.fdm.Atmosphere;
+import com.matigakis.fgcontrol.fdm.FDMData;
 
 @RunWith(JUnit4.class)
 public class TestPitotTube {
@@ -21,10 +22,11 @@ public class TestPitotTube {
 	
 	@Test
 	public void testUpdateFromSensorData(){
-		SensorData sensorData = new DummySensorData();
+		FDMData fdmData = new DummyFDMData();
 		
-		pitotTube.updateFromSensorData(sensorData);
+		pitotTube.updateFromFDMData(fdmData);
+		Atmosphere atmosphere = fdmData.getAtmosphere();
 		
-		assertEquals(sensorData.dynamicPressure, pitotTube.getPressure(), 0.0);
+		assertEquals(atmosphere.getPitotTubePressure(), pitotTube.getPressure(), 0.0);
 	}
 }

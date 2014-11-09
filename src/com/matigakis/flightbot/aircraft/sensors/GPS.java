@@ -1,6 +1,7 @@
 package com.matigakis.flightbot.aircraft.sensors;
 
-import com.matigakis.fgcontrol.sensors.SensorData;
+import com.matigakis.fgcontrol.fdm.FDMData;
+import com.matigakis.fgcontrol.fdm.Location;
 
 /**
  * The GPS object provides information about the aircraft's position and altitude.
@@ -28,12 +29,14 @@ public class GPS implements Sensor{
 	 * Update the GPS data using information from the SensorData object.
 	 */
 	@Override
-	public void updateFromSensorData(SensorData sensorData){
-		setLongitude(sensorData.longitude);
-		setLatitude(sensorData.latitude);
-		setAltitude(sensorData.gpsAltitude);
-		setAirspeed(sensorData.gpsAirspeed);
-		setHeading(sensorData.gpsHeading);
+	public void updateFromFDMData(FDMData fdmData){
+		Location location = fdmData.getLocation();
+		
+		setLongitude(location.getLongitude());
+		setLatitude(location.getLatitude());
+		setAltitude(location.getAltitude());
+		setAirspeed(location.getAirspeed());
+		setHeading(location.getHeading());
 	}
 	
 	/**

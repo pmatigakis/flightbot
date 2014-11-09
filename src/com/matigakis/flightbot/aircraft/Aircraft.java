@@ -1,14 +1,15 @@
 package com.matigakis.flightbot.aircraft;
 
-import com.matigakis.fgcontrol.controls.Controls;
+import com.matigakis.fgcontrol.fdm.Controls;
 import com.matigakis.flightbot.aircraft.sensors.Accelerometer;
 import com.matigakis.flightbot.aircraft.sensors.GPS;
 import com.matigakis.flightbot.aircraft.sensors.Gyroscope;
 import com.matigakis.flightbot.aircraft.sensors.Magnetometer;
 import com.matigakis.flightbot.aircraft.sensors.PitotTube;
-import com.matigakis.fgcontrol.sensors.SensorData;
+import com.matigakis.fgcontrol.fdm.FDMData;
 import com.matigakis.flightbot.aircraft.sensors.StaticPressureSensor;
 import com.matigakis.flightbot.aircraft.sensors.TemperatureSensor;
+import com.matigakis.fgcontrol.fdm.Orientation;
 
 /**
  *  The Aircraft object contains references to the instruments and
@@ -39,6 +40,7 @@ public class Aircraft {
 		controls = new Controls();
 		
 		orientation = new Orientation();
+		
 		instrumentation = new Instrumentation();
 		
 		autopilotActive = false;
@@ -151,25 +153,30 @@ public class Aircraft {
 	}
 	
 	/**
-	 * Update the aircraft state using sensor data.
+	 * Update the aircraft state using fdm data.
 	 * 
-	 * @param sensorData sensor data
+	 * @param fdmData fdm data
 	 */
-	public void updateFromSensorData(SensorData sensorData){
-		gps.updateFromSensorData(sensorData);
-		accelerometer.updateFromSensorData(sensorData);
-		gyroscope.updateFromSensorData(sensorData);
-		magnetometer.updateFromSensorData(sensorData);
-		pitotTube.updateFromSensorData(sensorData);
-		staticPressureSensor.updateFromSensorData(sensorData);
-		temperatureSensor.updateFromSensorData(sensorData);
-		instrumentation.updateFromSensorData(sensorData);
-		orientation.updateFromSensordata(sensorData);
+	public void updateFromFDMData(FDMData fdmData){
+		gps.updateFromFDMData(fdmData);
+		accelerometer.updateFromFDMData(fdmData);
+		gyroscope.updateFromFDMData(fdmData);
+		magnetometer.updateFromFDMData(fdmData);
+		pitotTube.updateFromFDMData(fdmData);
+		staticPressureSensor.updateFromFDMData(fdmData);
+		temperatureSensor.updateFromFDMData(fdmData);
+		instrumentation.updateFromFDMData(fdmData);
 		
-		//TODO: I should update the controls from the sensor data
-		controls.setAileron(sensorData.aileron);
-		controls.setElevator(sensorData.elevator);
-		controls.setRudder(sensorData.rudder);
-		controls.setThrottle(sensorData.throttle);
+		Orientation fdmOrientationData = fdmData.getOrientation();
+		
+		orientation.setPitch(fdmOrientationData.getPitch());
+		orientation.setRoll(fdmOrientationData.getRoll());
+		orientation.setYaw(fdmOrientationData.getYaw());
+		
+		Controls fdmControls = fdmData.getControls();
+		controls.setAileron(fdmControls.getAileron());
+		controls.setElevator(fdmControls.getElevator());
+		controls.setRudder(fdmControls.getRudder());
+		controls.setThrottle(fdmControls.getThrottle());
 	}
 }

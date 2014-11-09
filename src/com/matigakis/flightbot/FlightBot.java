@@ -10,12 +10,13 @@ import org.apache.log4j.BasicConfigurator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.matigakis.fgcontrol.fdm.FDMData;
+import com.matigakis.fgcontrol.fdm.NetworkFDMStateListener;
+import com.matigakis.fgcontrol.fdm.NetworkFDM;
 import com.matigakis.flightbot.aircraft.Aircraft;
 import com.matigakis.flightbot.aircraft.controllers.Autopilot;
 import com.matigakis.flightbot.configuration.FDMConfigurationException;
 import com.matigakis.flightbot.configuration.FDMManager;
-import com.matigakis.flightbot.fdm.NetworkFDMEventListener;
-import com.matigakis.flightbot.fdm.NetworkFDM;
 import com.matigakis.flightbot.fdm.NetworkFDMFactory;
 import com.matigakis.flightbot.ui.controllers.AutopilotViewController;
 import com.matigakis.flightbot.ui.controllers.JythonAutopilotViewController;
@@ -28,7 +29,7 @@ import com.matigakis.flightbot.ui.views.FlightBotWindow;
  * supports autopilots written in Jython. FlightBot is using Flightgear as
  * it's flight dynamics model.
  */
-public final class FlightBot extends WindowAdapter implements NetworkFDMEventListener{
+public final class FlightBot extends WindowAdapter implements NetworkFDMStateListener{
 	private static final Logger LOGGER = LoggerFactory.getLogger(FlightBot.class);
 	
 	private final NetworkFDM fdm;
@@ -51,17 +52,23 @@ public final class FlightBot extends WindowAdapter implements NetworkFDMEventLis
 		autopilotViewController.attachAutopilotView(FlightBotWindow);
 		telemetryViewController.attachTelemetryView(FlightBotWindow);
 		
-		fdm.addNetworkFDMEventListener(this);
+		fdm.addFDMStateListener(this);
 		
 		FlightBotWindow.addWindowListener(this);
 	}
 
 
+	/**
+	 * Create a FlightBot object using the configuration data
+	 * 
+	 * @param configuration the configuration object
+	 * @return a FlightBot object
+	 * @throws FDMConfigurationException
+	 */
 	public static FlightBot fromConfiguration(Configuration configuration) throws FDMConfigurationException{
-		//Create a network fdm using the configuration data
 		FDMManager fdmManager = new FDMManager(configuration);
 				
-		NetworkFDMFactory fdmFactory = (NetworkFDMFactory) fdmManager.getFDMFactory();
+		NetworkFDMFactory fdmFactory = fdmManager.getFDMFactory();
 				
 		NetworkFDM fdm = (NetworkFDM) fdmFactory.createFDM();
 		
@@ -89,15 +96,6 @@ public final class FlightBot extends WindowAdapter implements NetworkFDMEventLis
 	}
 	
 	@Override
-	public void networkFDMStateUpdated(NetworkFDM fdm) {
-		fdm.updateAircraftState(aircraft);
-		
-		updateAircraftControls();
-		
-		updateViews();
-	}
-	
-	@Override
 	public void windowClosing(WindowEvent e) {
 		stop();
 	}
@@ -111,8 +109,8 @@ public final class FlightBot extends WindowAdapter implements NetworkFDMEventLis
 			Autopilot autopilot = autopilotViewController.getAutopilot();
 						
 			autopilot.updateControls(aircraft);
-							
-			fdm.transmitAircraftControls(aircraft.getControls());
+			
+			fdm.transmitControls(aircraft.getControls());
 		}
 	}
 	
@@ -121,6 +119,15 @@ public final class FlightBot extends WindowAdapter implements NetworkFDMEventLis
 	 */
 	private void updateViews(){		
 		telemetryViewController.updateView(aircraft);
+	}
+	
+	@Override
+	public void FDMStateUpdated(NetworkFDM fdm, FDMData fdmData) {
+		aircraft.updateFromFDMData(fdmData);
+		
+		updateAircraftControls();
+		
+		updateViews();
 	}
 	
 	public static void main(String[] args) throws Exception{

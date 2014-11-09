@@ -1,6 +1,7 @@
 package com.matigakis.flightbot.aircraft.sensors;
 
-import com.matigakis.fgcontrol.sensors.SensorData;
+import com.matigakis.fgcontrol.fdm.Accelerations;
+import com.matigakis.fgcontrol.fdm.FDMData;
 
 public class Gyroscope implements Sensor{
 	protected double xRot;
@@ -22,10 +23,12 @@ public class Gyroscope implements Sensor{
 	 * 
 	 */
 	@Override
-	public void updateFromSensorData(SensorData sensorData) {
-		setXRotation(sensorData.xRotation);
-		setYRotation(sensorData.yRotation);
-		setZRotation(sensorData.zRotation);
+	public void updateFromFDMData(FDMData fdmData) {
+		Accelerations accelerations = fdmData.getAccelerations();
+		
+		setXRotation(accelerations.getRollRate());
+		setYRotation(accelerations.getPitchRate());
+		setZRotation(accelerations.getYawRate());
 	}
 
 	/**

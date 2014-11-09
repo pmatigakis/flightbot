@@ -7,7 +7,8 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
 
-import com.matigakis.fgcontrol.sensors.SensorData;
+import com.matigakis.fgcontrol.fdm.Atmosphere;
+import com.matigakis.fgcontrol.fdm.FDMData;
 import com.matigakis.flightbot.aircraft.sensors.TemperatureSensor;
 
 @RunWith(JUnit4.class)
@@ -21,10 +22,11 @@ public class TestTemperatureSensor {
 	
 	@Test
 	public void testUpdateFromSensorData(){
-		SensorData sensorData = new DummySensorData();
+		FDMData fdmData = new DummyFDMData();
 		
-		temperatureSensor.updateFromSensorData(sensorData);
+		temperatureSensor.updateFromFDMData(fdmData);
+		Atmosphere atmosphere = fdmData.getAtmosphere();
 		
-		assertEquals(sensorData.temperature, temperatureSensor.getTemperature(), 0);
+		assertEquals(atmosphere.getTemperature(), temperatureSensor.getTemperature(), 0);
 	}
 }

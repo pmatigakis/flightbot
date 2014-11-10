@@ -2,6 +2,8 @@ package com.matigakis.flightbot;
 
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.util.concurrent.ScheduledThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 
 import org.apache.commons.configuration.Configuration;
 import org.apache.commons.configuration.ConfigurationException;
@@ -10,39 +12,47 @@ import org.apache.log4j.BasicConfigurator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.matigakis.fgcontrol.fdm.FDMData;
-import com.matigakis.fgcontrol.fdm.NetworkFDMStateListener;
-import com.matigakis.fgcontrol.fdm.NetworkFDM;
-import com.matigakis.flightbot.aircraft.Aircraft;
-import com.matigakis.flightbot.aircraft.controllers.Autopilot;
 import com.matigakis.flightbot.configuration.FDMConfigurationException;
 import com.matigakis.flightbot.configuration.FDMManager;
-import com.matigakis.flightbot.fdm.NetworkFDMFactory;
+import com.matigakis.flightbot.fdm.RemoteFDM;
+import com.matigakis.flightbot.fdm.RemoteFDMConnectionException;
+import com.matigakis.flightbot.fdm.RemoteFDMFactory;
 import com.matigakis.flightbot.ui.controllers.AutopilotViewController;
 import com.matigakis.flightbot.ui.controllers.JythonAutopilotViewController;
 import com.matigakis.flightbot.ui.controllers.TelemetryViewController;
 import com.matigakis.flightbot.ui.controllers.TelemetryWindowController;
 import com.matigakis.flightbot.ui.views.FlightBotWindow;
+import com.matigakis.flightbot.services.TelemetryViewUpdater;
+import com.matigakis.flightbot.services.AutopilotUpdater;
 
 /**
  * FlightBot is an autopilot simulator application. At the moment it
  * supports autopilots written in Jython. FlightBot is using Flightgear as
  * it's flight dynamics model.
  */
-public final class FlightBot extends WindowAdapter implements NetworkFDMStateListener{
+public final class FlightBot extends WindowAdapter{
 	private static final Logger LOGGER = LoggerFactory.getLogger(FlightBot.class);
 	
-	private final NetworkFDM fdm;
+	private final RemoteFDM fdm;
 	
 	private final TelemetryViewController telemetryViewController;
 	private final AutopilotViewController autopilotViewController;
 	
-	private final Aircraft aircraft;
+	private final ScheduledThreadPoolExecutor backgroundServices;
 	
-	private FlightBot(NetworkFDM fdm){
-		this.fdm = fdm;
+	private boolean running;
+	
+	private long guiUpdateRate;
+	private long autopilotUpdateRate;
+	
+	private FlightBot(Configuration configuration) throws FDMConfigurationException{
+		FDMManager fdmManager = new FDMManager(configuration);
 		
-		aircraft = new Aircraft();
+		RemoteFDMFactory fdmFactory = fdmManager.getFDMFactory();
+				
+		fdm = fdmFactory.createRemoteFDM();
+		
+		running = false;
 		
 		autopilotViewController = new JythonAutopilotViewController();
 		telemetryViewController = new TelemetryWindowController();
@@ -52,82 +62,59 @@ public final class FlightBot extends WindowAdapter implements NetworkFDMStateLis
 		autopilotViewController.attachAutopilotView(FlightBotWindow);
 		telemetryViewController.attachTelemetryView(FlightBotWindow);
 		
-		fdm.addFDMStateListener(this);
-		
 		FlightBotWindow.addWindowListener(this);
+		
+		backgroundServices = new ScheduledThreadPoolExecutor(2);
+		
+		guiUpdateRate = (long)(1000 * configuration.getDouble("viewer.update_rate"));
+		autopilotUpdateRate = (long)(1000 * configuration.getDouble("autopilot.update_rate"));
 	}
 
-
-	/**
-	 * Create a FlightBot object using the configuration data
-	 * 
-	 * @param configuration the configuration object
-	 * @return a FlightBot object
-	 * @throws FDMConfigurationException
-	 */
-	public static FlightBot fromConfiguration(Configuration configuration) throws FDMConfigurationException{
-		FDMManager fdmManager = new FDMManager(configuration);
-				
-		NetworkFDMFactory fdmFactory = fdmManager.getFDMFactory();
-				
-		NetworkFDM fdm = (NetworkFDM) fdmFactory.createFDM();
-		
-		FlightBot flightbot = new FlightBot(fdm);
-		
-		return flightbot;
-	}
-	
 	/**
 	 * Run the simulation
 	 * 
-	 * @throws InterruptedException
+	 * @throws RemoteFDMConnectionException 
 	 */
-	public void run() throws InterruptedException{
-		LOGGER.info("Starting the telemetry viewer");
-		fdm.connect();
+	public void run() throws RemoteFDMConnectionException{
+		if(!running){
+			LOGGER.info("Starting FlightBot");
+			
+			fdm.connect();
+			
+			TelemetryViewUpdater telemetryViewUpdater = new TelemetryViewUpdater(fdm, telemetryViewController);
+			
+			backgroundServices.scheduleAtFixedRate(telemetryViewUpdater, 0, guiUpdateRate, TimeUnit.MILLISECONDS);
+			
+			AutopilotUpdater autopilotUpdater = new AutopilotUpdater(fdm, autopilotViewController);
+			
+			backgroundServices.scheduleAtFixedRate(autopilotUpdater, 0, autopilotUpdateRate, TimeUnit.MILLISECONDS);
+			
+			running = true;
+		}else{
+			LOGGER.info("FlightBot is already running");
+		}
 	}
 	
 	/**
 	 * Stop the simulation
 	 */
 	public void stop(){
-		LOGGER.info("Stopping the telemetry viewer");
-		fdm.disconnect();
+		if(running){
+			LOGGER.info("Stopping FlightBot");
+			
+			fdm.disconnect();
+			
+			backgroundServices.shutdown();
+			
+			running = false;
+		}else{
+			LOGGER.info("FlightBot is not running");
+		}
 	}
 	
 	@Override
 	public void windowClosing(WindowEvent e) {
 		stop();
-	}
-	
-	/**
-	 * Update the aircraft controls and transmit the new values
-	 * to the FDM if the autopilot is activated
-	 */
-	private void updateAircraftControls(){
-		if(autopilotViewController.isAutopilotActivated()){
-			Autopilot autopilot = autopilotViewController.getAutopilot();
-						
-			autopilot.updateControls(aircraft);
-			
-			fdm.transmitControls(aircraft.getControls());
-		}
-	}
-	
-	/**
-	 * Update the views that are active
-	 */
-	private void updateViews(){		
-		telemetryViewController.updateView(aircraft);
-	}
-	
-	@Override
-	public void FDMStateUpdated(NetworkFDM fdm, FDMData fdmData) {
-		aircraft.updateFromFDMData(fdmData);
-		
-		updateAircraftControls();
-		
-		updateViews();
 	}
 	
 	public static void main(String[] args) throws Exception{
@@ -143,7 +130,7 @@ public final class FlightBot extends WindowAdapter implements NetworkFDMStateLis
 			return;
 		}
 		
-		FlightBot flightbot = FlightBot.fromConfiguration(configuration);
+		FlightBot flightbot = new FlightBot(configuration);
 		
 		flightbot.run();
 	}

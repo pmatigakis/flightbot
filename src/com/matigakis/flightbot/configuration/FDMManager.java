@@ -2,7 +2,8 @@ package com.matigakis.flightbot.configuration;
 
 import org.apache.commons.configuration.Configuration;
 
-import com.matigakis.flightbot.fdm.NetworkFDMFactory;
+import com.matigakis.flightbot.fdm.FlightgearFDMFactory;
+import com.matigakis.flightbot.fdm.RemoteFDMFactory;
 
 /**
  * FDMManager is responsible for the creation of an FDM based
@@ -16,16 +17,16 @@ public final class FDMManager {
 	}
 	
 	/**
-	 * Create a NetworkFDMFactory
+	 * Create a FlightgearFDMFactory
 	 * 
 	 * @return
 	 */
-	private NetworkFDMFactory createNetworkFDMFactory(){
+	private FlightgearFDMFactory createFlightgearFDMFactory(){
 		String host = configuration.getString("simulation.fdm.controls.host");
 		int sensorsPort = configuration.getInt("simulation.fdm.sensors.port");
 		int controlsPort = configuration.getInt("simulation.fdm.controls.port");
 		
-		NetworkFDMFactory fdmFactory = new NetworkFDMFactory(host, sensorsPort, controlsPort);
+		FlightgearFDMFactory fdmFactory = new FlightgearFDMFactory(host, sensorsPort, controlsPort);
 		
 		return fdmFactory;
 	}
@@ -36,17 +37,17 @@ public final class FDMManager {
 	 * @return
 	 * @throws FDMConfigurationException
 	 */
-	public NetworkFDMFactory getFDMFactory() throws FDMConfigurationException{
-		NetworkFDMFactory fdmFactory;
+	public RemoteFDMFactory getFDMFactory() throws FDMConfigurationException{
+		FlightgearFDMFactory fdmFactory;
 		
 		String fdmType = configuration.getString("simulation.fdm.type");
 		
 		switch(fdmType){
-		case "network":
-			fdmFactory = createNetworkFDMFactory();
+		case "flightgear":
+			fdmFactory = createFlightgearFDMFactory();
 			break;
 		default:
-			throw new FDMConfigurationException();
+			throw new FDMConfigurationException("Failed create network fdm factory");
 		}
 		
 		return fdmFactory;

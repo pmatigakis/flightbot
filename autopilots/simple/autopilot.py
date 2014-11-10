@@ -23,11 +23,11 @@ from com.matigakis.flightbot.control import PID
 
 class Autopilot(Autopilot):
     def __init__(self):
-        self.throttle_pid = PID(0.1, 0.07, 0.05, 0.05, 10.0)
-        self.course_pid = PID(1.0, 0.0, 0.0, 0.05, 0.0)
-        self.aileron_pid = PID(0.1, 0.005, 0.001, 0.05, 10.0)
-        self.pitch_pid = PID(0.5, 0.0, 0.0, 0.05, 0.0)
-        self.elevator_pid = PID(0.055, 0.0005, 0.0001, 0.05, 200.0)
+        self.throttle_pid = PID(0.1, 0.07, 0.05, 0.1, 10.0)
+        self.course_pid = PID(1.0, 0.0, 0.0, 0.1, 0.0)
+        self.aileron_pid = PID(0.1, 0.005, 0.001, 0.1, 10.0)
+        self.pitch_pid = PID(0.5, 0.0, 0.0, 0.1, 0.0)
+        self.elevator_pid = PID(0.055, 0.0005, 0.0001, 0.1, 200.0)
 
         self.navigator = Navigator()
 

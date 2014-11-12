@@ -11,7 +11,10 @@ import org.python.util.PythonInterpreter;
 import com.matigakis.flightbot.aircraft.Aircraft;
 
 /**
- * The JythonAutopilot load an autopilot from specified Jython package.
+ * The JythonAutopilot loads an autopilot from specified Jython package.
+ * That package must have a module named autopilot which contains a function
+ * named create_autopilot that is responsible to create and initialize the
+ * autopilot and return an Autopilot object.
  */
 public class JythonAutopilot implements Autopilot{
 	private Autopilot autopilot;
@@ -23,11 +26,11 @@ public class JythonAutopilot implements Autopilot{
 		
 		interpreter = new PythonInterpreter(null, sys);
 		
-		interpreter.exec("from autopilot import Autopilot");
+		interpreter.exec("from autopilot import create_autopilot");
 		
-		PyObject controllerClass = interpreter.get("Autopilot");
+		PyObject autopilotCreator = interpreter.get("create_autopilot");
 		
-		PyObject controllerObject = controllerClass.__call__();
+		PyObject controllerObject = autopilotCreator.__call__();
 		
 		autopilot = (Autopilot) controllerObject.__tojava__(Autopilot.class);
 	}

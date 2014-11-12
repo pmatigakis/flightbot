@@ -21,7 +21,7 @@ from com.matigakis.flightbot.control import PID
 
 #    return Math.toDegrees(brng % (2.0 * 3.1415))
 
-class Autopilot(Autopilot):
+class JythonAutopilot(Autopilot):
     def __init__(self):
         self.throttle_pid = PID(0.1, 0.07, 0.05, 0.1, 10.0)
         self.course_pid = PID(1.0, 0.0, 0.0, 0.1, 0.0)
@@ -146,3 +146,6 @@ class Autopilot(Autopilot):
         self.updateThrottle(instrumentation, controls)
         self.updateAileron(gps, instrumentation, orientation, controls)
         self.updateElevator(instrumentation, orientation, controls)
+        
+def create_autopilot():
+    return JythonAutopilot()

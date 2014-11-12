@@ -46,14 +46,14 @@ public final class FlightBot extends WindowAdapter{
 	private long autopilotUpdateRate;
 	
 	private FlightBot(Configuration configuration) throws FDMConfigurationException{
+		//Create the FDM object
 		FDMManager fdmManager = new FDMManager(configuration);
 		
 		RemoteFDMFactory fdmFactory = fdmManager.getFDMFactory();
 				
 		fdm = fdmFactory.createRemoteFDM();
 		
-		running = false;
-		
+		//Set up the views and the controllers for those views
 		autopilotViewController = new JythonAutopilotViewController();
 		telemetryViewController = new TelemetryWindowController();
 		
@@ -64,10 +64,15 @@ public final class FlightBot extends WindowAdapter{
 		
 		FlightBotWindow.addWindowListener(this);
 		
-		backgroundServices = new ScheduledThreadPoolExecutor(2);
-		
+		//Set up the update rates for the telemetry window and the autopilot.
+		//The update rates have to be converted to long type as milliseconds
+		//because in the configuation file they are given in seconds.
 		guiUpdateRate = (long)(1000 * configuration.getDouble("viewer.update_rate"));
 		autopilotUpdateRate = (long)(1000 * configuration.getDouble("autopilot.update_rate"));
+		
+		backgroundServices = new ScheduledThreadPoolExecutor(2);
+		
+		running = false;
 	}
 
 	/**
@@ -130,6 +135,7 @@ public final class FlightBot extends WindowAdapter{
 			return;
 		}
 		
+		//Start FlightBot
 		FlightBot flightbot = new FlightBot(configuration);
 		
 		flightbot.run();

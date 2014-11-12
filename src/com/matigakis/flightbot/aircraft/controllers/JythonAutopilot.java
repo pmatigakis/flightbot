@@ -10,6 +10,9 @@ import org.python.util.PythonInterpreter;
 
 import com.matigakis.flightbot.aircraft.Aircraft;
 
+/**
+ * The JythonAutopilot load an autopilot from specified Jython package.
+ */
 public class JythonAutopilot implements Autopilot{
 	private Autopilot autopilot;
 	private PythonInterpreter interpreter;

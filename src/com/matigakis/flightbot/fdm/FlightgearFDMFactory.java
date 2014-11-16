@@ -1,5 +1,7 @@
 package com.matigakis.flightbot.fdm;
 
+import com.matigakis.fgcontrol.fdm.RemoteFDM;
+
 public class FlightgearFDMFactory implements RemoteFDMFactory{
 	private String host;
 	private int sensorsPort;

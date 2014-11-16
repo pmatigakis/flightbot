@@ -2,10 +2,10 @@ package com.matigakis.flightbot.tests.aircraft.sensors;
 
 import com.matigakis.fgcontrol.fdm.Accelerations;
 import com.matigakis.fgcontrol.fdm.Atmosphere;
-import com.matigakis.fgcontrol.fdm.Controls;
 import com.matigakis.fgcontrol.fdm.FDMData;
-import com.matigakis.fgcontrol.fdm.Location;
 import com.matigakis.fgcontrol.fdm.Orientation;
+import com.matigakis.fgcontrol.fdm.Position;
+import com.matigakis.fgcontrol.fdm.Velocities;
 
 public class DummyFDMData extends FDMData{
 	public DummyFDMData(){
@@ -15,19 +15,21 @@ public class DummyFDMData extends FDMData{
 		accelerations.setXAcceleration(0.5);
 		accelerations.setYAcceleration(0.3);
 		accelerations.setZAcceleration(30.0);
-		accelerations.setRollRate(2.0);
-		accelerations.setPitchRate(1.5);
-		accelerations.setYawRate(1.0);
 		
-		Location location = getLocation();
-		location.setLatitude(37.937056);
-		location.setLongitude(23.94667);
-		location.setAltitude(1000.0);
-		location.setAirspeed(60.0);
-		location.setHeading(170.0);
+		Velocities velocities = getVelocities();
+		velocities.setRollRate(2.0);
+		velocities.setPitchRate(1.5);
+		velocities.setYawRate(1.0);
+		velocities.setCalibratedAirspeed(60.0);
+		
+		Position position = getPosition();
+		position.setLatitude(37.937056);
+		position.setLongitude(23.94667);
+		position.setAltitude(1000.0);
+		position.setAGL(800.0);
 		
 		Atmosphere atmosphere = getAtmosphere();
-		atmosphere.setPitotTubePressure(31.5);
+		atmosphere.setTotalPressure(31.5);
 		atmosphere.setStaticPressure(29.8);
 		atmosphere.setTemperature(26.5);
 
@@ -38,13 +40,9 @@ public class DummyFDMData extends FDMData{
 		Orientation orientation = getOrientation();
 		orientation.setRoll(10.5);
 		orientation.setPitch(12.5);
-		orientation.setYaw(3.1);
-		
-		Controls controls = getControls();
-		controls.setElevator(0.5);
-		controls.setAileron(-0.6);
-		controls.setRudder(0.7);
-		controls.setThrottle(0.9);
+		orientation.setHeading(3.1);
+		orientation.setAngleOfAttach(3.2);
+		orientation.setSideSlipAngle(0.5);
 	
 		setSimulationTime(120.67);
 	}

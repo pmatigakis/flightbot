@@ -12,10 +12,10 @@ import org.apache.log4j.BasicConfigurator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.matigakis.fgcontrol.fdm.RemoteFDM;
 import com.matigakis.flightbot.configuration.FDMConfigurationException;
 import com.matigakis.flightbot.configuration.FDMManager;
-import com.matigakis.flightbot.fdm.RemoteFDM;
-import com.matigakis.flightbot.fdm.RemoteFDMConnectionException;
+import com.matigakis.flightbot.fdm.FDM;
 import com.matigakis.flightbot.fdm.RemoteFDMFactory;
 import com.matigakis.flightbot.ui.controllers.AutopilotViewController;
 import com.matigakis.flightbot.ui.controllers.JythonAutopilotViewController;
@@ -65,8 +65,8 @@ public final class FlightBot extends WindowAdapter{
 		FlightBotWindow.addWindowListener(this);
 		
 		//Set up the update rates for the telemetry window and the autopilot.
-		//The update rates have to be converted to long type as milliseconds
-		//because in the configuation file they are given in seconds.
+		//The update rates have to be converted to long type in milliseconds
+		//because in the configuration file they are given in seconds.
 		guiUpdateRate = (long)(1000 * configuration.getDouble("viewer.update_rate"));
 		autopilotUpdateRate = (long)(1000 * configuration.getDouble("autopilot.update_rate"));
 		
@@ -78,19 +78,19 @@ public final class FlightBot extends WindowAdapter{
 	/**
 	 * Run the simulation
 	 * 
-	 * @throws RemoteFDMConnectionException 
+	 * @throws InterruptedException 
 	 */
-	public void run() throws RemoteFDMConnectionException{
+	public void run() throws InterruptedException{
 		if(!running){
 			LOGGER.info("Starting FlightBot");
 			
 			fdm.connect();
 			
-			TelemetryViewUpdater telemetryViewUpdater = new TelemetryViewUpdater(fdm, telemetryViewController);
+			TelemetryViewUpdater telemetryViewUpdater = new TelemetryViewUpdater((FDM) fdm, telemetryViewController);
 			
 			backgroundServices.scheduleAtFixedRate(telemetryViewUpdater, 0, guiUpdateRate, TimeUnit.MILLISECONDS);
 			
-			AutopilotUpdater autopilotUpdater = new AutopilotUpdater(fdm, autopilotViewController);
+			AutopilotUpdater autopilotUpdater = new AutopilotUpdater((FDM) fdm, autopilotViewController);
 			
 			backgroundServices.scheduleAtFixedRate(autopilotUpdater, 0, autopilotUpdateRate, TimeUnit.MILLISECONDS);
 			

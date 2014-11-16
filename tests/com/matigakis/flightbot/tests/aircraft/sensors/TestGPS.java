@@ -9,7 +9,8 @@ import org.junit.Before;
 
 import com.matigakis.flightbot.aircraft.sensors.GPS;
 import com.matigakis.fgcontrol.fdm.FDMData;
-import com.matigakis.fgcontrol.fdm.Location;
+import com.matigakis.fgcontrol.fdm.Position;
+import com.matigakis.fgcontrol.fdm.Velocities;
 
 @RunWith(JUnit4.class)
 public class TestGPS {
@@ -25,11 +26,12 @@ public class TestGPS {
 		FDMData fdmData = new DummyFDMData();
 				
 		gps.updateFromFDMData(fdmData);
-		Location location = fdmData.getLocation();
+		Position position = fdmData.getPosition();
+		Velocities velocities = fdmData.getVelocities();
 		
-		assertEquals(location.getLatitude(), gps.getLatitude(), 0.0);
-		assertEquals(location.getLongitude(), gps.getLongitude(), 0.0);
-		assertEquals(location.getAltitude(), gps.getAltitude(), 0.0);
-		assertEquals(location.getAirspeed(), gps.getAirspeed(), 0.0);
+		assertEquals(position.getLatitude(), gps.getLatitude(), 0.0);
+		assertEquals(position.getLongitude(), gps.getLongitude(), 0.0);
+		assertEquals(position.getAltitude(), gps.getAltitude(), 0.0);
+		assertEquals(velocities.getCalibratedAirspeed(), gps.getAirspeed(), 0.0);
 	}
 }

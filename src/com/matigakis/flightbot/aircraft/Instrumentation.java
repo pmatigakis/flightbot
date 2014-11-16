@@ -1,7 +1,8 @@
 package com.matigakis.flightbot.aircraft;
 
 import com.matigakis.fgcontrol.fdm.FDMData;
-import com.matigakis.fgcontrol.fdm.Location;
+import com.matigakis.fgcontrol.fdm.Orientation;
+import com.matigakis.fgcontrol.fdm.Position;
 import com.matigakis.fgcontrol.fdm.Velocities;
 
 /**
@@ -12,6 +13,8 @@ public class Instrumentation {
 	private double airspeed;
 	private double altitude;
 	private double heading;
+	private double roll;
+	private double pitch;
 	
 	public Instrumentation(){
 		airspeed = 0.0;
@@ -73,17 +76,36 @@ public class Instrumentation {
 		return heading;
 	}
 	
+	public double getRoll(){
+		return roll;
+	}
+	
+	public double getPitch(){
+		return pitch;
+	}
+	
+	public void setRoll(double roll){
+		this.roll = roll;
+	}
+	
+	public void setPitch(double pitch){
+		this.pitch = pitch;
+	}
+	
 	/**
 	 * Update the instrument using data from the FDMData object.
 	 * 
 	 * @param fdmData
 	 */
 	public void updateFromFDMData(FDMData fdmData){
-		Location location = fdmData.getLocation();
+		Position location = fdmData.getPosition();
 		Velocities velocities = fdmData.getVelocities();
+		Orientation orientation = fdmData.getOrientation();
 		
 		setAltitude(location.getAltitude());
-		setAirspeed(velocities.getAirspeed());
-		setHeading(location.getHeading());
+		setAirspeed(velocities.getCalibratedAirspeed());
+		setHeading(orientation.getHeading());
+		setRoll(orientation.getRoll());
+		setPitch(orientation.getPitch());
 	}
 }

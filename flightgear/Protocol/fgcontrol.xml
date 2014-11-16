@@ -6,89 +6,179 @@
       <line_separator>newline</line_separator>
       <var_separator>tab</var_separator>
       
-      <!-- GPS data -->
+      <!-- information -->
       <chunk>
-        <node>/instrumentation/gps/indicated-altitude-ft</node>
-        <name>GPS altitude</name>
+        <name>Simulation time</name>
+        <node>/fdm/jsbsim/simulation/sim-time-sec</node>
         <type>float</type>
-        <format>%05.8f</format>
-      </chunk>
-
+        <format>%f</format>
+       </chunk>
+      
+      <!-- position -->
       <chunk>
-        <node>/instrumentation/gps/indicated-ground-speed-kt</node>
-        <name>GPS airspeed</name>
+        <node>/position/latitude-deg</node>
+        <name>Latitude</name>
         <type>float</type>
-        <format>%03.8f</format>
+        <format>%f</format>
       </chunk>
-
+      
       <chunk>
-        <node>/instrumentation/gps/indicated-latitude-deg</node>
-        <name>GPS latitude</name>
+        <node>/position/longitude-deg</node>
+        <name>Longitude</name>
         <type>float</type>
-        <format>%03.8f</format>
+        <format>%f</format>
       </chunk>
-
+      
       <chunk>
-        <node>/instrumentation/gps/indicated-longitude-deg</node>
-        <name>GPS longitude</name>
+        <node>/position/altitude-ft</node>
+        <name>Altitude</name>
         <type>float</type>
-        <format>%03.8f</format>
+        <format>%f</format>
       </chunk>
-
+      
       <chunk>
-        <node>/instrumentation/gps/indicated-track-true-deg</node>
-        <name>GPS heading</name>
+        <node>/position/altitude-agl-ft</node>
+        <name>Altitude above ground level</name>
         <type>float</type>
-        <format>%03.7f</format>
+        <format>%f</format>
       </chunk>
-
-      <!-- Accelerometer data -->
+      
+      <!-- orientation -->
       <chunk>
-        <node>/accelerations/pilot/x-accel-fps_sec</node>
-        <name>X acceleration</name>
+        <node>/orientation/roll-deg</node>
+        <name>Roll</name>
         <type>float</type>
-        <format>%04.9f</format>
+        <format>%f</format>
       </chunk>
-
+      
       <chunk>
-        <node>/accelerations/pilot/y-accel-fps_sec</node>
-        <name>Y acceleration</name>
+        <node>/orientation/pitch-deg</node>
+        <name>Pitch</name>
         <type>float</type>
-        <format>%04.9f</format>
+        <format>%f</format>
       </chunk>
-
+      
       <chunk>
-        <node>/accelerations/pilot/z-accel-fps_sec</node>
-        <name>Z acceleration</name>
+        <node>/orientation/heading-deg</node>
+        <name>Heading</name>
         <type>float</type>
-        <format>%04.9f</format>
+        <format>%f</format>
       </chunk>
-
-      <!-- Gyroscope data -->
+      
+      <chunk>
+        <node>/orientation/alpha-deg</node>
+        <name>Angle of attack</name>
+        <type>float</type>
+        <format>%f</format>
+      </chunk>
+      
+      <chunk>
+        <node>/orientation/beta-deg</node>
+        <name>Side slip</name>
+        <type>float</type>
+        <format>%f</format>
+      </chunk>
+      
+      <!-- velocities -->
       <chunk>
         <node>/orientation/roll-rate-degps</node>
         <name>Roll rate</name>
         <type>float</type>
-        <format>%04.9f</format>
+        <format>%f</format>
+      </chunk>
+      
+      <chunk>
+        <node>/orientation/pitch-rate-degps</node>
+        <name>Pitch rate</name>
+        <type>float</type>
+        <format>%f</format>
       </chunk>
       
       <chunk>
         <node>/orientation/yaw-rate-degps</node>
         <name>Yaw rate</name>
         <type>float</type>
-        <format>%04.9f</format>
+        <format>%f</format>
       </chunk>
-
+      
       <chunk>
-        <node>/orientation/pitch-rate-degps</node>
-        <name>Pitch rate</name>
+        <node>/velocities/airspeed-kt</node>
+        <name>Calibrated velocity</name>
         <type>float</type>
-        <format>%04.9f</format>
+        <format>%f</format>
       </chunk>
-
-      <!-- Magnetometer data -->
-      <!-- TODO: Add this -->
-
+      
+      <chunk>
+        <node>/velocities/vertical-speed-fps</node>
+        <name>Climb rate</name>
+        <type>float</type>
+        <format>%f</format>
+      </chunk>
+      
+      <chunk>
+        <node>/velocities/speed-north-fps</node>
+        <name>North velocity</name>
+        <type>float</type>
+        <format>%f</format>
+      </chunk>
+      
+      <chunk>
+        <node>/velocities/speed-east-fps</node>
+        <name>East velocity</name>
+        <type>float</type>
+        <format>%f</format>
+      </chunk>
+      
+      <chunk>
+        <node>/velocities/speed-down-fps</node>
+        <name>Vertical velocity</name>
+        <type>float</type>
+        <format>%f</format>
+      </chunk>
+      
+      <chunk>
+        <node>/velocities/uBody-fps</node>
+        <name>u</name>
+        <type>float</type>
+        <format>%f</format>
+      </chunk>
+      
+      <chunk>
+        <node>/velocities/vBody-fps</node>
+        <name>v</name>
+        <type>float</type>
+        <format>%f</format>
+      </chunk>
+      
+      <chunk>
+        <node>/velocities/wBody-fps</node>
+        <name>w</name>
+        <type>float</type>
+        <format>%f</format>
+      </chunk>
+      
+      <!-- accelerations -->
+      <chunk>
+        <node>/accelerations/pilot/x-accel-fps_sec</node>
+        <name>X acceleration</name>
+        <type>float</type>
+        <format>%f</format>
+      </chunk>
+      
+      <chunk>
+        <node>/accelerations/pilot/y-accel-fps_sec</node>
+        <name>Y acceleration</name>
+        <type>float</type>
+        <format>%f</format>
+      </chunk>
+      
+      <chunk>
+        <node>/accelerations/pilot/z-accel-fps_sec</node>
+        <name>Z acceleration</name>
+        <type>float</type>
+        <format>%f</format>
+      </chunk>
+      
       <!-- Atmospheric data -->
       <chunk>
         <node>/environment/pressure-inhg</node>
@@ -110,80 +200,6 @@
         <type>float</type>
         <format>%04.9f</format>
       </chunk>
-      
-      <!-- Orientation -->
-      <chunk>
-        <node>/orientation/roll-deg</node>
-        <name>Roll</name>
-        <type>float</type>
-        <format>%04.9f</format>
-      </chunk>
- 
-      <chunk>
-       	<node>/orientation/pitch-deg</node>
-        <name>Pitch</name>
-        <type>float</type>
-        <format>%04.9f</format>
-      </chunk>
-      
-      <!-- Instrumentation -->
-      <chunk>
-       	<node>/position/altitude-ft</node>
-        <name>Altitude</name>
-        <type>float</type>
-        <format>%04.9f</format>
-      </chunk>
-      
-      <chunk>
-       	<node>/velocities/airspeed-kt</node>
-        <name>Airspeed</name>
-        <type>float</type>
-        <format>%04.9f</format>
-      </chunk>
-      
-      <chunk>
-       	<node>/orientation/heading-deg</node>
-        <name>Heading</name>
-        <type>float</type>
-        <format>%04.9f</format>
-      </chunk>
-      
-      <!--  simulation -->
-      <chunk>
-           <name>Simulation time</name>
-           <node>/fdm/jsbsim/simulation/sim-time-sec</node>
-           <type>float</type>
-           <format>%f</format>
-       </chunk>
-      
-      <!-- flight controls -->
-      <chunk>
-           <name>Elevator</name>
-           <node>/controls/flight/elevator</node>
-           <type>float</type>
-           <format>%f</format>
-       </chunk>
-
-       <chunk>
-           <name>Aileron</name>
-           <node>/controls/flight/aileron</node>
-           <type>float</type>
-           <format>%f</format>
-       </chunk>
-
-       <chunk>
-           <name>Rudder</name>
-           <node>/controls/flight/rudder</node>
-           <type>float</type>
-           <format>%f</format>
-       </chunk>
-       
-       <chunk>
-           <name>Throttle</name>
-           <node>/controls/engines/engine/throttle</node>
-           <type>float</type>
-           <format>%f</format>
-       </chunk>
     </output>
     
    	<input>

@@ -47,7 +47,7 @@ public final class FDMManager {
 			fdmFactory = createFlightgearFDMFactory();
 			break;
 		default:
-			throw new FDMConfigurationException("Failed create network fdm factory");
+			throw new FDMConfigurationException("Failed to create remote fdm factory");
 		}
 		
 		return fdmFactory;

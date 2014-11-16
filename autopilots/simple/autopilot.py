@@ -67,7 +67,7 @@ class JythonAutopilot(Autopilot):
 
         controls.setThrottle(target_throttle)            
 
-    def updateAileron(self, gps, instrumentation, orientation, controls):
+    def updateAileron(self, gps, instrumentation, controls):
         current_course = instrumentation.getHeading()
         
         waypoint = self.waypoints[self.waypoint_index]
@@ -101,7 +101,7 @@ class JythonAutopilot(Autopilot):
         elif target_roll < -15.0:
             target_roll = -15.0
 
-        current_roll = orientation.getRoll()
+        current_roll = instrumentation.getRoll()
 
         roll_e = target_roll - current_roll
 
@@ -114,7 +114,7 @@ class JythonAutopilot(Autopilot):
 
         controls.setAileron(target_aileron)
 
-    def updateElevator(self, instrumentation, orientation, controls):
+    def updateElevator(self, instrumentation, controls):
         current_altitude = instrumentation.getAltitude()
 
         altitude_e = self.target_altitude - current_altitude
@@ -125,7 +125,7 @@ class JythonAutopilot(Autopilot):
         elif target_pitch < -15.0:
             target_pitch = -15.0
 
-        current_pitch = orientation.getPitch()
+        current_pitch = instrumentation.getPitch()
 
         pitch_e = target_pitch - current_pitch
         target_elevator = -self.elevator_pid.update(pitch_e)
@@ -140,12 +140,11 @@ class JythonAutopilot(Autopilot):
     def updateControls(self, aircraft):
         controls = aircraft.getControls()
         instrumentation = aircraft.getInstrumentation()
-        orientation = aircraft.getOrientation()
         gps = aircraft.getGPS()
 
         self.updateThrottle(instrumentation, controls)
-        self.updateAileron(gps, instrumentation, orientation, controls)
-        self.updateElevator(instrumentation, orientation, controls)
+        self.updateAileron(gps, instrumentation, controls)
+        self.updateElevator(instrumentation, controls)
         
 def create_autopilot():
     return JythonAutopilot()

@@ -33,7 +33,7 @@ public class AircraftPanel extends JPanel{
 	
 	public void updateFromAircraftData(Aircraft aircraft){
 		controlsPanel.updateFromControls(aircraft.getControls());
-		orientationPanel.updateFromOrientation(aircraft.getOrientation());
+		orientationPanel.updateFromInstrumentation(aircraft.getInstrumentation());
 		instrumentationPanel.updateFromInstrumentation(aircraft.getInstrumentation());
 	}
 }

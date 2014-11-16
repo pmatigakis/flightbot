@@ -10,7 +10,7 @@ import javax.swing.JLabel;
 import javax.swing.JFormattedTextField;
 import java.text.NumberFormat;
 
-import com.matigakis.fgcontrol.fdm.Orientation;
+import com.matigakis.flightbot.aircraft.Instrumentation;;
 
 /**
  * The OrientationPanel is used to display information about the orientation
@@ -71,8 +71,8 @@ public class OrientationPanel extends JPanel{
 	 * 
 	 * @param orientation
 	 */
-	public void updateFromOrientation(Orientation orientation){
-		rollText.setValue(orientation.getRoll());
-		pitchText.setValue(orientation.getPitch());
+	public void updateFromInstrumentation(Instrumentation instrumentation){
+		rollText.setValue(instrumentation.getRoll());
+		pitchText.setValue(instrumentation.getPitch());
 	}
 }

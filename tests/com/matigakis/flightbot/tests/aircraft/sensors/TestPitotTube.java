@@ -27,6 +27,6 @@ public class TestPitotTube {
 		pitotTube.updateFromFDMData(fdmData);
 		Atmosphere atmosphere = fdmData.getAtmosphere();
 		
-		assertEquals(atmosphere.getPitotTubePressure(), pitotTube.getPressure(), 0.0);
+		assertEquals(atmosphere.getTotalPressure(), pitotTube.getPressure(), 0.0);
 	}
 }

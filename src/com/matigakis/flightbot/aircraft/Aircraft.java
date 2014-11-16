@@ -9,7 +9,6 @@ import com.matigakis.flightbot.aircraft.sensors.PitotTube;
 import com.matigakis.fgcontrol.fdm.FDMData;
 import com.matigakis.flightbot.aircraft.sensors.StaticPressureSensor;
 import com.matigakis.flightbot.aircraft.sensors.TemperatureSensor;
-import com.matigakis.fgcontrol.fdm.Orientation;
 
 /**
  *  The Aircraft object contains references to the instruments and
@@ -25,7 +24,6 @@ public class Aircraft {
 	private final StaticPressureSensor staticPressureSensor;
 	private final TemperatureSensor temperatureSensor;
 	private final Controls controls;
-	private final Orientation orientation;
 	private final Instrumentation instrumentation;
 	
 	public Aircraft(){
@@ -38,8 +36,6 @@ public class Aircraft {
 		temperatureSensor = new TemperatureSensor();
 		
 		controls = new Controls();
-		
-		orientation = new Orientation();
 		
 		instrumentation = new Instrumentation();
 		
@@ -119,15 +115,6 @@ public class Aircraft {
 	}
 	
 	/**
-	 * Return the calculated orientation of the aircraft.
-	 * 
-	 * @return orientation
-	 */
-	public Orientation getOrientation(){
-		return orientation;
-	}
-	
-	/**
 	 * Return the airspeed, altitude and heading of the aircraft.
 	 */
 	public Instrumentation getInstrumentation(){
@@ -166,17 +153,5 @@ public class Aircraft {
 		staticPressureSensor.updateFromFDMData(fdmData);
 		temperatureSensor.updateFromFDMData(fdmData);
 		instrumentation.updateFromFDMData(fdmData);
-		
-		Orientation fdmOrientationData = fdmData.getOrientation();
-		
-		orientation.setPitch(fdmOrientationData.getPitch());
-		orientation.setRoll(fdmOrientationData.getRoll());
-		orientation.setYaw(fdmOrientationData.getYaw());
-		
-		Controls fdmControls = fdmData.getControls();
-		controls.setAileron(fdmControls.getAileron());
-		controls.setElevator(fdmControls.getElevator());
-		controls.setRudder(fdmControls.getRudder());
-		controls.setThrottle(fdmControls.getThrottle());
 	}
 }

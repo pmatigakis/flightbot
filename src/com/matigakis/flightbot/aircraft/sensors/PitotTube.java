@@ -5,6 +5,6 @@ import com.matigakis.fgcontrol.fdm.FDMData;;
 public class PitotTube extends PressureSensor {
 	@Override
 	public void updateFromFDMData(FDMData fdmData) {
-		setPressure(fdmData.getAtmosphere().getPitotTubePressure());
+		setPressure(fdmData.getAtmosphere().getTotalPressure());
 	}
 }

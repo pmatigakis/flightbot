@@ -11,7 +11,7 @@ import com.matigakis.flightbot.aircraft.Aircraft;
 import com.matigakis.flightbot.aircraft.Instrumentation;
 import com.matigakis.fgcontrol.fdm.Accelerations;
 import com.matigakis.fgcontrol.fdm.Atmosphere;
-import com.matigakis.fgcontrol.fdm.Location;
+import com.matigakis.fgcontrol.fdm.Position;
 import com.matigakis.fgcontrol.fdm.Orientation;
 import com.matigakis.fgcontrol.fdm.Velocities;
 import com.matigakis.flightbot.aircraft.sensors.Accelerometer;
@@ -39,13 +39,15 @@ public class TestAircraft {
 		aircraft.updateFromFDMData(fdmData);
 		
 		GPS gps = aircraft.getGPS();
-		Location location = fdmData.getLocation();
+		Position position = fdmData.getPosition();
+		Velocities velocities = fdmData.getVelocities();
+		Orientation orientation = fdmData.getOrientation();
 		
-		assertEquals(location.getAirspeed(), gps.getAirspeed(), 0.0);
-		assertEquals(location.getAltitude(), gps.getAltitude(), 0.0);
-		assertEquals(location.getHeading(), gps.getHeading(), 0.0);
-		assertEquals(location.getLatitude(), gps.getLatitude(), 0.0);
-		assertEquals(location.getLongitude(), gps.getLongitude(), 0.0);
+		assertEquals(velocities.getCalibratedAirspeed(), gps.getAirspeed(), 0.0);
+		assertEquals(position.getAltitude(), gps.getAltitude(), 0.0);
+		assertEquals(orientation.getHeading(), gps.getHeading(), 0.0);
+		assertEquals(position.getLatitude(), gps.getLatitude(), 0.0);
+		assertEquals(position.getLongitude(), gps.getLongitude(), 0.0);
 		
 		Accelerometer accelerometer = aircraft.getAccelerometer();
 		Accelerations accelerations = fdmData.getAccelerations();
@@ -56,14 +58,14 @@ public class TestAircraft {
 		
 		Gyroscope gyroscope = aircraft.getGyroscope();
 		
-		assertEquals(accelerations.getRollRate(), gyroscope.getXRotation(), 0.0);
-		assertEquals(accelerations.getPitchRate(), gyroscope.getYRotation(), 0.0);
-		assertEquals(accelerations.getYawRate(), gyroscope.getZRotation(), 0.0);
+		assertEquals(velocities.getRollRate(), gyroscope.getXRotation(), 0.0);
+		assertEquals(velocities.getPitchRate(), gyroscope.getYRotation(), 0.0);
+		assertEquals(velocities.getYawRate(), gyroscope.getZRotation(), 0.0);
 		
 		PitotTube pitotTube = aircraft.getPitotTube();
 		Atmosphere atmosphere = fdmData.getAtmosphere();
 		
-		assertEquals(atmosphere.getPitotTubePressure(), pitotTube.getPressure(), 0.0);
+		assertEquals(atmosphere.getTotalPressure(), pitotTube.getPressure(), 0.0);
 		
 		StaticPressureSensor staticPressureSensor = aircraft.getStaticPressureSensor();
 		
@@ -74,16 +76,12 @@ public class TestAircraft {
 		assertEquals(atmosphere.getTemperature(), temperatureSensor.getTemperature(), 0);
 		
 		Instrumentation instrumentation = aircraft.getInstrumentation();
-		Velocities velocities = fdmData.getVelocities();
 		
-		assertEquals(location.getAltitude(), instrumentation.getAltitude(), 0.0);
-		assertEquals(velocities.getAirspeed(), instrumentation.getAirspeed(), 0.0);
-		assertEquals(location.getHeading(), instrumentation.getHeading(), 0.0);
+		assertEquals(position.getAltitude(), instrumentation.getAltitude(), 0.0);
+		assertEquals(velocities.getCalibratedAirspeed(), instrumentation.getAirspeed(), 0.0);
+		assertEquals(orientation.getHeading(), instrumentation.getHeading(), 0.0);
 		
-		Orientation orientation = aircraft.getOrientation();
-		Orientation fdmOrientation = aircraft.getOrientation();
-		
-		assertEquals(fdmOrientation.getRoll(), orientation.getRoll(), 0.0);
-		assertEquals(fdmOrientation.getPitch(), orientation.getPitch(), 0.0);
+		assertEquals(instrumentation.getRoll(), orientation.getRoll(), 0.0);
+		assertEquals(instrumentation.getPitch(), orientation.getPitch(), 0.0);
 	}
 }

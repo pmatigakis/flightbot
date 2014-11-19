@@ -28,6 +28,8 @@ import org.openstreetmap.gui.jmapviewer.interfaces.MapMarker;
 
 import com.matigakis.flightbot.aircraft.Aircraft;
 import com.matigakis.flightbot.aircraft.controllers.JythonAutopilot;
+import com.matigakis.flightbot.aircraft.controllers.loaders.AutopilotLoader;
+import com.matigakis.flightbot.aircraft.controllers.loaders.JythonAutopilotLoader;
 import com.matigakis.flightbot.ui.controllers.AutopilotViewController;
 import com.matigakis.flightbot.ui.controllers.TelemetryViewController;
 import com.matigakis.flightbot.ui.views.information.AircraftPanel;
@@ -96,11 +98,11 @@ public class FlightBotWindow extends JFrame implements TelemetryView, AutopilotV
 		
 		JMenu fileMenu = new JMenu("File");
 		
-		loadAutopilotMenuItem = new JMenuItem("Load autopilot");
+		loadAutopilotMenuItem = new JMenuItem("Load Jython autopilot");
 		loadAutopilotMenuItem.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				loadNewAutopilot();
+				loadJythonAutopilot();
 			}
 		});
 		
@@ -310,7 +312,7 @@ public class FlightBotWindow extends JFrame implements TelemetryView, AutopilotV
 		}	
 	}
 	
-	private void loadNewAutopilot(){
+	private void loadJythonAutopilot(){
 		JFileChooser fileChooser = new JFileChooser();
 		fileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
 		
@@ -321,7 +323,9 @@ public class FlightBotWindow extends JFrame implements TelemetryView, AutopilotV
 			
 			File f = fileChooser.getSelectedFile();
 			
-			autopilotViewController.loadAutopilot(f.getAbsolutePath());
+			AutopilotLoader autopilotLoader = new JythonAutopilotLoader(f.getAbsolutePath());
+			
+			autopilotViewController.loadAutopilot(autopilotLoader);
 			
 			//TODO: perhaps this should be moved to the controller
 			JythonAutopilot autopilot = (JythonAutopilot) autopilotViewController.getAutopilot();

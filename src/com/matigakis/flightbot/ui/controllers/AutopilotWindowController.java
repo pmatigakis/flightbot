@@ -5,19 +5,17 @@ import java.util.LinkedList;
 
 import com.matigakis.flightbot.aircraft.controllers.Autopilot;
 import com.matigakis.flightbot.aircraft.controllers.loaders.AutopilotLoader;
-import com.matigakis.flightbot.aircraft.controllers.loaders.JythonAutopilotLoader;
 import com.matigakis.flightbot.ui.views.AutopilotView;
 
 /**
- * Implementation of the AutopilotViewController interface that is using 
- * autopilots written in Jython
+ * Implementation of the AutopilotViewController interface
  */
-public class JythonAutopilotViewController implements AutopilotViewController{
+public class AutopilotWindowController implements AutopilotViewController{
 	private Autopilot autopilot;
 	private boolean autopilotActive;
 	private List<AutopilotView> autopilotViews;
 	
-	public JythonAutopilotViewController(){
+	public AutopilotWindowController(){
 		autopilotViews = new LinkedList<AutopilotView>();
 		autopilotActive = false;
 	}
@@ -49,7 +47,7 @@ public class JythonAutopilotViewController implements AutopilotViewController{
 	}
 
 	@Override
-	public void loadAutopilot(String autopilotName) {
+	public void loadAutopilot(AutopilotLoader autopilotLoader) {
 		//Disable the autopilot menu items just in case something goes wrong
 		//and the autopilot module doesn't load properly.
 		for(AutopilotView autopilotView: autopilotViews){
@@ -57,9 +55,6 @@ public class JythonAutopilotViewController implements AutopilotViewController{
 		}
 		
 		deactivateAutopilot();
-		
-		//TODO: perhaps the JythonAutopilotLoader should become a static class
-		AutopilotLoader autopilotLoader = new JythonAutopilotLoader(autopilotName);
 		
 		autopilot = autopilotLoader.getAutopilot();
 		

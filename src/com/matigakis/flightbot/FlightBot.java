@@ -18,7 +18,7 @@ import com.matigakis.flightbot.configuration.FDMManager;
 import com.matigakis.flightbot.fdm.FDM;
 import com.matigakis.flightbot.fdm.RemoteFDMFactory;
 import com.matigakis.flightbot.ui.controllers.AutopilotViewController;
-import com.matigakis.flightbot.ui.controllers.JythonAutopilotViewController;
+import com.matigakis.flightbot.ui.controllers.AutopilotWindowController;
 import com.matigakis.flightbot.ui.controllers.TelemetryViewController;
 import com.matigakis.flightbot.ui.controllers.TelemetryWindowController;
 import com.matigakis.flightbot.ui.views.FlightBotWindow;
@@ -54,7 +54,7 @@ public final class FlightBot extends WindowAdapter{
 		fdm = fdmFactory.createRemoteFDM();
 		
 		//Set up the views and the controllers for those views
-		autopilotViewController = new JythonAutopilotViewController();
+		autopilotViewController = new AutopilotWindowController();
 		telemetryViewController = new TelemetryWindowController();
 		
 		FlightBotWindow FlightBotWindow = new FlightBotWindow(telemetryViewController, autopilotViewController);

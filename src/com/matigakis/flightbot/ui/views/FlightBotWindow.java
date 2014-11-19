@@ -27,6 +27,7 @@ import org.openstreetmap.gui.jmapviewer.interfaces.JMapViewerEventListener;
 import org.openstreetmap.gui.jmapviewer.interfaces.MapMarker;
 
 import com.matigakis.flightbot.aircraft.Aircraft;
+import com.matigakis.flightbot.aircraft.controllers.JythonAutopilot;
 import com.matigakis.flightbot.ui.controllers.AutopilotViewController;
 import com.matigakis.flightbot.ui.controllers.TelemetryViewController;
 import com.matigakis.flightbot.ui.views.information.AircraftPanel;
@@ -316,12 +317,16 @@ public class FlightBotWindow extends JFrame implements TelemetryView, AutopilotV
 		int result = fileChooser.showOpenDialog(this);
 		
 		if(result == JFileChooser.APPROVE_OPTION){
-			//aircraft.setAutopilotState(false);
 			setAutopilotControlsState(false); //This is necessary because the autopilot loader can crush
 			
 			File f = fileChooser.getSelectedFile();
 			
 			autopilotViewController.loadAutopilot(f.getAbsolutePath());
+			
+			//TODO: perhaps this should be moved to the controller
+			JythonAutopilot autopilot = (JythonAutopilot) autopilotViewController.getAutopilot();
+			autopilot.setOutputStream(getDebugConsoleStream());
+			autopilot.reset();
 			
 			setAutopilotControlsState(true);
 		}

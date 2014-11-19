@@ -4,6 +4,7 @@ from com.matigakis.flightbot.aircraft.controllers import Autopilot
 from com.matigakis.flightbot.navigation import Navigator
 from com.matigakis.controlsystems.pid import PID
 
+__VERSION__ = "0.0.1"
 
 class JythonAutopilot(Autopilot):
     def __init__(self):
@@ -26,18 +27,8 @@ class JythonAutopilot(Autopilot):
                           (37.630683,-122.415518),
                           (37.638364,-122.385477)]
 
-        #f = open("waypoints.csv", "r")
-
-        #for line in f:
-        #    lat, lon = line.split(",")
-        #    lat = float(lat)
-        #    lon = float(lon)
-        #    self.waypoints.append([lat, lon])
-        
-        #f.close()
-
         self.waypoint_index = 0
-
+        
     def updateThrottle(self, instrumentation, controls):
         current_airspeed = instrumentation.getAirspeed()
 
@@ -64,6 +55,7 @@ class JythonAutopilot(Autopilot):
             if distance_to_point < 0.2:
                 self.waypoint_index += 1
                 self.waypoint_index %= len(self.waypoints)
+                print("Going to %f, %f" % (self.waypoints[self.waypoint_index][0], self.waypoints[self.waypoint_index][1]))
 
         self.updateCnt -= 1
 
@@ -105,6 +97,12 @@ class JythonAutopilot(Autopilot):
         self.updateThrottle(instrumentation, controls)
         self.updateAileron(gps, instrumentation, controls)
         self.updateElevator(instrumentation, controls)
-        
+    
+    def reset(self):
+        self.waypoint_index = 0
+
+        print("Simple Autopilot version " + __VERSION__)    
+        print("Going to %f, %f" % (self.waypoints[self.waypoint_index][0], self.waypoints[self.waypoint_index][1]))
+    
 def create_autopilot():
     return JythonAutopilot()

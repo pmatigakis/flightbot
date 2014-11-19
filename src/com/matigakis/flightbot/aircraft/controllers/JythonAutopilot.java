@@ -43,4 +43,9 @@ public class JythonAutopilot implements Autopilot{
 	public void setOutputStream(OutputStream outputStream){
 		interpreter.setOut(outputStream);
 	}
+
+	@Override
+	public void reset() {
+		autopilot.reset();
+	}
 }

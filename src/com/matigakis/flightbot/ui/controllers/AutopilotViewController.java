@@ -1,5 +1,6 @@
 package com.matigakis.flightbot.ui.controllers;
 
+import com.matigakis.flightbot.aircraft.Aircraft;
 import com.matigakis.flightbot.aircraft.controllers.Autopilot;
 import com.matigakis.flightbot.aircraft.controllers.loaders.AutopilotLoader;
 import com.matigakis.flightbot.ui.views.AutopilotView;
@@ -15,4 +16,5 @@ public interface AutopilotViewController {
 	void detachAutopilotView(AutopilotView autopilotView);
 	boolean isAutopilotActivated();
 	Autopilot getAutopilot();
+	void run(Aircraft aircraft);
 }

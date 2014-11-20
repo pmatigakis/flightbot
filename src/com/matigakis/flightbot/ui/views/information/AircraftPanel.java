@@ -3,6 +3,7 @@ package com.matigakis.flightbot.ui.views.information;
 import javax.swing.BoxLayout;
 import javax.swing.JPanel;
 
+import com.matigakis.fgcontrol.fdm.Controls;
 import com.matigakis.flightbot.aircraft.Aircraft;
 
 public class AircraftPanel extends JPanel{
@@ -32,8 +33,11 @@ public class AircraftPanel extends JPanel{
 	}
 	
 	public void updateFromAircraftData(Aircraft aircraft){
-		controlsPanel.updateFromControls(aircraft.getControls());
 		orientationPanel.updateFromInstrumentation(aircraft.getInstrumentation());
 		instrumentationPanel.updateFromInstrumentation(aircraft.getInstrumentation());
+	}
+	
+	public void updateControls(Controls controls){
+		controlsPanel.updateFromControls(controls);
 	}
 }

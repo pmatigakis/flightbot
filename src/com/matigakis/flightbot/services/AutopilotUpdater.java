@@ -22,9 +22,7 @@ public class AutopilotUpdater implements Runnable{
 		if (autopilotViewController.isAutopilotActivated()){
 			fdm.updateAircraftState(aircraft);
 			
-			Autopilot autopilot = autopilotViewController.getAutopilot();
-			
-			autopilot.updateControls(aircraft);
+			autopilotViewController.run(aircraft);
 			
 			fdm.runSimulation(aircraft);
 		}

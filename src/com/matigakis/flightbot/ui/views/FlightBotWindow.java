@@ -26,6 +26,7 @@ import org.openstreetmap.gui.jmapviewer.events.JMVCommandEvent;
 import org.openstreetmap.gui.jmapviewer.interfaces.JMapViewerEventListener;
 import org.openstreetmap.gui.jmapviewer.interfaces.MapMarker;
 
+import com.matigakis.fgcontrol.fdm.Controls;
 import com.matigakis.flightbot.aircraft.Aircraft;
 import com.matigakis.flightbot.aircraft.controllers.JythonAutopilot;
 import com.matigakis.flightbot.aircraft.controllers.loaders.AutopilotLoader;
@@ -354,5 +355,10 @@ public class FlightBotWindow extends JFrame implements TelemetryView, AutopilotV
 	
 	private void clearMarkers(){
 		telemetryViewController.clearmarkers();
+	}
+
+	@Override
+	public void updateAutopilotControls(Controls controls) {
+		aircraftPanel.updateControls(controls);
 	}
 }

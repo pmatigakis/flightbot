@@ -3,6 +3,7 @@ package com.matigakis.flightbot.ui.controllers;
 import java.util.List;
 import java.util.LinkedList;
 
+import com.matigakis.flightbot.aircraft.Aircraft;
 import com.matigakis.flightbot.aircraft.controllers.Autopilot;
 import com.matigakis.flightbot.aircraft.controllers.loaders.AutopilotLoader;
 import com.matigakis.flightbot.ui.views.AutopilotView;
@@ -71,5 +72,14 @@ public class AutopilotWindowController implements AutopilotViewController{
 	@Override
 	public Autopilot getAutopilot() {
 		return autopilot;
+	}
+
+	@Override
+	public void run(Aircraft aircraft) {
+		autopilot.updateControls(aircraft);
+		
+		for(AutopilotView autopilotView: autopilotViews){
+			autopilotView.updateAutopilotControls(aircraft.getControls());
+		}
 	}
 }

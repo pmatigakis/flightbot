@@ -124,7 +124,7 @@ public class Aircraft {
 	/**
 	 * Check if the autopilot is active.
 	 * 
-	 * @return
+	 * @return the autopilot state
 	 */
 	public boolean isAutopilotActive(){
 		return autopilotActive;

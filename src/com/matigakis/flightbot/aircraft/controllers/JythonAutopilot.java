@@ -11,7 +11,7 @@ import org.python.util.PythonInterpreter;
 import com.matigakis.flightbot.aircraft.Aircraft;
 
 /**
- * The JythonAutopilot loads an autopilot from specified Jython package.
+ * The JythonAutopilot loads an autopilot from a specified Jython package.
  * That package must have a module named autopilot which contains a function
  * named create_autopilot that is responsible to create and initialize the
  * autopilot and return an Autopilot object.
@@ -40,6 +40,7 @@ public class JythonAutopilot implements Autopilot{
 		autopilot.updateControls(aircraft);
 	}
 	
+	//Set the output stream of the Jython interpreter to this output stream
 	public void setOutputStream(OutputStream outputStream){
 		interpreter.setOut(outputStream);
 	}

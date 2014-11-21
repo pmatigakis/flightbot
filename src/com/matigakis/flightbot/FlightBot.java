@@ -86,6 +86,8 @@ public final class FlightBot extends WindowAdapter{
 			
 			fdm.connect();
 			
+			//Create the background threads that will update the telemetry data
+			//and update aircraft controls using the autopilot 
 			TelemetryViewUpdater telemetryViewUpdater = new TelemetryViewUpdater((FDM) fdm, telemetryViewController);
 			
 			backgroundServices.scheduleAtFixedRate(telemetryViewUpdater, 0, guiUpdateRate, TimeUnit.MILLISECONDS);

@@ -1,24 +1,22 @@
 package com.matigakis.flightbot.services;
 
-import com.matigakis.flightbot.aircraft.Aircraft;
-import com.matigakis.flightbot.fdm.FDM;
-import com.matigakis.flightbot.ui.controllers.TelemetryViewController;
+import com.matigakis.fgcontrol.fdm.FDMData;
+import com.matigakis.fgcontrol.fdm.RemoteFDM;
+import com.matigakis.flightbot.ui.controllers.FDMDataViewController;
 
 public class TelemetryViewUpdater implements Runnable{
-	private TelemetryViewController telemetryViewController;
-	private Aircraft aircraft;
-	private FDM fdm;
+	private FDMDataViewController telemetryViewController;
+	private RemoteFDM fdm;
 	
-	public TelemetryViewUpdater(FDM fdm, TelemetryViewController telemetryViewController) {
-		this.aircraft = new Aircraft();
+	public TelemetryViewUpdater(RemoteFDM fdm, FDMDataViewController telemetryViewController) {
 		this.fdm = fdm;
 		this.telemetryViewController = telemetryViewController;
 	}
 	
 	@Override
 	public void run() {
-		fdm.updateAircraftState(aircraft);
+		FDMData fdmData = fdm.getFDMData();
 		
-		telemetryViewController.updateView(aircraft);
+		telemetryViewController.updateView(fdmData);
 	}
 }

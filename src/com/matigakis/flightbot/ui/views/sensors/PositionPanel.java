@@ -10,26 +10,23 @@ import javax.swing.JLabel;
 import javax.swing.BorderFactory;
 import javax.swing.border.Border;
 
-import com.matigakis.flightbot.aircraft.sensors.GPS;
-import com.matigakis.flightbot.ui.views.SensorRenderer;
-
+import com.matigakis.fgcontrol.fdm.Position;
 
 /**
  * The GPSPanel shows information received from the gps.
  */
-public class GPSPanel extends JPanel implements SensorRenderer<GPS>{
+public class PositionPanel extends JPanel{
 	private static final long serialVersionUID = 1L;
 	
 	private final JTextField longitudeText;
 	private final JTextField latitudeText;
 	private final JTextField altitudeText;
-	private final JTextField airspeedText;
-	private final JTextField headingText;
+	private final JTextField altitudeAGLText;
 	
-	public GPSPanel(){
+	public PositionPanel(){
 		super();
 		
-		Border border = BorderFactory.createTitledBorder("GPS");
+		Border border = BorderFactory.createTitledBorder("Position");
 		setBorder(border);
 		
 		LayoutManager layout = new GridBagLayout();
@@ -74,41 +71,28 @@ public class GPSPanel extends JPanel implements SensorRenderer<GPS>{
 		c.gridy = 2;
 		add(altitudeText, c);
 		
-		JLabel airspeedLabel = new JLabel("Airspeed (kt)");
-		airspeedText = new JTextField(10);
-		airspeedText.setEditable(false);
+		JLabel altitudeAGLLabel = new JLabel("Altitude AGL (ft)");
+		altitudeAGLText = new JTextField(10);
+		altitudeAGLText.setEditable(false);
 		c.gridx = 0;
 		c.gridy = 3;
-		add(airspeedLabel, c);
+		add(altitudeAGLLabel, c);
 		c.gridx = 1;
 		c.gridy = 3;
-		add(airspeedText, c);
-		
-		JLabel headingLabel = new JLabel("Heading (deg)");
-		headingText = new JTextField(10);
-		headingText.setEditable(false);
-		c.gridx = 0;
-		c.gridy = 4;
-		add(headingLabel, c);
-		c.gridx = 1;
-		c.gridy = 4;
-		add(headingText, c);
+		add(altitudeAGLText, c);
 		
 		setVisible(true);
 	}
 	
-	@Override
-	public void updateSensorView(GPS sensor) {
-		double longitude = sensor.getLongitude();
-		double latitude = sensor.getLatitude();
-		double altitude = sensor.getAltitude();
-		double heading = sensor.getHeading();
-		double airspeed = sensor.getAirspeed();
+	public void updatePosition(Position position) {
+		double longitude = position.getLongitude();
+		double latitude = position.getLatitude();
+		double altitude = position.getAltitude();
+		double altitudeAGL = position.getAGL();
 		
 		longitudeText.setText(String.valueOf(longitude));
 		latitudeText.setText(String.valueOf(latitude));
 		altitudeText.setText(String.valueOf(altitude));
-		airspeedText.setText(String.valueOf(airspeed));
-		headingText.setText(String.valueOf(heading));		
+		altitudeAGLText.setText(String.valueOf(altitudeAGL));		
 	}
 }

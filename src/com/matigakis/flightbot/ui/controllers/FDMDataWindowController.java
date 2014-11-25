@@ -15,41 +15,34 @@ import org.openstreetmap.gui.jmapviewer.interfaces.MapMarker;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.matigakis.fgcontrol.fdm.FDMData;
 import com.matigakis.flightbot.aircraft.Aircraft;
-import com.matigakis.flightbot.ui.views.TelemetryView;
+import com.matigakis.flightbot.ui.views.FDMDataView;
 
 /**
  * The TelemetryViewController is responsible for the rendering of sensor data
  * to the telemetry view.
  */
-public class TelemetryWindowController implements TelemetryViewController{
-	private static final Logger logger = LoggerFactory.getLogger(TelemetryWindowController.class);
-	//private final Aircraft aircraft;
-	private List<TelemetryView> telemetryViews;
+public class FDMDataWindowController implements FDMDataViewController{
+	private static final Logger logger = LoggerFactory.getLogger(FDMDataWindowController.class);
+	private Aircraft aircraft;
+	private List<FDMDataView> telemetryViews;
 	private List<MapMarker> markers;
 	
-	public TelemetryWindowController(){	
-		//aircraft = new Aircraft();
-		telemetryViews = new LinkedList<TelemetryView>();
+	public FDMDataWindowController(){	
+		aircraft = new Aircraft();
+		
+		telemetryViews = new LinkedList<FDMDataView>();
 		
 		markers = new LinkedList<MapMarker>();
 	}
 
-	/**
-	 * Close the view
-	 */
 	@Override
-	public void close() {
-		//telemetryView.dispatchEvent(new WindowEvent(telemetryView, WindowEvent.WINDOW_CLOSING));
-		for(TelemetryView telemetryView: telemetryViews){
-			telemetryView.close();
-		}
-	}
-
-	@Override
-	public void updateView(Aircraft aircraft) {
-		for(TelemetryView telemetryView: telemetryViews){
-			telemetryView.updateTelemetry(aircraft);
+	public void updateView(FDMData fdmData) {
+		aircraft.updateFromFDMData(fdmData);
+		
+		for(FDMDataView telemetryView: telemetryViews){
+			telemetryView.updateFDMData(fdmData);
 		}
 	}
 
@@ -76,7 +69,7 @@ public class TelemetryWindowController implements TelemetryViewController{
 							marker.setColor(Color.blue);
 							marker.setBackColor(Color.blue);
 							markers.add(marker);
-							for(TelemetryView telemetryView: telemetryViews){
+							for(FDMDataView telemetryView: telemetryViews){
 								telemetryView.addMarker(marker);
 							}
 						}else{
@@ -97,7 +90,7 @@ public class TelemetryWindowController implements TelemetryViewController{
 	@Override
 	public void clearmarkers() {
 		for(MapMarker mapMarker: markers){
-			for(TelemetryView telemetryView: telemetryViews){
+			for(FDMDataView telemetryView: telemetryViews){
 				telemetryView.removeMarker(mapMarker);
 			}
 		}
@@ -106,12 +99,12 @@ public class TelemetryWindowController implements TelemetryViewController{
 	}
 
 	@Override
-	public void attachTelemetryView(TelemetryView telemetryView) {
+	public void attachTelemetryView(FDMDataView telemetryView) {
 		telemetryViews.add(telemetryView);
 	}
 
 	@Override
-	public void detachTelemetryView(TelemetryView telemetryView) {
+	public void detachTelemetryView(FDMDataView telemetryView) {
 		telemetryViews.remove(telemetryView);
 	}
 }

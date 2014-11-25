@@ -1,20 +1,23 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <settings>
-	<simulation>
-		<fdm>
-			<type>flightgear</type>
-			<sensors>
-				<port>10502</port>
-			</sensors>
-			<controls>
-				<host>localhost</host>
-				<port>10501</port>
-			</controls>
-		</fdm>
-	</simulation>
-	
+	<fdm>
+		<type>flightgear</type>
+		<sensors>
+			<port>10502</port>
+		</sensors>
+		<controls>
+			<host>localhost</host>
+			<port>10501</port>
+		</controls>
+	</fdm>
+
 	<viewer>
+		<type>flightgear</type>
+		<sensors>
+			<port>10600</port>
+		</sensors>
+	
 		<update_rate>0.5</update_rate>
 	</viewer>
 	

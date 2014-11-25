@@ -9,20 +9,19 @@ import javax.swing.BorderFactory;
 import javax.swing.JLabel;
 import javax.swing.JTextField;
 
-import com.matigakis.flightbot.aircraft.sensors.Accelerometer;
-import com.matigakis.flightbot.ui.views.SensorRenderer;
+import com.matigakis.fgcontrol.fdm.Accelerations;
 
-public class AccelerometerPanel extends JPanel implements SensorRenderer<Accelerometer>{	
+public class AccelerationsPanel extends JPanel{	
 	private static final long serialVersionUID = 1L;
 	
 	private final JTextField xAccelerationText;
 	private final JTextField yAccelerationText;
 	private final JTextField zAccelerationText;
 	
-	public AccelerometerPanel(){
+	public AccelerationsPanel(){
 		super();
 		
-		setBorder(BorderFactory.createTitledBorder("Accelerometer"));
+		setBorder(BorderFactory.createTitledBorder("Accelerations"));
 		
 		GridBagLayout layout = new GridBagLayout();  
 		setLayout(layout);
@@ -107,12 +106,10 @@ public class AccelerometerPanel extends JPanel implements SensorRenderer<Acceler
 		setVisible(true);
 	}
 
-	@Override
-	public void updateSensorView(Accelerometer sensor) {
-		// TODO Auto-generated method stub
-		String xAcceleration = String.valueOf(sensor.getXAcceleration());
-		String yAcceleration = String.valueOf(sensor.getYAcceleration());
-		String zAcceleration = String.valueOf(sensor.getZAcceleration());
+	public void updateAccelerations(Accelerations accelerations) {
+		String xAcceleration = String.valueOf(accelerations.getXAcceleration());
+		String yAcceleration = String.valueOf(accelerations.getYAcceleration());
+		String zAcceleration = String.valueOf(accelerations.getZAcceleration());
 		
 		xAccelerationText.setText(xAcceleration);
 		yAccelerationText.setText(yAcceleration);

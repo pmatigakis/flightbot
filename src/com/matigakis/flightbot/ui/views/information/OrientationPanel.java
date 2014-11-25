@@ -4,13 +4,13 @@ import javax.swing.JPanel;
 
 import java.awt.GridBagLayout;
 import java.awt.GridBagConstraints;
+
 import javax.swing.BorderFactory;
 import javax.swing.border.Border;
 import javax.swing.JLabel;
-import javax.swing.JFormattedTextField;
-import java.text.NumberFormat;
+import javax.swing.JTextField;
 
-import com.matigakis.flightbot.aircraft.Instrumentation;;
+import com.matigakis.fgcontrol.fdm.Orientation;
 
 /**
  * The OrientationPanel is used to display information about the orientation
@@ -19,8 +19,11 @@ import com.matigakis.flightbot.aircraft.Instrumentation;;
 public class OrientationPanel extends JPanel{
 	private static final long serialVersionUID = 1L;
 	
-	private final JFormattedTextField rollText;
-	private final JFormattedTextField pitchText;
+	private JTextField rollText;
+	private JTextField pitchText;
+	private JTextField headingText;
+	private JTextField angleOfAttackText;
+	private JTextField sideslipAngleText;
 	
 	public OrientationPanel(){
 		super();
@@ -38,11 +41,8 @@ public class OrientationPanel extends JPanel{
 		c.weightx = 1.0;
 		c.weighty = 1.0;
 		
-		NumberFormat textFormat = NumberFormat.getInstance();
-		textFormat.setMaximumFractionDigits(0);
-		
 		JLabel rollLabel = new JLabel("Roll (deg)");
-		rollText = new JFormattedTextField(textFormat);
+		rollText = new JTextField();
 		rollText.setColumns(10);
 		rollText.setEditable(false);
 		c.gridx = 0;
@@ -53,7 +53,7 @@ public class OrientationPanel extends JPanel{
 		add(rollText, c);
 		
 		JLabel pitchLabel = new JLabel("Pitch (deg)");
-		pitchText = new JFormattedTextField(textFormat);
+		pitchText = new JTextField();
 		pitchText.setColumns(10);
 		pitchText.setEditable(false);
 		c.gridx = 0;
@@ -63,6 +63,39 @@ public class OrientationPanel extends JPanel{
 		c.gridy = 1;
 		add(pitchText, c);
 		
+		JLabel headingLabel = new JLabel("Heading (deg)");
+		headingText = new JTextField();
+		headingText.setColumns(10);
+		headingText.setEditable(false);
+		c.gridx = 0;
+		c.gridy = 2;
+		add(headingLabel, c);
+		c.gridx = 1;
+		c.gridy = 2;
+		add(headingText, c);
+		
+		JLabel angleOfAttackLabel = new JLabel("Angle of attack (deg)");
+		angleOfAttackText = new JTextField();
+		angleOfAttackText.setColumns(10);
+		angleOfAttackText.setEditable(false);
+		c.gridx = 0;
+		c.gridy = 3;
+		add(angleOfAttackLabel, c);
+		c.gridx = 1;
+		c.gridy = 3;
+		add(angleOfAttackText, c);
+		
+		JLabel sideslipAngleLabel = new JLabel("sideslip angle (deg)");
+		sideslipAngleText = new JTextField();
+		sideslipAngleText.setColumns(10);
+		sideslipAngleText.setEditable(false);
+		c.gridx = 0;
+		c.gridy = 4;
+		add(sideslipAngleLabel, c);
+		c.gridx = 1;
+		c.gridy = 4;
+		add(sideslipAngleText, c);
+		
 		setVisible(true);
 	}
 	
@@ -71,8 +104,11 @@ public class OrientationPanel extends JPanel{
 	 * 
 	 * @param orientation
 	 */
-	public void updateFromInstrumentation(Instrumentation instrumentation){
-		rollText.setValue(instrumentation.getRoll());
-		pitchText.setValue(instrumentation.getPitch());
+	public void updateFromOrientation(Orientation orientation){
+		rollText.setText(String.valueOf(orientation.getRoll()));
+		pitchText.setText(String.valueOf(orientation.getPitch()));
+		headingText.setText(String.valueOf(orientation.getHeading()));
+		angleOfAttackText.setText(String.valueOf(orientation.getAngleOfAttack()));
+		sideslipAngleText.setText(String.valueOf(orientation.getSideSlipAngle()));
 	}
 }

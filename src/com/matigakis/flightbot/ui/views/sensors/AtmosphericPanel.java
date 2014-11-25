@@ -8,20 +8,15 @@ import java.awt.GridBagConstraints;
 import javax.swing.BorderFactory;
 import javax.swing.JLabel;
 import javax.swing.JTextField;
-import javax.swing.JFormattedTextField;
 
-import java.text.NumberFormat;
-
-import com.matigakis.flightbot.aircraft.sensors.PitotTube;
-import com.matigakis.flightbot.aircraft.sensors.StaticPressureSensor;
-import com.matigakis.flightbot.aircraft.sensors.TemperatureSensor;
+import com.matigakis.fgcontrol.fdm.Atmosphere;
 
 public class AtmosphericPanel extends JPanel{
 	private static final long serialVersionUID = 1L;
 	
 	private final JTextField dynamicPressureText;
 	private final JTextField staticPressureText;
-	private final JFormattedTextField temperatureText;
+	private final JTextField temperatureText;
 	
 	public AtmosphericPanel(){
 		super();
@@ -31,7 +26,7 @@ public class AtmosphericPanel extends JPanel{
 		GridBagLayout layout = new GridBagLayout();
 		setLayout(layout);
 		
-		JLabel dynamicPressureLabel = new JLabel("Dynamic pressure (inHg)");
+		JLabel dynamicPressureLabel = new JLabel("Total pressure (inHg)");
 		GridBagConstraints c = new GridBagConstraints();
 		c.anchor = GridBagConstraints.NORTHWEST;
 		c.fill = GridBagConstraints.NONE;
@@ -93,9 +88,7 @@ public class AtmosphericPanel extends JPanel{
 		c.gridy = 2;
 		add(temperatureLabel, c);
 		
-		NumberFormat temperatureFormat = NumberFormat.getNumberInstance();
-		temperatureFormat.setMaximumFractionDigits(1);
-		temperatureText = new JFormattedTextField(temperatureFormat);
+		temperatureText = new JTextField();
 		temperatureText.setColumns(10);
 		temperatureText.setEditable(false);
 		c = new GridBagConstraints();
@@ -112,13 +105,13 @@ public class AtmosphericPanel extends JPanel{
 		setVisible(true);
 	}
 
-	public void updateSensorView(PitotTube pitotTube, StaticPressureSensor staticPressureSensor, TemperatureSensor temperatureSensor) {
-		double dynamicPressure = pitotTube.getPressure();
-		double staticPressure = staticPressureSensor.getPressure();
-		double temperature = temperatureSensor.getTemperature();
+	public void updateAtmosphere(Atmosphere atmosphere) {
+		double totalPressure = atmosphere.getTotalPressure();
+		double staticPressure = atmosphere.getStaticPressure();
+		double temperature = atmosphere.getTemperature();
 		
-		dynamicPressureText.setText(String.valueOf(dynamicPressure));
+		dynamicPressureText.setText(String.valueOf(totalPressure));
 		staticPressureText.setText(String.valueOf(staticPressure));
-		temperatureText.setValue(temperature);
+		temperatureText.setText(String.valueOf(temperature));
 	}
 }

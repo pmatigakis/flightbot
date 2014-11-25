@@ -22,9 +22,14 @@ In order to build FlightBot you must install Ant first.
 
     ./start_fg_on_air.sh
 
-6. To run FlightBot give the following command on the console and load an autopilot from the File menu..
+6. Run the Telemetry viewer using the following command
 
     ./run_flightbot.sh
+
+7. Run the sample autopilot using the following command
+
+    ./run_jython_autopilot.sh ../autopilots/simple
+
 
 # Documentation
 There isn't any documentation yet. However you can check how the sample autopilot at

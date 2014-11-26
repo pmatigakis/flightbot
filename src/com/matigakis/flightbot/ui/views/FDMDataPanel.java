@@ -5,10 +5,12 @@ import javax.swing.JPanel;
 
 import com.matigakis.fgcontrol.fdm.Accelerations;
 import com.matigakis.fgcontrol.fdm.Atmosphere;
+import com.matigakis.fgcontrol.fdm.Controls;
 import com.matigakis.fgcontrol.fdm.FDMData;
 import com.matigakis.fgcontrol.fdm.Orientation;
 import com.matigakis.fgcontrol.fdm.Position;
 import com.matigakis.fgcontrol.fdm.Velocities;
+import com.matigakis.flightbot.ui.views.information.ControlsPanel;
 import com.matigakis.flightbot.ui.views.information.OrientationPanel;
 import com.matigakis.flightbot.ui.views.sensors.AccelerationsPanel;
 import com.matigakis.flightbot.ui.views.sensors.AtmosphericPanel;
@@ -23,6 +25,7 @@ public class FDMDataPanel extends JPanel{
 	private AccelerationsPanel accelerationsPanel;
 	private OrientationPanel orientationPanel;
 	private AtmosphericPanel atmosphericpanel;
+	private ControlsPanel controlsPanel;
 	
 	public FDMDataPanel(){
 		super();
@@ -48,6 +51,9 @@ public class FDMDataPanel extends JPanel{
 		
 		atmosphericpanel = new AtmosphericPanel();
 		add(atmosphericpanel);
+		
+		controlsPanel = new ControlsPanel();
+		add(controlsPanel);
 	}
 	
 	public void updateFromFDMData(FDMData fdmData){
@@ -65,5 +71,8 @@ public class FDMDataPanel extends JPanel{
 		
 		Atmosphere atmosphere = fdmData.getAtmosphere();
 		atmosphericpanel.updateAtmosphere(atmosphere);
+		
+		Controls controls = fdmData.getControls();
+		controlsPanel.updateControls(controls);
 	}
 }

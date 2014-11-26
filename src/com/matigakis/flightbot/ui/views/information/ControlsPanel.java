@@ -86,7 +86,7 @@ public class ControlsPanel extends JPanel{
 	 * 
 	 * @param controls
 	 */
-	public void updateFromControls(Controls controls){
+	public void updateControls(Controls controls){
 		aileronText.setText(String.valueOf(controls.getAileron()));
 		elevatorText.setText(String.valueOf(controls.getElevator()));
 		rudderText.setText(String.valueOf(controls.getRudder()));

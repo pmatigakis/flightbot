@@ -38,6 +38,6 @@ public class AircraftPanel extends JPanel{
 	}
 	
 	public void updateControls(Controls controls){
-		controlsPanel.updateFromControls(controls);
+		controlsPanel.updateControls(controls);
 	}
 }

@@ -125,7 +125,7 @@ public class AutopilotWindow extends JFrame implements AutopilotView{
 	
 	@Override
 	public void updateAutopilotControls(Controls controls) {
-		controlsPanel.updateFromControls(controls);
+		controlsPanel.updateControls(controls);
 	}
 
 	private void activateAutopilot(){

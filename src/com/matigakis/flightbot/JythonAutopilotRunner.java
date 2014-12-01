@@ -2,8 +2,6 @@ package com.matigakis.flightbot;
 
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import java.util.concurrent.ScheduledThreadPoolExecutor;
-import java.util.concurrent.TimeUnit;
 
 import org.apache.commons.configuration.Configuration;
 import org.apache.commons.configuration.ConfigurationException;
@@ -14,10 +12,12 @@ import org.slf4j.LoggerFactory;
 
 import com.matigakis.flightbot.configuration.FDMConfigurationException;
 import com.matigakis.flightbot.configuration.FDMManager;
+import com.matigakis.flightbot.fdm.RemoteFDMAdapter;
+import com.matigakis.fgcontrol.fdm.FDMData;
 import com.matigakis.fgcontrol.fdm.RemoteFDM;
+import com.matigakis.flightbot.aircraft.Aircraft;
 import com.matigakis.flightbot.aircraft.controllers.JythonAutopilot;
 import com.matigakis.flightbot.aircraft.controllers.loaders.JythonAutopilotLoader;
-import com.matigakis.flightbot.services.AutopilotUpdater;
 import com.matigakis.flightbot.ui.controllers.AutopilotWindowController;
 import com.matigakis.flightbot.ui.views.AutopilotWindow;
 
@@ -26,7 +26,6 @@ public class JythonAutopilotRunner {
 	
 	private long autopilotUpdateRate;
 	private AutopilotWindowController autopilotWindowController;
-	private ScheduledThreadPoolExecutor updateService;
 	private RemoteFDM fdm;
 	private boolean running;
 	
@@ -46,6 +45,13 @@ public class JythonAutopilotRunner {
 		
 		fdm = fdmManager.getRemoteFDM();
 		
+		fdm.addRemoteFDMStateListener(new RemoteFDMAdapter(){
+			@Override
+			public void fdmDataReceived(RemoteFDM fdm, FDMData fdmData) {
+				runAutopilot(fdm, fdmData);
+			}
+		});
+		
 		autopilotWindow.addWindowListener(new WindowAdapter() {
 			@Override
 			public void windowClosing(WindowEvent e) {
@@ -55,9 +61,17 @@ public class JythonAutopilotRunner {
 		
 		autopilotUpdateRate = (long)(1000 * configuration.getDouble("autopilot.update_rate"));
 		
-		updateService = new ScheduledThreadPoolExecutor(1);
-		
 		running = false;
+	}
+	
+	private void runAutopilot(RemoteFDM fdm, FDMData fdmData){
+		if (autopilotWindowController.isAutopilotActivated()){
+			autopilotWindowController.run(fdmData);
+			
+			Aircraft aircraft = autopilotWindowController.getAircraft();
+			
+			fdm.transmitControls(aircraft.getControls());
+		}
 	}
 	
 	private void stop(){
@@ -65,8 +79,6 @@ public class JythonAutopilotRunner {
 			LOGGER.info("Shutting down the autopilot simulator");
 		
 			fdm.disconnect();
-		
-			updateService.shutdown();
 			
 			running = false;
 		}else{
@@ -79,10 +91,6 @@ public class JythonAutopilotRunner {
 			LOGGER.info("Starting the autopilot simulator");
 		
 			fdm.connect();
-		
-			AutopilotUpdater updater = new AutopilotUpdater(fdm, autopilotWindowController);
-		
-			updateService.scheduleAtFixedRate(updater, 0, autopilotUpdateRate, TimeUnit.MILLISECONDS);
 		
 			running = true;
 		}else{

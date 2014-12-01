@@ -11,7 +11,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.matigakis.fgcontrol.fdm.FDMData;
-import com.matigakis.fgcontrol.network.Telemetry;
 import com.matigakis.fgcontrol.network.FDMDataListener;
 import com.matigakis.fgcontrol.network.FDMDataServer;
 import com.matigakis.flightbot.configuration.FDMConfigurationException;

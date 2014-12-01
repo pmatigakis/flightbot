@@ -4,8 +4,8 @@ import org.apache.commons.configuration.Configuration;
 
 import com.matigakis.fgcontrol.fdm.NetworkFDM;
 import com.matigakis.fgcontrol.fdm.RemoteFDM;
-import com.matigakis.fgcontrol.network.TelemetryServer;
-import com.matigakis.fgcontrol.network.UDPTelemetryServer;
+import com.matigakis.fgcontrol.network.FDMDataServer;
+import com.matigakis.fgcontrol.network.UDPFDMServer;
 
 /**
  * FDMManager is responsible for the creation of an FDM based
@@ -55,14 +55,10 @@ public final class FDMManager {
 		return fdm;
 	}
 	
-	public TelemetryServer getViewerTelemetryServer(){
-		//TODO: I should check what type of fdm server to create.
-		//For the moment I will always assume that a connection to flightgear will
-		//be used
-		
+	public FDMDataServer getViewerFDMDataServer(){
 		int port = configuration.getInt("viewer.sensors.port");
 		
-		TelemetryServer viewerFDMServer = new UDPTelemetryServer(port);
+		FDMDataServer viewerFDMServer = new UDPFDMServer(port);
 		
 		return viewerFDMServer;
 	}

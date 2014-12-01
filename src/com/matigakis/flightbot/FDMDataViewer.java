@@ -11,10 +11,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.matigakis.fgcontrol.fdm.FDMData;
-import com.matigakis.fgcontrol.fdm.FDMDataFactory;
 import com.matigakis.fgcontrol.network.Telemetry;
-import com.matigakis.fgcontrol.network.TelemetryListener;
-import com.matigakis.fgcontrol.network.TelemetryServer;
+import com.matigakis.fgcontrol.network.FDMDataListener;
+import com.matigakis.fgcontrol.network.FDMDataServer;
 import com.matigakis.flightbot.configuration.FDMConfigurationException;
 import com.matigakis.flightbot.configuration.FDMManager;
 import com.matigakis.flightbot.ui.controllers.FDMDataViewController;
@@ -28,20 +27,20 @@ import com.matigakis.flightbot.ui.views.FDMDataWindow;
 public final class FDMDataViewer{
 	private static final Logger LOGGER = LoggerFactory.getLogger(FDMDataViewer.class);
 	
-	private TelemetryServer telemetryServer;
+	private FDMDataServer fdmDataServer;
 	private FDMDataViewController fdmDataViewController;
 	private boolean running;
 	
 	public FDMDataViewer(Configuration configuration) throws FDMConfigurationException{
-		//Create the FDM object
+		//Create the FDM server object
 		FDMManager fdmManager = new FDMManager(configuration);
 		
-		telemetryServer = fdmManager.getViewerTelemetryServer();
+		fdmDataServer = fdmManager.getViewerFDMDataServer();
 		
-		telemetryServer.addTelemetryListener(new TelemetryListener() {
+		fdmDataServer.addFDMDataListener(new FDMDataListener() {
 			@Override
-			public void handleTelemetry(Telemetry telemetry) {
-				updateUsingTelemetry(telemetry);
+			public void handleFDMData(FDMData fdmData) {
+				updateUsingFDMData(fdmData);
 			}
 		});
 		
@@ -52,6 +51,7 @@ public final class FDMDataViewer{
 		
 		fdmDataViewController.attachTelemetryView(fdmDataWindow);
 		
+		//Update the view when new data from the FDM have arrived
 		fdmDataWindow.addWindowListener(new WindowAdapter() {
 			@Override
 			public void windowClosing(WindowEvent e) {
@@ -62,9 +62,7 @@ public final class FDMDataViewer{
 		running = false;
 	}
 
-	private void updateUsingTelemetry(Telemetry telemetry){
-		FDMData fdmData = FDMDataFactory.fromTelemetry(telemetry);
-		
+	private void updateUsingFDMData(FDMData fdmData){
 		fdmDataViewController.updateView(fdmData);
 	}
 	
@@ -72,7 +70,7 @@ public final class FDMDataViewer{
 		if(!running){
 			LOGGER.info("Starting the telemetry viewer");
 			
-			telemetryServer.startServer();
+			fdmDataServer.startServer();
 				
 			running = true;
 		}else{
@@ -84,7 +82,7 @@ public final class FDMDataViewer{
 		if(running){
 			LOGGER.info("Stopping the telemetry viewer");
 			
-			telemetryServer.stopServer();
+			fdmDataServer.stopServer();
 			
 			running = false;
 		}else{

@@ -11,6 +11,7 @@ import com.matigakis.flightbot.ui.views.AutopilotView;
 public interface AutopilotViewController {
 	void activateAutopilot();
 	void deactivateAutopilot();
+	void resetAutopilot();
 	void attachAutopilotView(AutopilotView autopilotView);
 	void detachAutopilotView(AutopilotView autopilotView);
 	boolean isAutopilotActivated();

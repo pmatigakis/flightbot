@@ -76,7 +76,13 @@ public class AutopilotWindow extends JFrame implements AutopilotView{
 		});
 		
 		JMenuItem resetMenuItem = new JMenuItem("Reset");
-		resetMenuItem.setEnabled(false);
+		//resetMenuItem.setEnabled(false);
+		resetMenuItem.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				resetAutopilot();
+			}
+		});
 		autopilotMenu.add(resetMenuItem);
 		
 		JMenu flightgearMenu = new JMenu("Flightgear");
@@ -86,7 +92,6 @@ public class AutopilotWindow extends JFrame implements AutopilotView{
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				pauseFlightgear();
-				
 			}
 		});
 		flightgearMenu.add(pauseFlightgearMenuItem);
@@ -159,16 +164,16 @@ public class AutopilotWindow extends JFrame implements AutopilotView{
 		flightgearViewController.pause();
 	}
 
-	private void unpauseFlightgear(){
-		flightgearViewController.unpause();
-	}
-
 	private void resetFlightgear(){
 		flightgearViewController.reset();
 	}
 
 	private void activateAutopilot(){
 		autopilotViewController.activateAutopilot();
+	}
+	
+	private void resetAutopilot(){
+		autopilotViewController.resetAutopilot();
 	}
 
 	private void deactivateAutopilot(){

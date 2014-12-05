@@ -84,4 +84,9 @@ public class AutopilotWindowController implements AutopilotViewController{
 	public Aircraft getAircraft() {
 		return aircraft;
 	}
+
+	@Override
+	public void resetAutopilot() {
+		autopilot.reset();
+	}
 }

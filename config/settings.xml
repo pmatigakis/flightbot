@@ -1,6 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <settings>
+	<flightgear>
+		<console>
+			<host>127.0.0.1</host>
+			<port>10504</port>
+		</console>
+	</flightgear>
+
 	<fdm>
 		<type>flightgear</type>
 		<sensors>

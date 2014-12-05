@@ -2,6 +2,7 @@ package com.matigakis.flightbot;
 
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.net.InetSocketAddress;
 
 import org.apache.commons.configuration.Configuration;
 import org.apache.commons.configuration.ConfigurationException;
@@ -13,12 +14,14 @@ import org.slf4j.LoggerFactory;
 import com.matigakis.flightbot.configuration.FDMConfigurationException;
 import com.matigakis.flightbot.configuration.FDMManager;
 import com.matigakis.flightbot.fdm.RemoteFDMAdapter;
+import com.matigakis.fgcontrol.FGControl;
 import com.matigakis.fgcontrol.fdm.FDMData;
 import com.matigakis.fgcontrol.fdm.RemoteFDM;
 import com.matigakis.flightbot.aircraft.Aircraft;
 import com.matigakis.flightbot.aircraft.controllers.JythonAutopilot;
 import com.matigakis.flightbot.aircraft.controllers.loaders.JythonAutopilotLoader;
 import com.matigakis.flightbot.ui.controllers.AutopilotWindowController;
+import com.matigakis.flightbot.ui.controllers.FlightgearWindowController;
 import com.matigakis.flightbot.ui.views.AutopilotWindow;
 
 public class JythonAutopilotRunner {
@@ -26,7 +29,9 @@ public class JythonAutopilotRunner {
 	
 	private long autopilotUpdateRate;
 	private AutopilotWindowController autopilotWindowController;
+	private FlightgearWindowController flightgearWindowController;
 	private RemoteFDM fdm;
+	private FGControl fgControl;
 	private boolean running;
 	
 	public JythonAutopilotRunner(Configuration configuration, String autopilotPackage) throws FDMConfigurationException{
@@ -35,7 +40,12 @@ public class JythonAutopilotRunner {
 		JythonAutopilot autopilot = (JythonAutopilot) autopilotLoader.getAutopilot();
 		
 		autopilotWindowController = new AutopilotWindowController(autopilot);
-		AutopilotWindow autopilotWindow = new AutopilotWindow(autopilotWindowController);	
+		
+		InetSocketAddress consoleAddress = new InetSocketAddress(configuration.getString("flightgear.console.host"), configuration.getInt("flightgear.console.port"));
+		fgControl = new FGControl(consoleAddress);
+		
+		flightgearWindowController = new FlightgearWindowController(fgControl);
+		AutopilotWindow autopilotWindow = new AutopilotWindow(autopilotWindowController, flightgearWindowController);	
 		
 		autopilot.setOutputStream(autopilotWindow.getDebugConsoleStream());
 		
@@ -78,6 +88,7 @@ public class JythonAutopilotRunner {
 		if(running){
 			LOGGER.info("Shutting down the autopilot simulator");
 		
+			fgControl.disconnect();
 			fdm.disconnect();
 			
 			running = false;
@@ -90,6 +101,7 @@ public class JythonAutopilotRunner {
 		if(!running){
 			LOGGER.info("Starting the autopilot simulator");
 		
+			fgControl.connect();
 			fdm.connect();
 		
 			running = true;

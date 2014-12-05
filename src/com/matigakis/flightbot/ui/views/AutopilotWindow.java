@@ -17,20 +17,25 @@ import java.io.OutputStream;
 
 import com.matigakis.fgcontrol.fdm.Controls;
 import com.matigakis.flightbot.ui.controllers.AutopilotViewController;
+import com.matigakis.flightbot.ui.controllers.FlightgearViewController;
 import com.matigakis.flightbot.ui.views.information.ControlsPanel;
 
 public class AutopilotWindow extends JFrame implements AutopilotView{
 	private static final long serialVersionUID = 1L;
 	
 	private AutopilotViewController autopilotViewController;
+	private FlightgearViewController flightgearViewController;
 	private ControlsPanel controlsPanel;
 	private JMenuItem startMenuItem;
 	private JMenuItem stopMenuItem;
+	private JMenuItem pauseFlightgearMenuItem;
+	private JMenuItem resetFlightgearMenuItem;
 	private JTextArea debugText;
 	private OutputStream consoleStream;
-	
-	public AutopilotWindow(AutopilotViewController autopilotViewController){
+
+	public AutopilotWindow(AutopilotViewController autopilotViewController, FlightgearViewController flightgearViewController){
 		this.autopilotViewController = autopilotViewController;
+		this.flightgearViewController = flightgearViewController;
 		
 		setDefaultCloseOperation(DISPOSE_ON_CLOSE);
 		
@@ -74,7 +79,29 @@ public class AutopilotWindow extends JFrame implements AutopilotView{
 		resetMenuItem.setEnabled(false);
 		autopilotMenu.add(resetMenuItem);
 		
+		JMenu flightgearMenu = new JMenu("Flightgear");
+
+		pauseFlightgearMenuItem = new JMenuItem("Pause");
+		pauseFlightgearMenuItem.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				pauseFlightgear();
+				
+			}
+		});
+		flightgearMenu.add(pauseFlightgearMenuItem);
+
+		resetFlightgearMenuItem = new JMenuItem("Reset");
+		resetFlightgearMenuItem.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				resetFlightgear();
+			}
+		});
+		flightgearMenu.add(resetFlightgearMenuItem);
+		
 		menuBar.add(autopilotMenu);
+		menuBar.add(flightgearMenu);
 		
 		setJMenuBar(menuBar);
 		
@@ -126,6 +153,18 @@ public class AutopilotWindow extends JFrame implements AutopilotView{
 	@Override
 	public void updateAutopilotControls(Controls controls) {
 		controlsPanel.updateControls(controls);
+	}
+	
+	private void pauseFlightgear(){
+		flightgearViewController.pause();
+	}
+
+	private void unpauseFlightgear(){
+		flightgearViewController.unpause();
+	}
+
+	private void resetFlightgear(){
+		flightgearViewController.reset();
 	}
 
 	private void activateAutopilot(){

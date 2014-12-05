@@ -50,7 +50,6 @@ public final class FDMDataViewer{
 		
 		fdmDataViewController.attachTelemetryView(fdmDataWindow);
 		
-		//Update the view when new data from the FDM have arrived
 		fdmDataWindow.addWindowListener(new WindowAdapter() {
 			@Override
 			public void windowClosing(WindowEvent e) {

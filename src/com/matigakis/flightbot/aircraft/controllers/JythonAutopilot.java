@@ -2,13 +2,16 @@ package com.matigakis.flightbot.aircraft.controllers;
 
 import java.io.OutputStream;
 
+import org.apache.commons.configuration.Configuration;
 import org.python.core.Py;
 import org.python.core.PyObject;
 import org.python.core.PyString;
+import org.python.core.PyStringMap;
 import org.python.core.PySystemState;
 import org.python.util.PythonInterpreter;
 
 import com.matigakis.flightbot.aircraft.Aircraft;
+import com.matigakis.flightbot.configuration.JythonConfigurationAdapter;
 
 /**
  * The JythonAutopilot loads an autopilot from a specified Jython package.
@@ -20,9 +23,14 @@ public class JythonAutopilot implements Autopilot{
 	private Autopilot autopilot;
 	private PythonInterpreter interpreter;
 	
-	public JythonAutopilot(String autopilotPackage) {
+	public JythonAutopilot(String autopilotPackage, Configuration configuration) {
 		PySystemState sys = Py.getSystemState();
 		sys.path.append(new PyString(autopilotPackage));
+		
+		//Make the configuration object available through the sys package
+		JythonConfigurationAdapter configurationAdapter = new JythonConfigurationAdapter(configuration);
+		PyStringMap dict = (PyStringMap) sys.__dict__;
+		dict.__setitem__("configuration", configurationAdapter);
 		
 		interpreter = new PythonInterpreter(null, sys);
 		

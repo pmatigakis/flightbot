@@ -13,6 +13,7 @@ import org.slf4j.LoggerFactory;
 import com.matigakis.fgcontrol.fdm.FDMData;
 import com.matigakis.fgcontrol.network.FDMDataListener;
 import com.matigakis.fgcontrol.network.FDMDataServer;
+import com.matigakis.flightbot.configuration.ConfigurationManager;
 import com.matigakis.flightbot.configuration.FDMConfigurationException;
 import com.matigakis.flightbot.configuration.FDMManager;
 import com.matigakis.flightbot.ui.controllers.FDMDataViewController;
@@ -92,14 +93,7 @@ public final class FDMDataViewer{
 		BasicConfigurator.configure();
 		
 		//load the configuration
-		Configuration configuration;
-		
-		try {
-			configuration = new XMLConfiguration("config/settings.xml");
-		} catch (ConfigurationException e) {
-			e.printStackTrace();
-			return;
-		}
+		Configuration configuration = ConfigurationManager.getConfiguration();
 		
 		//Start the fdm data viewer
 		FDMDataViewer fdmDataViewer = new FDMDataViewer(configuration);

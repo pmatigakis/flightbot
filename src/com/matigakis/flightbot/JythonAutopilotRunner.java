@@ -5,12 +5,11 @@ import java.awt.event.WindowEvent;
 import java.net.InetSocketAddress;
 
 import org.apache.commons.configuration.Configuration;
-import org.apache.commons.configuration.ConfigurationException;
-import org.apache.commons.configuration.XMLConfiguration;
 import org.apache.log4j.BasicConfigurator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.matigakis.flightbot.configuration.ConfigurationManager;
 import com.matigakis.flightbot.configuration.FDMConfigurationException;
 import com.matigakis.flightbot.configuration.FDMManager;
 import com.matigakis.flightbot.fdm.RemoteFDMAdapter;
@@ -27,7 +26,6 @@ import com.matigakis.flightbot.ui.views.AutopilotWindow;
 public class JythonAutopilotRunner {
 	private static final Logger LOGGER = LoggerFactory.getLogger(JythonAutopilotRunner.class);
 	
-	private long autopilotUpdateRate;
 	private AutopilotWindowController autopilotWindowController;
 	private FlightgearWindowController flightgearWindowController;
 	private RemoteFDM fdm;
@@ -35,7 +33,7 @@ public class JythonAutopilotRunner {
 	private boolean running;
 	
 	public JythonAutopilotRunner(Configuration configuration, String autopilotPackage) throws FDMConfigurationException{
-		JythonAutopilotLoader autopilotLoader = new JythonAutopilotLoader(autopilotPackage);
+		JythonAutopilotLoader autopilotLoader = new JythonAutopilotLoader(autopilotPackage, configuration);
 		
 		JythonAutopilot autopilot = (JythonAutopilot) autopilotLoader.getAutopilot();
 		
@@ -48,6 +46,8 @@ public class JythonAutopilotRunner {
 		AutopilotWindow autopilotWindow = new AutopilotWindow(autopilotWindowController, flightgearWindowController);	
 		
 		autopilot.setOutputStream(autopilotWindow.getDebugConsoleStream());
+		
+		autopilot.reset();
 		
 		autopilotWindowController.attachAutopilotView(autopilotWindow);
 		
@@ -68,8 +68,6 @@ public class JythonAutopilotRunner {
 				stop();
 			}
 		});
-		
-		autopilotUpdateRate = (long)(1000 * configuration.getDouble("autopilot.update_rate"));
 		
 		running = false;
 	}
@@ -113,15 +111,7 @@ public class JythonAutopilotRunner {
 	public static void main(String[] args) throws Exception{
 		BasicConfigurator.configure();
 		
-		//load the configuration
-		Configuration configuration;
-		
-		try {
-			configuration = new XMLConfiguration("config/settings.xml");
-		} catch (ConfigurationException e) {
-			e.printStackTrace();
-			return;
-		}
+		Configuration configuration = ConfigurationManager.getConfiguration();
 		
 		//JythonAutopilotRunner jythonAutopilotRunner = new JythonAutopilotRunner(configuration, "autopilots/simple");
 		JythonAutopilotRunner jythonAutopilotRunner = new JythonAutopilotRunner(configuration, args[0]);

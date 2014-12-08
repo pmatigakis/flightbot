@@ -1,19 +1,26 @@
 from java.lang import Math
 
+import sys
+
 from com.matigakis.flightbot.aircraft.controllers import Autopilot
 from com.matigakis.flightbot.navigation import Navigator
 from com.matigakis.controlsystems.pid import PID
 
 __VERSION__ = "0.0.1"
 
+print sys.configuration.getProperty("fdm.type")
+print sys.configuration.getProperty("fdm.sensors.port")
+
 class JythonAutopilot(Autopilot):
-    def __init__(self):
+    def __init__(self, dt):
+        self.dt = dt
+        
         p = PID
-        self.throttle_pid = PID(0.1, 0.07, 0.05, 0.0, 1.0, 0.1, 10.0)
-        self.course_pid = PID(1.0, 0.0, 0.0, -15.0, 15.0, 0.1, 0.0)
-        self.aileron_pid = PID(0.1, 0.005, 0.001, -1.0, 1.0, 0.1, 10.0)
-        self.pitch_pid = PID(0.5, 0.0, 0.0, -15.0, 15.0, 0.1, 0.0)
-        self.elevator_pid = PID(0.055, 0.0005, 0.0001, -1.0, 1.0, 0.1, 200.0)
+        self.throttle_pid = PID(0.1, 0.07, 0.05, 0.0, 1.0, dt, 10.0)
+        self.course_pid = PID(1.0, 0.0, 0.0, -15.0, 15.0, dt, 0.0)
+        self.aileron_pid = PID(0.1, 0.005, 0.001, -1.0, 1.0, dt, 10.0)
+        self.pitch_pid = PID(0.5, 0.0, 0.0, -15.0, 15.0, dt, 0.0)
+        self.elevator_pid = PID(0.055, 0.0005, 0.0001, -1.0, 1.0, dt, 200.0)
 
         self.navigator = Navigator()
 
@@ -105,4 +112,8 @@ class JythonAutopilot(Autopilot):
         print("Going to %f, %f" % (self.waypoints[self.waypoint_index][0], self.waypoints[self.waypoint_index][1]))
     
 def create_autopilot():
-    return JythonAutopilot()
+    dt = float(sys.configuration.getProperty("autopilot.update_rate"))
+    
+    print dt
+    
+    return JythonAutopilot(dt)

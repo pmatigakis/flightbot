@@ -1,119 +1,106 @@
 from java.lang import Math
 
-import sys
-
-from com.matigakis.flightbot.aircraft.controllers import Autopilot
 from com.matigakis.flightbot.navigation import Navigator
 from com.matigakis.controlsystems.pid import PID
 
-__VERSION__ = "0.0.1"
+from altitude import AltitudeHoldAutopilot
+from airspeed import AirspeedHoldAutopilot
+from heading import HeadingHoldAutopilot
 
-print sys.configuration.getProperty("fdm.type")
-print sys.configuration.getProperty("fdm.sensors.port")
+import settings
 
-class JythonAutopilot(Autopilot):
-    def __init__(self, dt):
-        self.dt = dt
+__VERSION__ = "0.0.2"
+
+class Autopilot(object):
+    def __init__(self):
         
-        p = PID
-        self.throttle_pid = PID(0.1, 0.07, 0.05, 0.0, 1.0, dt, 10.0)
-        self.course_pid = PID(1.0, 0.0, 0.0, -15.0, 15.0, dt, 0.0)
-        self.aileron_pid = PID(0.1, 0.005, 0.001, -1.0, 1.0, dt, 10.0)
-        self.pitch_pid = PID(0.5, 0.0, 0.0, -15.0, 15.0, dt, 0.0)
-        self.elevator_pid = PID(0.055, 0.0005, 0.0001, -1.0, 1.0, dt, 200.0)
-
-        self.navigator = Navigator()
-
-        self.updateCnt = 0;
-        self.target_course = 100;
-        self.target_airspeed = 60.0;
-        self.target_altitude = 1000.0
-
         self.waypoints = [(37.614299,-122.357153),
                           (37.602468,-122.398867),
                           (37.630683,-122.415518),
                           (37.638364,-122.385477)]
-
-        self.waypoint_index = 0
+         
+        self.navigator = Navigator()
+    
+    def setup(self, configuration):    
+        self.updateCnt = 0
         
-    def updateThrottle(self, instrumentation, controls):
+        self.target_heading = 100;
+        self.target_airspeed = 60.0;
+        self.target_altitude = 1000.0
+        
+        self.current_waypoint = 0
+        
+        self.altitude_hold_autopilot = AltitudeHoldAutopilot(settings.PITCH_P,
+                                                            settings.PITCH_I,
+                                                            settings.PITCH_D,
+                                                            settings.ELEVATOR_P,
+                                                            settings.ELEVATOR_I,
+                                                            settings.ELEVATOR_D,
+                                                            settings.dt)
+        
+        self.airspeed_hold_autopilot = AirspeedHoldAutopilot(settings.THROTTLE_P,
+                                                            settings.THROTTLE_I,
+                                                            settings.THROTTLE_D,
+                                                            settings.dt)
+        
+        self.heading_hold_autopilot = HeadingHoldAutopilot(settings.ROLL_P,
+                                                           settings.ROLL_I,
+                                                           settings.ROLL_D,
+                                                           settings.AILERON_P,
+                                                           settings.AILERON_I,
+                                                           settings.AILERON_D,
+                                                           settings.dt)
+        
+        self.altitude_hold_autopilot.set_target_altitude(self.target_altitude)
+        self.heading_hold_autopilot.set_target_heading(self.target_heading)
+        self.airspeed_hold_autopilot.set_target_airspeed(self.target_airspeed)
+        
+    def reset(self, configuration):
+        #just call setup again for the moment
+        self.setup(configuration)
+    
+    def run(self, aircraft):
+        instrumentation = aircraft.getInstrumentation()
+        
         current_airspeed = instrumentation.getAirspeed()
-
-        e = self.target_airspeed - current_airspeed
-
-        target_throttle = self.throttle_pid.calculateOutput(e)
-
-        controls.setThrottle(target_throttle)            
-
-    def updateAileron(self, gps, instrumentation, controls):
-        current_course = instrumentation.getHeading()
+        throttle = self.airspeed_hold_autopilot.get_throttle(current_airspeed)
         
-        waypoint = self.waypoints[self.waypoint_index]
-        
+        current_altitude = instrumentation.getAltitude()
+        current_pitch = instrumentation.getPitch()
+        elevator = self.altitude_hold_autopilot.get_elevator(current_altitude, current_pitch)
+            
         if self.updateCnt == 0:
+            gps = aircraft.getGPS()
+            
+            waypoint = self.waypoints[self.current_waypoint]
+            
             distance_to_point = self.navigator.distance(gps.getLatitude(), gps.getLongitude(),
-                                                   waypoint[0], waypoint[1])
-
-            self.target_course = self.navigator.bearing(gps.getLatitude(), gps.getLongitude(),
                                                         waypoint[0], waypoint[1])
-
+    
+            target_heading = self.navigator.bearing(gps.getLatitude(), gps.getLongitude(),
+                                                    waypoint[0], waypoint[1])
+    
+            self.heading_hold_autopilot.set_target_heading(target_heading)
+    
             self.updateCnt = 20
             
             if distance_to_point < 0.2:
-                self.waypoint_index += 1
-                self.waypoint_index %= len(self.waypoints)
-                print("Going to %f, %f" % (self.waypoints[self.waypoint_index][0], self.waypoints[self.waypoint_index][1]))
-
+                self.current_waypoint += 1
+                self.current_waypoint %= len(self.waypoints)
+                print("Going to %f, %f" % (self.waypoints[self.current_waypoint][0], self.waypoints[self.current_waypoint][1]))
+    
+        current_heading = instrumentation.getHeading()
+        current_roll = instrumentation.getRoll()
+        aileron = self.heading_hold_autopilot.get_aileron(current_heading, current_roll)
+        
+        controls = aircraft.getControls()
+        
+        controls.setElevator(elevator)
+        controls.setAileron(aileron)
+        controls.setThrottle(throttle)
+        controls.setRudder(0.0)
+        
         self.updateCnt -= 1
 
-        course_e = self.target_course - current_course
-
-        if course_e < -180.0:
-            course_e = course_e + 360
-        elif course_e > 180.0:
-            course_e =  course_e - 360
-
-        target_roll = self.course_pid.calculateOutput(course_e)
-
-        current_roll = instrumentation.getRoll()
-
-        roll_e = target_roll - current_roll
-
-        target_aileron = self.aileron_pid.calculateOutput(roll_e)
-
-        controls.setAileron(target_aileron)
-
-    def updateElevator(self, instrumentation, controls):
-        current_altitude = instrumentation.getAltitude()
-
-        altitude_e = self.target_altitude - current_altitude
-        target_pitch = self.pitch_pid.calculateOutput(altitude_e)
-
-        current_pitch = instrumentation.getPitch()
-
-        pitch_e = target_pitch - current_pitch
-        target_elevator = -self.elevator_pid.calculateOutput(pitch_e)
-
-        controls.setElevator(target_elevator)
-
-    def updateControls(self, aircraft):
-        controls = aircraft.getControls()
-        instrumentation = aircraft.getInstrumentation()
-        gps = aircraft.getGPS()
-
-        self.updateThrottle(instrumentation, controls)
-        self.updateAileron(gps, instrumentation, controls)
-        self.updateElevator(instrumentation, controls)
-    
-    def reset(self):
-        self.waypoint_index = 0
-
-        print("Simple Autopilot version " + __VERSION__)    
-        print("Going to %f, %f" % (self.waypoints[self.waypoint_index][0], self.waypoints[self.waypoint_index][1]))
-    
 def create_autopilot():
-    dt = float(sys.configuration.getProperty("autopilot.update_rate"))
-    
-    print dt
-    
-    return JythonAutopilot(dt)
+    return Autopilot()

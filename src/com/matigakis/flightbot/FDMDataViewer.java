@@ -4,8 +4,6 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 
 import org.apache.commons.configuration.Configuration;
-import org.apache.commons.configuration.ConfigurationException;
-import org.apache.commons.configuration.XMLConfiguration;
 import org.apache.log4j.BasicConfigurator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -13,6 +11,7 @@ import org.slf4j.LoggerFactory;
 import com.matigakis.fgcontrol.fdm.FDMData;
 import com.matigakis.fgcontrol.network.FDMDataListener;
 import com.matigakis.fgcontrol.network.FDMDataServer;
+import com.matigakis.fgcontrol.network.FDMServerException;
 import com.matigakis.flightbot.configuration.ConfigurationManager;
 import com.matigakis.flightbot.configuration.FDMConfigurationException;
 import com.matigakis.flightbot.configuration.FDMManager;
@@ -65,7 +64,7 @@ public final class FDMDataViewer{
 		fdmDataViewController.updateView(fdmData);
 	}
 	
-	public void run() throws InterruptedException{
+	public void run() throws FDMServerException{
 		if(!running){
 			LOGGER.info("Starting the telemetry viewer");
 			

@@ -14,8 +14,10 @@ import com.matigakis.flightbot.configuration.FDMConfigurationException;
 import com.matigakis.flightbot.configuration.FDMManager;
 import com.matigakis.flightbot.fdm.RemoteFDMAdapter;
 import com.matigakis.fgcontrol.FGControl;
+import com.matigakis.fgcontrol.console.ConsoleConnectionException;
 import com.matigakis.fgcontrol.fdm.FDMData;
 import com.matigakis.fgcontrol.fdm.RemoteFDM;
+import com.matigakis.fgcontrol.fdm.RemoteFDMConnectionException;
 import com.matigakis.flightbot.aircraft.Aircraft;
 import com.matigakis.flightbot.aircraft.controllers.JythonAutopilot;
 import com.matigakis.flightbot.aircraft.controllers.loaders.JythonAutopilotLoader;
@@ -95,7 +97,7 @@ public class JythonAutopilotRunner {
 		}
 	}
 	
-	public void run() throws InterruptedException{
+	public void run() throws ConsoleConnectionException, RemoteFDMConnectionException{
 		if(!running){
 			LOGGER.info("Starting the autopilot simulator");
 		

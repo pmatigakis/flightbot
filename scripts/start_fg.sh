@@ -8,8 +8,7 @@ fgfs --geometry=480x360 \
 --disable-real-weather-fetch \
 --prop:/engines/engine/running=true \
 --prop:/engines/engine/rpm=1000 \
---generic=socket,in,10,localhost,10501,udp,fgcontrol \
---generic=socket,out,10,localhost,10502,udp,fgcontrol \
---generic=socket,out,1,localhost,10600,udp,fgcontrol \
---httpd=10503 \
---telnet=10504 
+--generic=socket,in,10,localhost,10500,udp,fgcontrol \
+--generic=socket,out,50,localhost,10501,udp,fgcontrol \
+--httpd=10600 \
+--telnet=10700 

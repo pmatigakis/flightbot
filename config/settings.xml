@@ -2,31 +2,24 @@
 
 <settings>
 	<flightgear>
+		<address>localhost</address>
+	
 		<console>
-			<host>127.0.0.1</host>
-			<port>10504</port>
+			<port>10700</port>
 		</console>
+		
+		<fdm>
+			<port>10501</port>
+		</fdm>
+
+		<controls>
+			<port>10500</port>
+		</controls>	
 	</flightgear>
 
-	<fdm>
-		<type>flightgear</type>
-		<sensors>
-			<port>10502</port>
-		</sensors>
-		<controls>
-			<host>localhost</host>
-			<port>10501</port>
-		</controls>
-	</fdm>
-
-	<viewer>
-		<type>flightgear</type>
-		<sensors>
-			<port>10600</port>
-		</sensors>
-	
+	<fdmviewer>
 		<update_rate>0.5</update_rate>
-	</viewer>
+	</fdmviewer>
 	
 	<autopilot>
 		<update_rate>0.1</update_rate>

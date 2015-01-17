@@ -25,7 +25,7 @@ class Autopilot(object):
         self.updateCnt = 0
         
         self.target_heading = 100;
-        self.target_airspeed = 60.0;
+        self.target_airspeed = 75.0;
         self.target_altitude = 1000.0
         
         self.current_waypoint = 0

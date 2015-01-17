@@ -10,6 +10,8 @@ import java.util.concurrent.Executors;
 
 import org.apache.commons.configuration.Configuration;
 import org.apache.log4j.BasicConfigurator;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.matigakis.fgcontrol.fdm.Controls;
 import com.matigakis.fgcontrol.fdm.NetworkFDM;
@@ -21,22 +23,31 @@ import com.matigakis.fgcontrol.console.ConsoleConnectionException;
 import com.matigakis.fgcontrol.fdm.FDMData;
 import com.matigakis.flightbot.aircraft.Aircraft;
 import com.matigakis.flightbot.configuration.ConfigurationManager;
+import com.matigakis.flightbot.ui.controllers.AutopilotWindowController;
+import com.matigakis.flightbot.ui.controllers.FDMDataViewController;
+import com.matigakis.flightbot.ui.controllers.FDMDataWindowController;
 import com.matigakis.flightbot.ui.controllers.FlightbotWindowController;
+import com.matigakis.flightbot.ui.controllers.MapViewController;
+import com.matigakis.flightbot.ui.controllers.MapWindowController;
+import com.matigakis.flightbot.ui.controllers.SimulatorControlViewController;
+import com.matigakis.flightbot.ui.controllers.SimulatorControlWindowController;
 import com.matigakis.flightbot.ui.views.FlightBotWindow;
 
 public class FlightBot {
+	private static final Logger LOGGER = LoggerFactory.getLogger(FlightBot.class);
+	
 	private FDMData fdmData;
 	private ScheduledExecutorService updater;
 	
-	private final FlightbotWindowController controller;
+	private final FlightbotWindowController flightbotViewController;
 	
 	private Aircraft aircraft;
 	
 	private long autopilotUpdateRate;
 	private long dataViewerUpdateRate;
 	
-	FGControl fgControl;
-	NetworkFDM fdm;
+	private FGControl fgControl;
+	private NetworkFDM fdm;
 	
 	public FlightBot(Configuration configuration){
 		String flightgearAddress = configuration.getString("flightgear.address");
@@ -55,31 +66,45 @@ public class FlightBot {
 		autopilotUpdateRate = (long) (1000 * configuration.getDouble("autopilot.update_rate"));
 		dataViewerUpdateRate = (long) (1000 * configuration.getDouble("fdmviewer.update_rate"));
 		
-		controller = new FlightbotWindowController(configuration, fgControl, aircraft);
+		flightbotViewController = new FlightbotWindowController(aircraft);
 		
-		FlightBotWindow window = new FlightBotWindow(controller);
-		controller.attachView(window);
+		MapViewController mapViewController = new MapWindowController();
+		SimulatorControlViewController simulatorViewController = new SimulatorControlWindowController(fgControl);
+		final FDMDataViewController fdmDataViewController = new FDMDataWindowController();
+		final AutopilotWindowController autopilotWindowController = new AutopilotWindowController(configuration, aircraft);
+		
+		FlightBotWindow window = new FlightBotWindow(flightbotViewController, mapViewController, simulatorViewController, autopilotWindowController);
+		
+		flightbotViewController.attachView(window);
+		mapViewController.attachMapView(window);
+		fdmDataViewController.attachFDMDataView(window);
+		autopilotWindowController.attachAutopilotView(window);
+		
+		autopilotWindowController.setAutopilotOutputStream(window.getAutopilotConsoleStream());
 		
 		updater = Executors.newScheduledThreadPool(2);
 		
+		//Add a background thread that updates the fdm data on the gui at the specified interval
+		//defined in the configuration file.
 		updater.scheduleAtFixedRate(new Runnable(){
 			@Override
 			public void run() {
-				controller.updateFDMData(getFDMData());
+				fdmDataViewController.updateFDMData(getFDMData());
 			}
 		}, 0, dataViewerUpdateRate, TimeUnit.MILLISECONDS);
 		
+		//Run the autopilot at the specified time interval
 		updater.scheduleAtFixedRate(new Runnable(){
 			@Override
 			public void run() {
-				controller.updateAircraftState(fdmData);
+				flightbotViewController.updateAircraftState(fdmData);
 				
-				if (controller.isAutopilotActive()){
-					Controls controls = controller.runAutopilot();
+				if (aircraft.isAutopilotActive()){
+					Controls controls = autopilotWindowController.runAutopilot();
 				
 					fdm.transmitControls(controls );
 				
-					controller.updateControls(controls);
+					autopilotWindowController.updateControls(controls);
 				}
 			}
 		}, 0, autopilotUpdateRate, TimeUnit.MILLISECONDS);
@@ -103,11 +128,11 @@ public class FlightBot {
 		updater.shutdown();
 	}
 	
-	public void setFDMData(FDMData fdmData){
+	private void setFDMData(FDMData fdmData){
 		this.fdmData = fdmData;
 	}
 	
-	public FDMData getFDMData(){
+	private FDMData getFDMData(){
 		return fdmData;
 	}
 	
@@ -127,8 +152,17 @@ public class FlightBot {
 		
 		try{
 			flightbot.run();
-		}catch(Exception e){
+		}catch(ConsoleConnectionException | RemoteFDMConnectionException e){
+			LOGGER.error("Failed to connect to Flightgear", e);
+			
 			JOptionPane.showMessageDialog(null, "Failed to connect to Flightgear");
+			
+			System.exit(-1);
+		}catch(Exception e){
+			LOGGER.error("FlightBot encountered a critical error", e);
+			
+			JOptionPane.showMessageDialog(null, "FlightBot encountered a critical error");
+			
 			System.exit(-1);
 		}
 	}

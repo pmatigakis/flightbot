@@ -5,12 +5,16 @@ import javax.swing.JFrame;
 import com.matigakis.fgcontrol.fdm.Controls;
 import com.matigakis.fgcontrol.fdm.FDMData;
 import com.matigakis.flightbot.aircraft.Aircraft;
+import com.matigakis.flightbot.ui.controllers.AutopilotViewController;
 import com.matigakis.flightbot.ui.controllers.FlightbotViewController;
+import com.matigakis.flightbot.ui.controllers.MapViewController;
+import com.matigakis.flightbot.ui.controllers.SimulatorControlViewController;
 import com.matigakis.flightbot.ui.views.information.ControlsPanel;
 
 import javax.swing.JMenuBar;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
+import javax.swing.SwingUtilities;
 
 import java.awt.Color;
 
@@ -32,10 +36,13 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.util.List;
 
-public class FlightBotWindow extends JFrame implements FlightbotView, JMapViewerEventListener{
+public class FlightBotWindow extends JFrame implements FlightbotView, MapView, FDMDataView, AutopilotView, JMapViewerEventListener{
 	private static final long serialVersionUID = 1L;
 
-	final private FlightbotViewController flightbotViewController;
+	private final FlightbotViewController flightbotViewController;
+	private final MapViewController mapViewController;
+	private final SimulatorControlViewController simulatorControlViewController;
+	private final AutopilotViewController autopilotViewController;
 	
 	private FDMDataTableModel fdmDataTableModel;
 	private JMapViewer mapViewer;
@@ -46,8 +53,9 @@ public class FlightBotWindow extends JFrame implements FlightbotView, JMapViewer
 	
 	private JMenuItem loadMarkersMenuItem;
 	private JMenuItem clearMarkersMenuItem;
-	private JMenuItem pauseMenuItem;
-	private JMenuItem resetFlightgearMenuItem;
+	
+	private JMenuItem pauseSimulatorMenuItem;
+	private JMenuItem resetSimulatorMenuItem;
 	
 	private JMenuItem startAutopilotMenuItem;
 	private JMenuItem stopAutopilotMenuItem;
@@ -59,8 +67,11 @@ public class FlightBotWindow extends JFrame implements FlightbotView, JMapViewer
 	
 	private ControlsPanel controlsPanel;
 	
-	public FlightBotWindow(FlightbotViewController flightbotViewController){
+	public FlightBotWindow(FlightbotViewController flightbotViewController, MapViewController mapViewController, SimulatorControlViewController simulatorControlViewController, AutopilotViewController autopilotViewController){
 		this.flightbotViewController = flightbotViewController;
+		this.mapViewController = mapViewController;
+		this.simulatorControlViewController = simulatorControlViewController;
+		this.autopilotViewController = autopilotViewController;
 		
 		setTitle("FlightBot");
 		
@@ -168,11 +179,11 @@ public class FlightBotWindow extends JFrame implements FlightbotView, JMapViewer
 		JMenu flightgearMenu = new JMenu("Flightgear");
 		menuBar.add(flightgearMenu);
 		
-		pauseMenuItem = new JMenuItem("Pause/Upause");
-		flightgearMenu.add(pauseMenuItem);
+		pauseSimulatorMenuItem = new JMenuItem("Pause/Upause");
+		flightgearMenu.add(pauseSimulatorMenuItem);
 		
-		resetFlightgearMenuItem = new JMenuItem("Reset");
-		flightgearMenu.add(resetFlightgearMenuItem);
+		resetSimulatorMenuItem = new JMenuItem("Reset");
+		flightgearMenu.add(resetSimulatorMenuItem);
 		
 		JMenu autopilotMenu = new JMenu("Autopilot");
 		menuBar.add(autopilotMenu);
@@ -201,8 +212,7 @@ public class FlightBotWindow extends JFrame implements FlightbotView, JMapViewer
 		loadAutopilotMenuItem.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				flightbotViewController.loadJythonAutopilot();
-				
+				autopilotViewController.loadJythonAutopilot();
 			}
 		});
 		
@@ -216,49 +226,49 @@ public class FlightBotWindow extends JFrame implements FlightbotView, JMapViewer
 		loadMarkersMenuItem.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				flightbotViewController.loadMapMarkersFromFile();
+				mapViewController.loadMapMarkersFromFile();
 			}
 		});
 		
 		clearMarkersMenuItem.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				flightbotViewController.removeAllMapMarkers();
+				mapViewController.removeAllMapMarkers();
 			}
 		});
 		
-		pauseMenuItem.addActionListener(new ActionListener() {
+		pauseSimulatorMenuItem.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				flightbotViewController.pauseFlightgear();
+				simulatorControlViewController.pause();
 			}
 		});
 		
-		resetFlightgearMenuItem.addActionListener(new ActionListener() {
+		resetSimulatorMenuItem.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				flightbotViewController.resetFlightgear();
+				simulatorControlViewController.reset();
 			}
 		});
 		
 		startAutopilotMenuItem.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				flightbotViewController.setAutopilotEnabled(true);
+				autopilotViewController.setAutopilotEnabled(true);
 			}
 		});
 		
 		stopAutopilotMenuItem.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				flightbotViewController.setAutopilotEnabled(false);
+				autopilotViewController.setAutopilotEnabled(false);
 			}
 		});
 		
 		resetAutopilotMenuItem.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				flightbotViewController.resetAutopilot();
+				autopilotViewController.resetAutopilot();
 			}
 		});
 	}
@@ -272,15 +282,20 @@ public class FlightBotWindow extends JFrame implements FlightbotView, JMapViewer
 	public void updateFDMData(FDMData fdmData) {
 		fdmDataTableModel.updateFromFDMData(fdmData);
 		
-		double longitude = fdmData.getPosition().getLongitude();
-		double latitude = fdmData.getPosition().getLatitude();
+		final double longitude = fdmData.getPosition().getLongitude();
+		final double latitude = fdmData.getPosition().getLatitude();
 		
-		int zoom = mapViewer.getZoom();
+		final int zoom = mapViewer.getZoom();
 		
-		mapViewer.setDisplayPositionByLatLon(latitude, longitude, zoom);
-		
-		aircraftMarker.setLat(latitude);
-		aircraftMarker.setLon(longitude);
+		SwingUtilities.invokeLater(new Runnable() {
+			@Override
+			public void run() {
+				mapViewer.setDisplayPositionByLatLon(latitude, longitude, zoom);
+				
+				aircraftMarker.setLat(latitude);
+				aircraftMarker.setLon(longitude);		
+			}
+		});	
 	}
 
 	@Override
@@ -289,35 +304,50 @@ public class FlightBotWindow extends JFrame implements FlightbotView, JMapViewer
 	}
 
 	@Override
-	public void addMapMarkers(List<MapMarker> mapMarkers) {
-		for(MapMarker mapMarker: mapMarkers){
-			mapViewer.addMapMarker(mapMarker);
-		}
+	public void addMapMarkers(final List<MapMarker> mapMarkers) {
+		SwingUtilities.invokeLater(new Runnable(){
+			@Override
+			public void run() {
+				for(MapMarker mapMarker: mapMarkers){
+					mapViewer.addMapMarker(mapMarker);
+				}	
+			}
+		});
 	}
 
 	@Override
 	public void removeAllMapMarkers() {
-		mapViewer.removeAllMapMarkers();
+		SwingUtilities.invokeLater(new Runnable(){
+			@Override
+			public void run() {
+				mapViewer.removeAllMapMarkers();
+			}
+		});	
 	}
 
 	@Override
-	public void updateControls(Controls controls) {
-		controlsPanel.updateControls(controls);
+	public void updateControls(final Controls controls) {
+		SwingUtilities.invokeLater(new Runnable() {
+			@Override
+			public void run() {
+				controlsPanel.updateControls(controls);	
+			}
+		});
 	}
 
 	@Override
-	public void updateAircraftState(Aircraft aircraft) {
-		if (aircraft.isAutopilotActive()){
+	public OutputStream getAutopilotConsoleStream() {
+		return consoleStream;
+	}
+
+	@Override
+	public void updateAutopilotState(boolean autopilotState) {
+		if (autopilotState){
 			startAutopilotMenuItem.setEnabled(false);
 			stopAutopilotMenuItem.setEnabled(true);
 		}else{
 			startAutopilotMenuItem.setEnabled(true);
 			stopAutopilotMenuItem.setEnabled(false);
 		}
-	}
-
-	@Override
-	public OutputStream getConsoleStream() {
-		return consoleStream;
 	}
 }

@@ -321,6 +321,8 @@ public class FlightBotWindow extends JFrame implements FlightbotView, MapView, F
 			@Override
 			public void run() {
 				mapViewer.removeAllMapMarkers();
+				
+				mapViewer.addMapMarker(aircraftMarker);
 			}
 		});	
 	}

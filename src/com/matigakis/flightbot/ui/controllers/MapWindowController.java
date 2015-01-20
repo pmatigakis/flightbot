@@ -9,6 +9,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import javax.swing.JFileChooser;
+import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
@@ -17,6 +18,9 @@ import org.slf4j.LoggerFactory;
 import org.openstreetmap.gui.jmapviewer.MapMarkerDot;
 import org.openstreetmap.gui.jmapviewer.interfaces.MapMarker;
 
+import com.matigakis.flightbot.maps.XMLMarkerLoader;
+import com.matigakis.flightbot.maps.MarkerLoader;
+import com.matigakis.flightbot.maps.MarkerLoadException;
 import com.matigakis.flightbot.ui.views.MapView;
 
 public class MapWindowController implements MapViewController{
@@ -29,9 +33,9 @@ public class MapWindowController implements MapViewController{
 	}
 	
 	@Override
-	public void loadMapMarkersFromFile() {
+	public void loadMapMarkersFromFile(){
 		JFileChooser fileChooser = new JFileChooser();
-		FileNameExtensionFilter filter = new FileNameExtensionFilter("CSV files", "csv");
+		FileNameExtensionFilter filter = new FileNameExtensionFilter("XML files", "xml");
 		fileChooser.setFileFilter(filter);
 		
 		int retval = fileChooser.showOpenDialog(null);
@@ -41,37 +45,21 @@ public class MapWindowController implements MapViewController{
 		}
 		
 		String filename = fileChooser.getSelectedFile().getPath();
-		final List<MapMarker> mapMarkers = new LinkedList<MapMarker>();
+	
+		MarkerLoader markerLoader = new XMLMarkerLoader();
 		
 		try {
-			FileReader fr = new FileReader(filename);
-			
-			BufferedReader br = new BufferedReader(fr);
-			
-			while(true){
-				String line = br.readLine();
-				
-				if(line != null){
-					String[] data = line.split(",");
-					if(data.length == 2){
-						MapMarkerDot marker = new MapMarkerDot(Double.parseDouble(data[0]), Double.parseDouble(data[1]));
-						marker.setVisible(true);
-						marker.setColor(Color.blue);
-						marker.setBackColor(Color.blue);
-						mapMarkers.add(marker);
-					}else{
-						LOGGER.error("Invalid marker data");
-					}
-				}else{
-					break;
-				}
-			}
-		} catch (FileNotFoundException e) {
-			LOGGER.error("File " + filename + "does not exist", e);
-		} catch (IOException e) {
+			markerLoader.loadMarkers(filename);
+		} catch (IOException | MarkerLoadException e) {
 			LOGGER.error("Failed to load map markers", e);
-		}
+			
+			JOptionPane.showMessageDialog(null, "Failed to load map markers");
+			
+			return;
+		} 
 	
+		final List<MapMarker> mapMarkers = markerLoader.getMarkers();
+		
 		SwingUtilities.invokeLater(new Runnable() {
 			@Override
 			public void run() {

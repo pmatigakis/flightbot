@@ -5,6 +5,7 @@ import javax.swing.JFrame;
 import com.matigakis.fgcontrol.fdm.Controls;
 import com.matigakis.fgcontrol.fdm.FDMData;
 import com.matigakis.flightbot.aircraft.Aircraft;
+import com.matigakis.flightbot.aircraft.sensors.GPS;
 import com.matigakis.flightbot.ui.controllers.AutopilotViewController;
 import com.matigakis.flightbot.ui.controllers.FlightbotViewController;
 import com.matigakis.flightbot.ui.controllers.MapViewController;
@@ -281,21 +282,6 @@ public class FlightBotWindow extends JFrame implements FlightbotView, MapView, F
 	@Override
 	public void updateFDMData(FDMData fdmData) {
 		fdmDataTableModel.updateFromFDMData(fdmData);
-		
-		final double longitude = fdmData.getPosition().getLongitude();
-		final double latitude = fdmData.getPosition().getLatitude();
-		
-		final int zoom = mapViewer.getZoom();
-		
-		SwingUtilities.invokeLater(new Runnable() {
-			@Override
-			public void run() {
-				mapViewer.setDisplayPositionByLatLon(latitude, longitude, zoom);
-				
-				aircraftMarker.setLat(latitude);
-				aircraftMarker.setLon(longitude);		
-			}
-		});	
 	}
 
 	@Override
@@ -351,5 +337,25 @@ public class FlightBotWindow extends JFrame implements FlightbotView, MapView, F
 			startAutopilotMenuItem.setEnabled(true);
 			stopAutopilotMenuItem.setEnabled(false);
 		}
+	}
+
+	@Override
+	public void updateMap(Aircraft aircraft) {
+		GPS gps = aircraft.getGPS();
+		
+		final double longitude = gps.getLongitude();
+		final double latitude = gps.getLatitude();
+		
+		final int zoom = mapViewer.getZoom();
+		
+		SwingUtilities.invokeLater(new Runnable() {
+			@Override
+			public void run() {
+				mapViewer.setDisplayPositionByLatLon(latitude, longitude, zoom);
+				
+				aircraftMarker.setLat(latitude);
+				aircraftMarker.setLon(longitude);		
+			}
+		});	
 	}
 }

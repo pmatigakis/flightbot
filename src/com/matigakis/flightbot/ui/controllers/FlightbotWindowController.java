@@ -5,8 +5,6 @@ import javax.swing.SwingUtilities;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.matigakis.fgcontrol.fdm.FDMData;
-import com.matigakis.flightbot.aircraft.Aircraft;
 import com.matigakis.flightbot.ui.views.FlightbotView;
 
 /**
@@ -17,15 +15,7 @@ public class FlightbotWindowController implements FlightbotViewController{
 	private static final Logger LOGGER = LoggerFactory.getLogger(FlightbotWindowController.class);
 	
 	private FlightbotView flightbotView;
-	private Aircraft aircraft;
 		
-	private FlightbotWindowController(){
-	}
-	
-	public FlightbotWindowController(Aircraft aircraft){
-		this.aircraft = aircraft;
-	}
-	
 	public void attachView(FlightbotView flightbotView){
 		this.flightbotView = flightbotView;
 	}
@@ -45,10 +35,5 @@ public class FlightbotWindowController implements FlightbotViewController{
 		});
 		
 		System.exit(0);
-	}
-
-	@Override
-	public void updateAircraftState(FDMData fdmData) {
-		aircraft.updateFromFDMData(fdmData);
 	}
 }

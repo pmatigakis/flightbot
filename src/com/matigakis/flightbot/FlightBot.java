@@ -37,14 +37,14 @@ public class FlightBot {
 	private static final Logger LOGGER = LoggerFactory.getLogger(FlightBot.class);
 	
 	private FDMData fdmData;
-	private ScheduledExecutorService updater;
-	
-	private final FlightbotWindowController flightbotViewController;
-	
 	private Aircraft aircraft;
 	
-	private long autopilotUpdateRate;
-	private long dataViewerUpdateRate;
+	private AutopilotWindowController autopilotWindowController;
+	private FDMDataViewController fdmDataViewController;
+	private MapViewController mapViewController;
+	private final FlightbotWindowController flightbotViewController;
+	
+	private ScheduledExecutorService updater;
 	
 	private FGControl fgControl;
 	private NetworkFDM fdm;
@@ -59,19 +59,20 @@ public class FlightBot {
 		fdm = new NetworkFDM("localhost", fdmPort, controlsPort);
 		
 		aircraft = new Aircraft();
-		aircraft.setAutopilotState(false);
+		aircraft.setAutopilotActive(false);
 		
 		fdmData = new FDMData();
 		
-		autopilotUpdateRate = (long) (1000 * configuration.getDouble("autopilot.update_rate"));
-		dataViewerUpdateRate = (long) (1000 * configuration.getDouble("fdmviewer.update_rate"));
+		//The update rates must be converted from seconds to milliseconds
+		long autopilotUpdateRate = (long) (1000 * configuration.getDouble("autopilot.update_rate"));
+		long dataViewerUpdateRate = (long) (1000 * configuration.getDouble("fdmviewer.update_rate"));
 		
-		flightbotViewController = new FlightbotWindowController(aircraft);
+		flightbotViewController = new FlightbotWindowController();
 		
-		MapViewController mapViewController = new MapWindowController();
+		mapViewController = new MapWindowController(aircraft);
 		SimulatorControlViewController simulatorViewController = new SimulatorControlWindowController(fgControl);
-		final FDMDataViewController fdmDataViewController = new FDMDataWindowController();
-		final AutopilotWindowController autopilotWindowController = new AutopilotWindowController(configuration, aircraft);
+		fdmDataViewController = new FDMDataWindowController();
+		autopilotWindowController = new AutopilotWindowController(configuration, aircraft);
 		
 		FlightBotWindow window = new FlightBotWindow(flightbotViewController, mapViewController, simulatorViewController, autopilotWindowController);
 		
@@ -89,7 +90,9 @@ public class FlightBot {
 		updater.scheduleAtFixedRate(new Runnable(){
 			@Override
 			public void run() {
-				fdmDataViewController.updateFDMData(getFDMData());
+				updateFDMDataWindow();
+				updateMapWindow();
+				updateAircraftControlsWindow();
 			}
 		}, 0, dataViewerUpdateRate, TimeUnit.MILLISECONDS);
 		
@@ -97,15 +100,7 @@ public class FlightBot {
 		updater.scheduleAtFixedRate(new Runnable(){
 			@Override
 			public void run() {
-				flightbotViewController.updateAircraftState(fdmData);
-				
-				if (aircraft.isAutopilotActive()){
-					Controls controls = autopilotWindowController.runAutopilot();
-				
-					fdm.transmitControls(controls );
-				
-					autopilotWindowController.updateControls(controls);
-				}
+				updateAutopilot();
 			}
 		}, 0, autopilotUpdateRate, TimeUnit.MILLISECONDS);
 		
@@ -129,11 +124,29 @@ public class FlightBot {
 	}
 	
 	private void setFDMData(FDMData fdmData){
+		aircraft.updateFromFDMData(fdmData);
+		
 		this.fdmData = fdmData;
 	}
 	
-	private FDMData getFDMData(){
-		return fdmData;
+	private void updateAutopilot() {
+		if (aircraft.isAutopilotActive()){
+			Controls controls = autopilotWindowController.runAutopilot();
+		
+			fdm.transmitControls(controls);
+		}
+	}
+
+	private void updateFDMDataWindow() {
+		fdmDataViewController.updateFDMData(fdmData);
+	}
+
+	private void updateMapWindow(){
+		mapViewController.updateMap();
+	}
+	
+	private void updateAircraftControlsWindow(){
+		autopilotWindowController.updateControls();
 	}
 	
 	public static void main(String[] args) throws Exception{

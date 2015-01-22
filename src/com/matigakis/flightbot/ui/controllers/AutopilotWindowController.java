@@ -46,7 +46,7 @@ public class AutopilotWindowController implements AutopilotViewController{
 	@Override
 	public void setAutopilotEnabled(boolean enabled) {
 		if(autopilot != null){
-			aircraft.setAutopilotState(enabled);
+			aircraft.setAutopilotActive(enabled);
 		
 			for(AutopilotView autopilotView: autopilotViews){
 				autopilotView.updateAutopilotState(enabled);
@@ -67,7 +67,7 @@ public class AutopilotWindowController implements AutopilotViewController{
 
 	@Override
 	public void loadJythonAutopilot() {
-		aircraft.setAutopilotState(false);
+		aircraft.setAutopilotActive(false);
 		
 		for(AutopilotView autopilotView: autopilotViews){
 			autopilotView.updateAutopilotState(false);
@@ -96,7 +96,21 @@ public class AutopilotWindowController implements AutopilotViewController{
 
 	@Override
 	public Controls runAutopilot() {
-		autopilot.updateControls(aircraft);
+		try{
+			synchronized (aircraft) {
+				autopilot.updateControls(aircraft);		
+			}
+		}catch(Exception e){
+			LOGGER.error("The autopilot encountered a critical error", e);
+			
+			aircraft.setAutopilotActive(false);
+			
+			for(AutopilotView autopilotView: autopilotViews){
+				autopilotView.updateAutopilotState(false);
+			}
+			
+			JOptionPane.showMessageDialog(null, "The autopilot encountered a critical error");
+		}
 		
 		return aircraft.getControls();
 	}
@@ -117,9 +131,13 @@ public class AutopilotWindowController implements AutopilotViewController{
 	}
 
 	@Override
-	public void updateControls(Controls controls) {
-		for(AutopilotView autopilotView: autopilotViews){
-			autopilotView.updateControls(controls);
+	public void updateControls() {		
+		Controls controls = aircraft.getControls();
+		
+		synchronized(controls) {
+			for(AutopilotView autopilotView: autopilotViews){
+				autopilotView.updateControls(controls);
+			}	
 		}
 	}
 }

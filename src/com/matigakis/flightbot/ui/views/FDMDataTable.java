@@ -12,4 +12,8 @@ public class FDMDataTable extends JTable{
 		
 		this.fdmDataTableModel = fdmDataTableModel;
 	}
+	
+	public FDMDataTableModel getDataTable(){
+		return fdmDataTableModel;
+	}
 }

@@ -1,9 +1,5 @@
 package com.matigakis.flightbot.ui.controllers;
 
-import java.awt.Color;
-import java.io.BufferedReader;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
 import java.io.IOException;
 import java.util.LinkedList;
 import java.util.List;
@@ -15,9 +11,9 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.openstreetmap.gui.jmapviewer.MapMarkerDot;
 import org.openstreetmap.gui.jmapviewer.interfaces.MapMarker;
 
+import com.matigakis.flightbot.aircraft.Aircraft;
 import com.matigakis.flightbot.maps.XMLMarkerLoader;
 import com.matigakis.flightbot.maps.MarkerLoader;
 import com.matigakis.flightbot.maps.MarkerLoadException;
@@ -26,9 +22,13 @@ import com.matigakis.flightbot.ui.views.MapView;
 public class MapWindowController implements MapViewController{
 	private static final Logger LOGGER = LoggerFactory.getLogger(MapWindowController.class);
 	
+	private Aircraft aircraft;
+	
 	List<MapView> mapViews;
 	
-	public MapWindowController(){
+	public MapWindowController(Aircraft aircraft){
+		this.aircraft = aircraft;
+		
 		mapViews = new LinkedList<MapView>();
 	}
 	
@@ -85,5 +85,14 @@ public class MapWindowController implements MapViewController{
 	@Override
 	public void detachMapView(MapView mapView) {
 		mapViews.remove(mapView);
+	}
+
+	@Override
+	public void updateMap() {
+		synchronized (aircraft) {
+			for(MapView mapView: mapViews){
+				mapView.updateMap(aircraft);
+			}	
+		}
 	}
 }

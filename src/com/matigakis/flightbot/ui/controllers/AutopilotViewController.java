@@ -6,7 +6,7 @@ import com.matigakis.fgcontrol.fdm.Controls;
 import com.matigakis.flightbot.ui.views.AutopilotView;
 
 public interface AutopilotViewController {
-	public void updateControls(Controls controls);
+	public void updateControls();
 	public boolean isAutopilotActive();
 	public void setAutopilotEnabled(boolean enabled);
 	public void resetAutopilot();

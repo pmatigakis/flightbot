@@ -135,7 +135,7 @@ public class Aircraft {
 	 * 
 	 * @param state the state which the autopilot is to be set.
 	 */
-	public void setAutopilotState(boolean state){
+	public void setAutopilotActive(boolean state){
 		autopilotActive = state;
 	}
 	
